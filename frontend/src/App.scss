@@ -1,0 +1,15 @@
+@import '~bootstrap/scss/bootstrap.scss';
+* {
+    box-sizing: border-box;
+}
+
+.app-cont {
+    display: flex;
+}
+
+.content-cont {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}

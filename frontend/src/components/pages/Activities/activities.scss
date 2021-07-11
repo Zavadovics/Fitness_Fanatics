@@ -1,0 +1,29 @@
+@use '../../../styles/variables';
+.activities-cont {
+    width: 60%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.activities-cont h2 {
+    margin: 1em auto;
+}
+
+@media screen and (max-width: 1200px) {
+    .activities-cont {
+        width: 80%;
+    }
+}
+
+@media screen and (max-width: 1024px) {
+    .activities-cont {
+        width: 90%;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .activities-cont {
+        width: 95%;
+    }
+}

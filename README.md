@@ -1,8 +1,4 @@
-# Zavadovics_masterwork
-
-# FITNESS FANATICS
-
-# Sport Alkalmazás
+# FITNESS FANATICS - Sport Alkalmazás
 
 ## _Dokumentáció_
 

@@ -58,3 +58,21 @@
 | cities         | Magyarország városai |
 | photos         | felhasználók fotói   |
 | training plans | edzés tervek         |
+
+## Technikai követelmények
+
+**Backend**
+
+- Node.js
+- Express.js
+- MongoDB
+- JSON Web Token
+- Docker
+
+**Frontend**
+
+- React
+
+**API dokumentáció**
+
+- OpenAPI/Swagger

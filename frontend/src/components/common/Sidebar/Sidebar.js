@@ -9,7 +9,7 @@ import {
 import { NavLink } from 'react-router-dom';
 import './sidebar.scss';
 
-const Sidebar = () => {
+const Sidebar = ({ loggedInUser }) => {
   return (
     <div className='sidebar-nav-cont'>
       <CDBSidebar
@@ -33,6 +33,7 @@ const Sidebar = () => {
                 Tevékenységek
               </CDBSidebarMenuItem>
             </NavLink>
+
             <NavLink
               className='sidebar-nav-link'
               exact
@@ -43,6 +44,7 @@ const Sidebar = () => {
                 Új hozzáadása
               </CDBSidebarMenuItem>
             </NavLink>
+
             <NavLink
               className='sidebar-nav-link'
               exact
@@ -55,13 +57,15 @@ const Sidebar = () => {
             <NavLink
               className='sidebar-nav-link'
               exact
-              to='/profile/edit/:id'
+              // to='/profile/edit/:id'
+              to={`/profile/edit/${loggedInUser.id}`}
               activeClassName='activeClicked'
             >
               <CDBSidebarMenuItem icon='user-edit'>
                 Profil szerkesztése
               </CDBSidebarMenuItem>
             </NavLink>
+
             <NavLink
               className='sidebar-nav-link'
               exact

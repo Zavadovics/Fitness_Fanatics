@@ -3,10 +3,6 @@ const { model, Schema } = pkg;
 
 const UserSchema = new Schema(
   {
-    userName: {
-      type: String,
-      required: false,
-    },
     firstName: {
       type: String,
       required: true,
@@ -31,31 +27,8 @@ const UserSchema = new Schema(
       max: 255,
       min: 8,
     },
-    gender: {
-      type: String,
-      required: false,
-    },
-    cityOfResidence: {
-      type: String,
-      required: false,
-    },
-    weight: {
-      type: Number,
-      required: false,
-    },
-    birthDate: {
-      type: Date,
-      required: false,
-    },
-    // birthDate: {
-    //   type: String,
-    // },
-    motivation: {
-      type: String,
-      required: false,
-    },
   },
-  { timestamps: false }
+  { timestamps: true }
 );
 
 export default model('User', UserSchema);

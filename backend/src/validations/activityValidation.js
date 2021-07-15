@@ -2,7 +2,8 @@ import Joi from 'joi';
 
 export const activityValidation = data => {
   const schema = Joi.object({
-    // activityStartDateAndTime: Joi.date().min('now').required(),
+    activityDate: Joi.date().min(1).required(),
+    activityTime: Joi.string().min(1).required(),
     duration: Joi.number().min(1).required(),
     activityType: Joi.string().min(1).required(),
     distance: Joi.number().min(1).required(),

@@ -12,6 +12,7 @@ import NewActivity from './components/pages/NewActivity/NewActivity';
 import EditActivity from './components/pages/EditActivity/EditActivity';
 import Profile from './components/pages/Profile/Profile';
 import EditProfile from './components/pages/EditProfile/EditProfile';
+// import EditPhoto from './components/pages/EditPhoto/EditPhoto';
 import TrainingPlans from './components/pages/TrainingPlans/TrainingPlans';
 
 const newUser = localStorage.getItem('loggedInUser')
@@ -20,8 +21,19 @@ const newUser = localStorage.getItem('loggedInUser')
 
 const App = () => {
   const [loggedInUser, setLoggedInUser] = useState(newUser);
+  const [profile, setProfile] = useState('');
+  // const [activity, setActivity] = useState({
+  //   activityDate: '',
+  //   activityTime: '',
+  //   duration: '',
+  //   activityType: '',
+  //   distance: '',
+  //   comment: '',
+  // });
+
   // console.log('newUser - app.js', newUser);
 
+  // console.log(loggedInUser);
   return (
     <>
       <Router>
@@ -33,31 +45,44 @@ const App = () => {
                 loggedInUser={loggedInUser}
               />
               <div className='app-cont'>
-                <Sidebar />
+                <Sidebar loggedInUser={loggedInUser} />
                 <div className='content-cont'>
                   <Route exact path='/activities'>
-                    <Activities />
+                    <Activities
+                      profile={profile}
+                      // activity={activity}
+                      // setActivity={setActivity}
+                    />
                   </Route>
                   <Route exact path='/activities/new'>
-                    <NewActivity />
+                    <NewActivity
+                    // activity={activity}
+                    // setActivity={setActivity}
+                    />
                   </Route>
                   <Route exact path='/activities/edit/:id'>
                     <EditActivity
-                      activityFromList={{
-                        _id: 4,
-                        duration: '120',
-                        activityType: 'futás',
-                        distance: '6000',
-                        comment: 'cool run',
-                      }}
+                    // activity={activity}
+                    // setActivity={setActivity}
                     />
                   </Route>
                   <Route exact path='/profile'>
-                    <Profile />
+                    <Profile
+                      loggedInUser={loggedInUser}
+                      profile={profile}
+                      setProfile={setProfile}
+                    />
                   </Route>
-                  <Route exact path='/profile/edit/:id'>
-                    <EditProfile />
+                  <Route exact path={`/profile/edit/${loggedInUser.id}`}>
+                    <EditProfile
+                      loggedInUser={loggedInUser}
+                      profile={profile}
+                      setProfile={setProfile}
+                    />
                   </Route>
+                  {/* <Route exact path='/profile/edit/photo/:id'>
+                    <EditPhoto />
+                  </Route> */}
                   <Route path='/training-plans'>
                     <TrainingPlans />
                   </Route>

@@ -99,6 +99,9 @@ div.vertical-line {
     .nav-item-flex li {
         padding: 0;
     }
+    div.vertical-line {
+        display: none;
+    }
 }
 
 @media screen and (max-width: 480px) {

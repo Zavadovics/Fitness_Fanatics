@@ -1,7 +1,7 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
-import { loginValidation } from '../loginValidation.js';
+import { loginValidation } from '../validations/loginValidation.js';
 import User from '../models/User.js';
 
 export const loginService = {
@@ -15,6 +15,7 @@ export const loginService = {
     }
 
     const user = await User.findOne({ email: loginData.email });
+    console.log(user);
     if (!user) {
       return {
         status: 400,
@@ -33,6 +34,9 @@ export const loginService = {
     const authToken = jwt.sign(
       {
         firstName: user.firstName,
+        email: user.email,
+        lastName: user.lastName,
+        id: user._id,
       },
       process.env.TOKEN_SECRET
     );
@@ -40,8 +44,10 @@ export const loginService = {
       status: 200,
       message: 'Logged in!',
       token: authToken,
-      firstName: user.firstName,
       email: user.email,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      id: user._id,
     };
   },
 };

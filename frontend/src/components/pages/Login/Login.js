@@ -140,11 +140,7 @@ const Login = props => {
         .then(response => response.json())
         .then(res => {
           if (res.status >= 200 && res.status < 300) {
-            const user = {
-              email: res.email,
-              firstName: res.firstName,
-              token: res.token,
-            };
+            const user = res;
             localStorage.setItem('loggedInUser', JSON.stringify(user));
 
             // setAlert({ alertType: 'success', message: messageTypes.success });

@@ -1,7 +1,7 @@
 import logger from 'logger';
 import bcrypt from 'bcryptjs';
 import User from '../models/User.js';
-import { registerValidation } from '../registerValidation.js';
+import { registerValidation } from '../validations/registerValidation.js';
 
 export const registrationService = {
   async saveUser(userData) {

@@ -1,15 +1,21 @@
-import { useState, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import InputField from '../InputField/InputField';
 import SelectField from '../SelectField/SelectField';
 import './activityForm.scss';
 
-/* TO-DO
-select field does not validate on blur */
-const ActivityForm = ({ type, selectedActivity }) => {
-  const { REACT_APP_SERVER_URL } = process.env;
+/* TO-DO !!!
+- select field does not validate on blur 
+- form doesn't load data in edit mode
+- validation not perfect, perhaps date validation should be added
+*/
+const ActivityForm = props => {
+  const { type, activity } = props;
+  // console.log('ActivityForm-props', activity);
 
-  const activity = selectedActivity;
-  const id = type === 'edit' ? activity.id : null;
+  const { REACT_APP_SERVER_URL } = process.env;
+  const id = type === 'edit' ? activity._id : null;
+
+  // console.log('props', activityDate);
 
   const activityTypeList = ['futás', 'kerékpározás', 'úszás'];
 
@@ -17,19 +23,22 @@ const ActivityForm = ({ type, selectedActivity }) => {
     type === 'edit'
       ? activity
       : {
-          //   activityStartDateAndTime: '',
+          activityDate: '',
+          activityTime: '',
           duration: '',
           activityType: '',
           distance: '',
           comment: '',
         }
   );
+  // console.log('formData', formData);
 
   const [alert, setAlert] = useState(null);
   const [formWasValidated, setFormWasValidated] = useState(false);
 
   const references = {
-    // activityStartDateAndTime: useRef(),
+    activityDate: useRef(),
+    activityTime: useRef(),
     duration: useRef(),
     activityType: useRef(),
     distance: useRef(),
@@ -42,7 +51,8 @@ const ActivityForm = ({ type, selectedActivity }) => {
   });
 
   const [formErrors, setFormErrors] = useState({
-    // activityStartDateAndTime: '',
+    activityDate: '',
+    activityTime: '',
     duration: '',
     activityType: '',
     distance: '',
@@ -60,9 +70,9 @@ const ActivityForm = ({ type, selectedActivity }) => {
     return value !== '';
   };
 
-  const isValueNegative = value => {
-    return value >= 0;
-  };
+  // const isValueNegative = value => {
+  //   return value >= 0;
+  // };
 
   //   const isDateExpired = value => {
   //     const expiryDate = new Date(value);
@@ -76,21 +86,22 @@ const ActivityForm = ({ type, selectedActivity }) => {
   //   };
 
   const validators = {
-    // activityStartDateAndTime: {
-    //   required: isFieldEmpty,
-    //     isDate,
-    //     isDateExpired,
-    // },
+    activityDate: {
+      required: isFieldEmpty,
+    },
+    activityTime: {
+      required: isFieldEmpty,
+    },
     duration: {
       required: isFieldEmpty,
-      positive: isValueNegative,
+      // positive: isValueNegative,
     },
     activityType: {
       required: isFieldEmpty,
     },
     distance: {
       required: isFieldEmpty,
-      positive: isValueNegative,
+      // positive: isValueNegative,
     },
     comment: {
       required: isFieldEmpty,
@@ -98,14 +109,17 @@ const ActivityForm = ({ type, selectedActivity }) => {
   };
 
   const validateField = fieldName => {
+    if (fieldName === '_id') return true;
+
     const value = formData[fieldName];
     let isValid = true;
     setFormErrors(prev => ({
       ...prev,
       [fieldName]: '',
     }));
-    references[fieldName].current.setCustomValidity('');
-
+    if (type === 'new') {
+      references[fieldName].current.setCustomValidity('');
+    }
     if (validators[fieldName] !== undefined) {
       for (const [validationType, validatorFn] of Object.entries(
         validators[fieldName]
@@ -136,9 +150,20 @@ const ActivityForm = ({ type, selectedActivity }) => {
     }
     return isValid;
   };
+  // const isFormValid = () => {
+  //   let isValid = true;
+  //   Object.keys(formData).forEach(fieldName => {
+  //     const isFieldValid = validateField(fieldName);
+  //     if (!isFieldValid) {
+  //       isValid = false;
+  //     }
+  //   });
+  //   return isValid;
+  // };
 
   const handleInputChange = e => {
     const { name, value } = e.target;
+    console.log('e.target.value', e.target.value);
     setFormData({
       ...formData,
       [name]: value,
@@ -154,7 +179,8 @@ const ActivityForm = ({ type, selectedActivity }) => {
     e.preventDefault();
     setAlert(null);
     setFormErrors({
-      //   activityStartDateAndTime: '',
+      activityDate: '',
+      activityTime: '',
       duration: '',
       activityType: '',
       distance: '',
@@ -163,35 +189,31 @@ const ActivityForm = ({ type, selectedActivity }) => {
     setFormWasValidated(false);
     const isValid = isFormValid();
     if (isValid) {
+      console.log('new - handleSubmit', formData.activityDate);
       if (type === 'new') {
         await fetch(`${REACT_APP_SERVER_URL}/api/activities`, {
           method: 'post',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({
-            duration: formData.duration,
-            activityType: formData.activityType,
-            distance: formData.distance,
-            comment: formData.comment,
-          }),
+          body: JSON.stringify(formData),
         })
-          .then(response => response.json())
+          // .then(response => response.json())
           .then(res => {
             if (res.status >= 200 && res.status < 300) {
-              setTimeout(() => {
-                setAlert({
-                  alertType: 'success',
-                  message: messageTypes.createSuccess,
-                });
-              }, 3000);
+              setAlert({
+                alertType: 'success',
+                message: messageTypes.createSuccess,
+              });
               setFormData({
-                // activityStartDateAndTime: '',
+                activityDate: '',
+                activityTime: '',
                 duration: '',
                 activityType: '',
                 distance: '',
                 comment: '',
               });
+              e.target.reset();
               console.log('új tevékenység sikeresen elmentve');
             } else {
               setAlert({
@@ -203,18 +225,29 @@ const ActivityForm = ({ type, selectedActivity }) => {
           });
       }
       if (type === 'edit') {
-        console.log(formData);
+        console.log(
+          'formData - handleSubmit',
+          formData
+          // new Date(formData.activityDate).toISOString()
+        );
+        console.log('edit - handleSubmit', formData);
+
         await fetch(`${REACT_APP_SERVER_URL}/api/activities/${id}`, {
           method: 'put',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({
-            duration: formData.duration,
-            activityType: formData.activityType,
-            distance: formData.distance,
-            comment: formData.comment,
-          }),
+          body: JSON.stringify(
+            /* formData */ {
+              // activityDate: new Date(formData.activityDate).toISOString(),
+              activityDate: formData.activityDate,
+              activityTime: formData.activityTime,
+              duration: formData.duration,
+              activityType: formData.activityType,
+              distance: formData.distance,
+              comment: formData.comment,
+            }
+          ),
         })
           .then(response => response.json())
           .then(res => {
@@ -225,13 +258,6 @@ const ActivityForm = ({ type, selectedActivity }) => {
                   message: messageTypes.modifySuccess,
                 });
               }, 3000);
-              setFormData({
-                // activityStartDateAndTime: '',
-                duration: '',
-                activityType: '',
-                distance: '',
-                comment: '',
-              });
               console.log('tevékenység sikeresen frissítve');
             } else {
               setAlert({
@@ -262,87 +288,101 @@ const ActivityForm = ({ type, selectedActivity }) => {
           className={`needs-validation ${formWasValidated && 'was-validated'}`}
         >
           <div className='input'>
-            {/* <div className='activityStartDateAndTime'>
-              <label className='form-label' htmlFor='activityStartDateAndTime'>
-                Kezdet (dátum / idő)
-              </label>
-              <DatePicker
-                className='form-control'
-                // autoComplete='off'
-                id='activityStartDateAndTime'
-                selected={activityStartDateAndTime}
-                // selected={formData.activityStartDateAndTime}
-                // onChange={handleInputChange}
-                // name='activityStartDateAndTime'
-                onChange={date => setActivityStartDateAndTime(date)}
-                showTimeSelect
-                dateFormat='Pp'
-                locale='hu'
-                // formvalue={formData.activityStartDateAndTime}
-                // reference={references.activityStartDateAndTime}
-                // error={formErrors.activityStartDateAndTime}
-              />
-            </div> */}
-            {/* <InputField
-              name='activityStartDateAndTime'
+            <InputField
+              name='activityDate'
+              id='activityDate'
               type='date'
-              labelText='Kezdet (dátum / idő)'
+              labelText='Dátum'
+              placeholder={'ÉÉ/HH/NN'}
               onChange={handleInputChange}
               onBlur={handleInputBlur}
-              formvalue={formData.activityStartDateAndTime}
-              reference={references.activityStartDateAndTime}
-              formError={formErrors.activityStartDateAndTime}
-            /> */}
+              value={formData.activityDate}
+              reference={references.activityDate}
+              error={formErrors.activityDate}
+            />
+            <InputField
+              name='activityTime'
+              id='activityTime'
+              type='time'
+              labelText='Idő'
+              onChange={handleInputChange}
+              onBlur={handleInputBlur}
+              value={formData.activityTime}
+              reference={references.activityTime}
+              error={formErrors.activityTime}
+            />
             <InputField
               name='duration'
+              id='duration'
               type='number'
               labelText='Időtartam (perc)'
               onChange={handleInputChange}
               onBlur={handleInputBlur}
-              formvalue={formData.duration}
+              value={formData.duration}
               reference={references.duration}
-              formError={formErrors.duration}
+              error={formErrors.duration}
             />
-            <SelectField
-              id='activityType'
-              name='activityType'
-              labelText='Típus'
-              valueList={activityTypeList}
-              onChange={handleInputChange}
-              // onBlur={handleInputBlur}
-              formvalue={formData.activityType}
-              reference={references.activityType}
-              formError={formErrors.activityType}
-            />
+            {type === 'new' ? (
+              <SelectField
+                name='activityType'
+                id='activityType'
+                labelText='Típus'
+                valueList={activityTypeList}
+                onChange={handleInputChange}
+                onBlur={handleInputBlur}
+                value={formData.activityType}
+                reference={references.activityType}
+                error={formErrors.activityType}
+              />
+            ) : (
+              <>
+                <label className='form-label m-2' htmlFor='activityType'>
+                  Típus
+                </label>
+                <select
+                  className='form-select m-2'
+                  id='activityType'
+                  name='activityType'
+                  value={formData.activityType}
+                  onChange={handleInputChange}
+                  onBlur={handleInputBlur}
+                  reference={references.activityType}
+                  error={formErrors.activityType}
+                >
+                  {activityTypeList.map(type => (
+                    <option value={type} key={type}>
+                      {type}
+                    </option>
+                  ))}
+                </select>
+              </>
+            )}
             <InputField
               name='distance'
+              id='distance'
               type='number'
               labelText='Távolság (méter)'
               onChange={handleInputChange}
               onBlur={handleInputBlur}
-              formvalue={formData.distance}
+              value={formData.distance}
               reference={references.distance}
-              formError={formErrors.distance}
+              error={formErrors.distance}
             />
             <InputField
               name='comment'
+              id='comment'
               type='comment'
               labelText='Megjegyzés'
               onChange={handleInputChange}
               onBlur={handleInputBlur}
-              formvalue={formData.comment}
+              value={formData.comment}
               reference={references.comment}
-              formError={formErrors.comment}
+              error={formErrors.comment}
             />
           </div>
           <button type='submit' className='custom-btn'>
             MENTÉS
           </button>
-          {/* <Link to='/login' className='link'>
-            <button type='button' className='link-btn'>
-              Már regisztráltál? Itt bejelentkezhetsz
-            </button>
-          </Link> */}
         </form>
       </div>
     </>

@@ -1,12 +1,41 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import user from '../../../images/user.png';
 import './profile.scss';
 
-const Profile = () => {
-  const _id = 1234;
+const Profile = ({ loggedInUser, profile, setProfile }) => {
+  // const { loggedInUser } = props;
+  const { REACT_APP_SERVER_URL } = process.env;
+  // const [profile, setProfile] = useState('');
+  // console.log('profile on page load', profile);
+  const [error, setError] = useState(null);
+  // console.log('Profile:', loggedInUser.id);
 
-  /* fetch data and get id */
+  useEffect(() => {
+    const getProfile = async () => {
+      fetch(`${REACT_APP_SERVER_URL}/api/user/${loggedInUser.id}`)
+        .then(res => {
+          if (res.status < 200 || res.status >= 300) {
+            throw Error(
+              `could not fetch the data from database, error ${res.status}`
+            );
+          }
+          return res.json();
+        })
+        .then(jsonRes => {
+          // console.log('Profile: jsonRes - ', jsonRes);
+          setProfile(jsonRes);
+          // console.log('Profile: profile - ', profile);
+          setError(null);
+          // console.log(error);
+        })
+        .catch(err => {
+          setError(err.message);
+        });
+    };
+    getProfile();
+  }, [REACT_APP_SERVER_URL, error, loggedInUser.id, setProfile]);
+
   return (
     <>
       <div className='view-profile-cont'>
@@ -16,38 +45,43 @@ const Profile = () => {
           <div className='text-cont'>
             <div className='text-row'>
               <p>Felhasználónév:</p>
-              <p>még nincs adat</p>
+              <p>{profile.userName}</p>
             </div>
             <div className='text-row'>
               <p>Vezetéknév:</p>
-              <p>még nincs adat</p>
+              <p>{profile.lastName}</p>
             </div>
             <div className='text-row'>
               <p>Keresztnév</p>
-              <p>még nincs adat</p>
+              <p>{profile.firstName}</p>
+            </div>
+            <div className='text-row'>
+              <p>Email cím</p>
+              <p>{profile.email}</p>
             </div>
             <div className='text-row'>
               <p>Nem:</p>
-              <p>még nincs adat</p>
+              <p>{profile.gender}</p>
             </div>
             <div className='text-row'>
               <p>Tartózkodási hely:</p>
-              <p>még nincs adat</p>
+              <p>{profile.cityOfResidence}</p>
             </div>
             <div className='text-row'>
               <p>Testsúly:</p>
-              <p>még nincs adat</p>
+              <p>{profile.weight}</p>
             </div>
             <div className='text-row'>
               <p>Születés dátuma:</p>
-              <p>még nincs adat</p>
+              <p>{profile.birthDate}</p>
             </div>
             <div className='text-row'>
               <p>Motivációs szöveg:</p>
-              <p>még nincs adat</p>
+              <p>{profile.motivation}</p>
             </div>
           </div>
-          <NavLink to={`/profile/edit/${_id}`}>
+
+          <NavLink to={`/profile/edit/${loggedInUser.id}`}>
             <button type='button' className='prof-mod-btn'>
               MÓDOSÍTÁS
             </button>

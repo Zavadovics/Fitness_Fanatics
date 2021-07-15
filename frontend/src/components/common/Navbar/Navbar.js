@@ -55,7 +55,10 @@ const Navbar = props => {
                   <NavLink to='/register' className='nav-link'>
                     <li className='w-100 reg-link'>Regisztráció</li>
                   </NavLink>
-                  <div class='vertical-line' style={{ height: '45px' }}></div>
+                  <div
+                    className='vertical-line'
+                    style={{ height: '45px' }}
+                  ></div>
                   <NavLink exact to='/login' className='nav-link'>
                     <li className='w-100'>Bejelentkezés</li>
                   </NavLink>

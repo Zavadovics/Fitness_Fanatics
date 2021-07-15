@@ -1,6 +1,6 @@
 import logger from 'logger';
 import City from '../models/City.js';
-import { cityValidation } from '../cityValidation.js';
+import { cityValidation } from '../validations/cityValidation.js';
 
 export const cityService = {
   async saveCity(cityData) {

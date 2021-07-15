@@ -1,11 +1,25 @@
 import pkg from 'mongoose';
 const { model, Schema } = pkg;
 
-const UserSchema = new Schema(
+const EditUserSchema = new Schema(
   {
     userName: {
       type: String,
-      required: false,
+      required: true,
+      max: 255,
+      min: 1,
+    },
+    password: {
+      type: String,
+      required: true,
+      max: 255,
+      min: 8,
+    },
+    email: {
+      type: String,
+      required: true,
+      max: 255,
+      min: 6,
     },
     firstName: {
       type: String,
@@ -19,43 +33,38 @@ const UserSchema = new Schema(
       max: 255,
       min: 1,
     },
-    email: {
-      type: String,
-      required: true,
-      max: 255,
-      min: 6,
-    },
-    password: {
-      type: String,
-      required: true,
-      max: 255,
-      min: 8,
-    },
     gender: {
       type: String,
-      required: false,
+      required: true,
+      max: 255,
+      min: 1,
     },
     cityOfResidence: {
       type: String,
-      required: false,
+      required: true,
+      max: 255,
+      min: 1,
     },
     weight: {
       type: Number,
-      required: false,
+      required: true,
+      max: 255,
+      min: 1,
     },
     birthDate: {
       type: Date,
-      required: false,
+      required: true,
+      max: 255,
+      min: 1,
     },
-    // birthDate: {
-    //   type: String,
-    // },
     motivation: {
       type: String,
-      required: false,
+      required: true,
+      max: 255,
+      min: 1,
     },
   },
-  { timestamps: false }
+  { timestamps: true }
 );
 
-export default model('User', UserSchema);
+export default model('EditUser', EditUserSchema);

@@ -8,15 +8,17 @@ const InputField = ({
   onChange,
   onBlur,
   reference,
-  formError,
+  error,
   labelText,
+  placeholder,
 }) => {
   return (
-    <div className={`${formError && 'was-validated'}`}>
+    <div className={`${error && 'was-validated'}`}>
       <label className='form-label m-2' htmlFor={name}>
         {labelText}
       </label>
       <input
+        placeholder={placeholder}
         className='form-control m-2'
         type={type}
         name={name}
@@ -25,7 +27,7 @@ const InputField = ({
         onBlur={onBlur}
         ref={reference}
       />
-      <div className='invalid-feedback mx-2'>{formError}</div>
+      <div className='invalid-feedback mx-2'>{error}</div>
     </div>
   );
 };

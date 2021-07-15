@@ -4,29 +4,35 @@ const { model, Schema } = pkg;
 
 const ActivitySchema = new Schema(
   {
-    // activityStartDateAndTime: {
-    //   type: Date,
-    //   required: true,
-    // },
+    activityDate: {
+      type: Date,
+      required: true,
+      min: 1,
+    },
+    activityTime: {
+      type: String,
+      required: true,
+      min: 1,
+    },
     duration: {
       type: Number,
       required: true,
-      // min: 1,
+      min: 1,
     },
     activityType: {
       type: String,
       required: true,
-      // min: 1,
+      min: 1,
     },
     distance: {
       type: Number,
       required: true,
-      // min: 1,
+      min: 1,
     },
     comment: {
       type: String,
       required: true,
-      // min: 1,
+      min: 1,
     },
   },
   { timestamps: true }

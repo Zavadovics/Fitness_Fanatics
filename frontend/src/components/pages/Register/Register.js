@@ -142,7 +142,7 @@ const Register = () => {
     setFormWasValidated(false);
     const isValid = isFormValid();
     if (isValid) {
-      await fetch(`${REACT_APP_SERVER_URL}/api/register`, {
+      await fetch(`${REACT_APP_SERVER_URL}/api/user`, {
         method: 'post',
         headers: {
           'Content-Type': 'application/json',

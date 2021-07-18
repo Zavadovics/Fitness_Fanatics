@@ -12,7 +12,7 @@ import NewActivity from './components/pages/NewActivity/NewActivity';
 import EditActivity from './components/pages/EditActivity/EditActivity';
 import Profile from './components/pages/Profile/Profile';
 import EditProfile from './components/pages/EditProfile/EditProfile';
-// import EditPhoto from './components/pages/EditPhoto/EditPhoto';
+import EditPhoto from './components/pages/EditPhoto/EditPhoto';
 import TrainingPlans from './components/pages/TrainingPlans/TrainingPlans';
 
 const newUser = localStorage.getItem('loggedInUser')
@@ -21,16 +21,13 @@ const newUser = localStorage.getItem('loggedInUser')
 
 const App = () => {
   const [loggedInUser, setLoggedInUser] = useState(newUser);
-  const [profile, setProfile] = useState('');
-  // const [activity, setActivity] = useState({
-  //   activityDate: '',
-  //   activityTime: '',
-  //   duration: '',
-  //   activityType: '',
-  //   distance: '',
-  //   comment: '',
-  // });
 
+  const [profile, setProfile] = useState('');
+
+  const [userPhoto, setUserPhoto] = useState({
+    user_id: loggedInUser.id,
+    image: '',
+  });
   // console.log('newUser - app.js', newUser);
 
   // console.log(loggedInUser);
@@ -48,23 +45,13 @@ const App = () => {
                 <Sidebar loggedInUser={loggedInUser} />
                 <div className='content-cont'>
                   <Route exact path='/activities'>
-                    <Activities
-                      profile={profile}
-                      // activity={activity}
-                      // setActivity={setActivity}
-                    />
+                    <Activities profile={profile} />
                   </Route>
                   <Route exact path='/activities/new'>
-                    <NewActivity
-                    // activity={activity}
-                    // setActivity={setActivity}
-                    />
+                    <NewActivity />
                   </Route>
                   <Route exact path='/activities/edit/:id'>
-                    <EditActivity
-                    // activity={activity}
-                    // setActivity={setActivity}
-                    />
+                    <EditActivity />
                   </Route>
                   <Route exact path='/profile'>
                     <Profile
@@ -80,9 +67,13 @@ const App = () => {
                       setProfile={setProfile}
                     />
                   </Route>
-                  {/* <Route exact path='/profile/edit/photo/:id'>
-                    <EditPhoto />
-                  </Route> */}
+                  <Route exact path={`/profile/photo/edit/${loggedInUser.id}`}>
+                    <EditPhoto
+                      loggedInUser={loggedInUser}
+                      userPhoto={userPhoto}
+                      setUserPhoto={setUserPhoto}
+                    />
+                  </Route>
                   <Route path='/training-plans'>
                     <TrainingPlans />
                   </Route>

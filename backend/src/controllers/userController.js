@@ -2,6 +2,18 @@ import User from '../models/User.js';
 import { userService } from '../services/userService.js';
 
 export const userController = {
+  /* ⬇️ get user by ID - OK */
+  async get(req, res, next) {
+    try {
+      User.findById(req.params.id).then(foundUser =>
+        res.status(200).json(foundUser)
+      );
+    } catch (err) {
+      next(err);
+    }
+  },
+  /* ⬆️ get user by ID - OK */
+
   /* ⬇️ save new user - OK */
   async post(req, res, next) {
     try {
@@ -12,6 +24,17 @@ export const userController = {
     }
   },
   /* ⬆️ save new user - OK */
+
+  /* ⬇️ find user in db by Id - OK */
+  async getId(req, res) {
+    try {
+      const user = await User.findById(req.params.id);
+      res.status(200).json(user);
+    } catch (err) {
+      res.status(500).json(err);
+    }
+  },
+  /* ⬆️ find user in db by Id - OK */
 
   /* mukodokepes */
   // async get(req, res, next) {
@@ -24,18 +47,6 @@ export const userController = {
   //   }
   // },
   /* mukodokepes */
-
-  /* ⬇️ get user by ID - OK */
-  async get(req, res, next) {
-    try {
-      User.findById(req.params.id).then(foundUser =>
-        res.status(200).json(foundUser)
-      );
-    } catch (err) {
-      next(err);
-    }
-  },
-  /* ⬆️ get user by ID - OK */
 
   // async put(req, res, next) {
   //   try {

@@ -1,12 +1,16 @@
-// import pkg from 'mongoose';
-// const { model, Schema } = pkg;
+import pkg from 'mongoose';
+const { model, Schema } = pkg;
 
-// const PhotoSchema = mongoose.Schema(
-//   {
-//     title: String,
-//     image: String,
-//   },
-//   { timestamps: true }
-// );
+const photoSchema = new Schema({
+  user_id: {
+    type: String,
+  },
+  avatar: {
+    type: String,
+  },
+  cloudinary_id: {
+    type: String,
+  },
+});
 
-// export default model('City', PhotoSchema);
+export default model('Photo', photoSchema);

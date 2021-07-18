@@ -1,4 +1,5 @@
-import logger from 'logger';
+import logger from '../logger.js';
+// import logger from 'logger';
 import bcrypt from 'bcryptjs';
 import User from '../models/User.js';
 import { userValidation } from '../validations/userValidation.js';

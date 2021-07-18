@@ -1,4 +1,3 @@
-// import { model, Schema } from 'mongoose';
 import pkg from 'mongoose';
 const { model, Schema } = pkg;
 
@@ -30,6 +29,11 @@ const ActivitySchema = new Schema(
       min: 1,
     },
     comment: {
+      type: String,
+      required: true,
+      min: 1,
+    },
+    photoUrl: {
       type: String,
       required: true,
       min: 1,

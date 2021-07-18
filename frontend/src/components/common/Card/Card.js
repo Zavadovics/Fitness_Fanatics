@@ -47,6 +47,7 @@ const Card = ({ profile, activity }) => {
       <div className='card'>
         <div className='card-body'>
           <h5 className='card-title'>
+            {/* <div>{activity.photoUrl}</div> */}
             <Moment format='LL'>{activity.activityDate}</Moment>-{' '}
             <span>{activity.activityTime}</span>
           </h5>

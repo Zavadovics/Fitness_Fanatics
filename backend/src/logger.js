@@ -1,4 +1,3 @@
-// import { format, createLogger, transports } from 'winston';
 import pkg from 'winston';
 const { format, createLogger, transports } = pkg;
 

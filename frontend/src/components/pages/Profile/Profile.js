@@ -69,7 +69,7 @@ const Profile = ({ loggedInUser, profile, setProfile }) => {
             </div>
             <div className='text-row'>
               <p>Testsúly:</p>
-              <p>{profile.weight}</p>
+              {profile.weight === 0 ? <p></p> : <p>{profile.weight}</p>}
             </div>
             <div className='text-row'>
               <p>Születés dátuma:</p>

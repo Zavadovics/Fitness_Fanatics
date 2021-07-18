@@ -57,12 +57,22 @@ const Sidebar = ({ loggedInUser }) => {
             <NavLink
               className='sidebar-nav-link'
               exact
-              // to='/profile/edit/:id'
               to={`/profile/edit/${loggedInUser.id}`}
               activeClassName='activeClicked'
             >
               <CDBSidebarMenuItem icon='user-edit'>
                 Profil szerkesztése
+              </CDBSidebarMenuItem>
+            </NavLink>
+
+            <NavLink
+              className='sidebar-nav-link'
+              exact
+              to={`/profile/photo/edit/${loggedInUser.id}`}
+              activeClassName='activeClicked'
+            >
+              <CDBSidebarMenuItem icon='camera-retro'>
+                Profil fotó
               </CDBSidebarMenuItem>
             </NavLink>
 

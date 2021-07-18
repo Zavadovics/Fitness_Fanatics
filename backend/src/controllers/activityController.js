@@ -14,7 +14,7 @@ export const activityController = {
   },
   /* ⬆️ get all activities - OK */
 
-  /* ⬇️ save a new activity - OK */
+  /* ⬇️ save new activity - OK */
   async post(req, res, next) {
     try {
       const data = await activityService.saveActivity(req.body);
@@ -23,15 +23,36 @@ export const activityController = {
       next(err);
     }
   },
-  /* ⬆️ save a new activity - OK */
+  /* ⬆️ save new activity - OK */
 
-  // async put(req, res) {
-  //   const { id } = req.params;
-  //   const reqData = req.body;
+  /* ⬇️ find activity in db by Id - OK */
+  async getId(req, res) {
+    try {
+      const activity = await Activity.findById(req.params.id);
+      res.status(200).json(activity);
+    } catch (err) {
+      res.status(500).json(err);
+    }
+  },
+  /* ⬆️ find activity in db by Id - OK */
 
-  //   const data = await activityService.updateEvent(id, reqData);
-  //   res.status(data.status).json(data);
+  // async get(req, res, next) {
+  //   try {
+  //     Activity.findById(req.params.id).then(foundActivity =>
+  //       res.status(200).json(foundActivity)
+  //     );
+  //   } catch (err) {
+  //     next(err);
+  //   }
   // },
+
+  async put(req, res) {
+    const { id } = req.params;
+    const reqData = req.body;
+
+    const data = await activityService.updateActivity(id, reqData);
+    res.status(data.status).json(data);
+  },
 
   /* ------------ */
   // async put(req, res, next) {
@@ -58,22 +79,14 @@ export const activityController = {
   //   }
   // },
   /* ------------- */
-  async getId(req, res) {
-    try {
-      const activity = await Activity.findById(req.params.id);
-      res.status(200).json(activity);
-    } catch (err) {
-      res.status(500).json(err);
-    }
-  },
 
-  async put(req, res) {
-    const { id } = req.params;
-    const reqData = req.body;
+  // async put(req, res) {
+  //   const { id } = req.params;
+  //   const reqData = req.body;
 
-    const data = await activityService.updateActivity(id, reqData);
-    res.status(data.status).json(data);
-  },
+  //   const data = await activityService.updateActivity(id, reqData);
+  //   res.status(data.status).json(data);
+  // },
 
   async delete(req, res, next) {
     try {

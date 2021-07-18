@@ -1,5 +1,6 @@
 @use '../../../styles/variables';
 .sidebar-nav-cont {
+    min-height: 70vh;
     display: flex;
     position: relative;
     overflow: scroll initial;

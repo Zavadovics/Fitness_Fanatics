@@ -4,7 +4,7 @@ import Activity from '../models/Activity.js';
 import { activityValidation } from '../validations/activityValidation.js';
 
 export const activityService = {
-  /* ⬇️ save a new activity - OK */
+  /* ⬇️ save new activity - OK */
   async saveActivity(activityData) {
     try {
       const { error } = activityValidation(activityData);
@@ -28,7 +28,7 @@ export const activityService = {
       };
     }
   },
-  /* ⬆️ save a new activity - OK */
+  /* ⬆️ save new activity - OK */
 
   async updateActivity(id, reqData) {
     const { /* _id, */ __v, updatedAt, ...others } = reqData;

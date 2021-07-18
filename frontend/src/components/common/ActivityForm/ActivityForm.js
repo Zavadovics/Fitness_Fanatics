@@ -29,6 +29,7 @@ const ActivityForm = props => {
           activityType: '',
           distance: '',
           comment: '',
+          // photoUrl: '',
         }
   );
   // console.log('formData', formData);
@@ -43,6 +44,7 @@ const ActivityForm = props => {
     activityType: useRef(),
     distance: useRef(),
     comment: useRef(),
+    // photoUrl: useRef(),
   };
 
   const formErrorTypes = Object.freeze({
@@ -57,6 +59,7 @@ const ActivityForm = props => {
     activityType: '',
     distance: '',
     comment: '',
+    // photoUrl: '',
   });
 
   const messageTypes = Object.freeze({
@@ -106,6 +109,9 @@ const ActivityForm = props => {
     comment: {
       required: isFieldEmpty,
     },
+    // photoUrl: {
+    //   required: isFieldEmpty,
+    // },
   };
 
   const validateField = fieldName => {
@@ -117,9 +123,9 @@ const ActivityForm = props => {
       ...prev,
       [fieldName]: '',
     }));
-    if (type === 'new') {
-      references[fieldName].current.setCustomValidity('');
-    }
+    // if (type === 'new') {
+    //   references[fieldName].current.setCustomValidity('');
+    // }
     if (validators[fieldName] !== undefined) {
       for (const [validationType, validatorFn] of Object.entries(
         validators[fieldName]
@@ -185,6 +191,7 @@ const ActivityForm = props => {
       activityType: '',
       distance: '',
       comment: '',
+      // photoUrl: '',
     });
     setFormWasValidated(false);
     const isValid = isFormValid();
@@ -195,6 +202,7 @@ const ActivityForm = props => {
           method: 'post',
           headers: {
             'Content-Type': 'application/json',
+            // 'Content-Type': 'multipart/form-data',
           },
           body: JSON.stringify(formData),
         })
@@ -212,6 +220,7 @@ const ActivityForm = props => {
                 activityType: '',
                 distance: '',
                 comment: '',
+                // photoUrl: '',
               });
               e.target.reset();
               console.log('új tevékenység sikeresen elmentve');
@@ -236,6 +245,7 @@ const ActivityForm = props => {
           method: 'put',
           headers: {
             'Content-Type': 'application/json',
+            // 'Content-Type': 'multipart/form-data',
           },
           body: JSON.stringify(
             /* formData */ {
@@ -246,6 +256,7 @@ const ActivityForm = props => {
               activityType: formData.activityType,
               distance: formData.distance,
               comment: formData.comment,
+              // photoUrl: formData.photoUrl,
             }
           ),
         })
@@ -379,6 +390,17 @@ const ActivityForm = props => {
               reference={references.comment}
               error={formErrors.comment}
             />
+            {/* <InputField
+              name='photoUrl'
+              id='photoUrl'
+              type='file'
+              labelText='Fotó'
+              onChange={handleInputChange}
+              onBlur={handleInputBlur}
+              value={formData.photoUrl}
+              reference={references.photoUrl}
+              error={formErrors.photoUrl}
+            /> */}
           </div>
           <button type='submit' className='custom-btn'>
             MENTÉS

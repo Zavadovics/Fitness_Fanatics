@@ -1,61 +1,117 @@
-// import { useEffect, useState } from 'react';
-// import FileBase64 from 'react-file-base64';
-// import { createPhoto, getPhoto } from './functions';
+import { useEffect, useState } from 'react';
+import user from '../../../images/user.png';
+import './editPhoto.scss';
+/* TO-DO
+- can't get response 200 to display correct alert
+- can/t reload page without window.location.reload
+ */
+const EditPhoto = ({ loggedInUser, userPhoto, setUserPhoto }) => {
+  const { REACT_APP_SERVER_URL } = process.env;
+  const [alert, setAlert] = useState(null);
+  // const [userPhoto, setUserPhoto] = useState({
+  //   user_id: loggedInUser.id,
+  //   image: '',
+  // });
+  const [error, setError] = useState(null);
 
-// const EditPhoto = () => {
-//   const [item, setItem] = useState({ title: '', image: '' });
-//   const [items, setItems] = useState([]);
+  const messageTypes = Object.freeze({
+    success: `Sikeres fotó feltöltés.`,
+    fail: `Fotó feltöltés sikertelen.`,
+  });
 
-//   const onSubmitHandler = async e => {
-//     e.preventDefault();
-//     const result = await createPhoto(item);
-//     setItems([...items, result]);
-//   };
+  // console.log('userPhoto', userPhoto);
 
-//   useEffect(() => {
-//     const fetchData = async () => {
-//       const result = await getPhoto();
-//       console.log('fetch data;m', result);
-//       setItems(result);
-//     };
-//     fetchData();
-//   }, []);
+  useEffect(() => {
+    const getPhoto = async () => {
+      fetch(`${REACT_APP_SERVER_URL}/api/photo/${loggedInUser.id}`)
+        .then(res => {
+          if (res.status < 200 || res.status >= 300) {
+            throw Error(
+              `could not fetch the data from database, error ${res.status}`
+            );
+          }
+          return res.json();
+        })
+        .then(jsonRes => {
+          setUserPhoto({
+            user_id: jsonRes[0].user_id,
+            image: jsonRes[0].avatar,
+          });
+          // console.log('json data', jsonRes);
+          setError(null);
+          // console.log(error);
+        })
+        .catch(err => {
+          setError(err.message);
+        });
+    };
+    getPhoto();
+  }, [REACT_APP_SERVER_URL, loggedInUser.id]);
 
-//   return (
-//     <div className='container'>
-//       <pre>{JSON.stringify(item, null, '\t')}</pre>
-//       <form action='' onSubmit={onSubmitHandler}>
-//         <input
-//           type='text'
-//           className='input-field'
-//           onChange={e => setItem({ ...item, title: e.target.value })}
-//         />
-//         <FileBase64
-//           type='file'
-//           multiple={false}
-//           onDone={({ base64 }) => setItem({ ...item, image: base64 })}
-//         />
-//         <div className='right-align'>
-//           <button className='btn'>submit</button>
-//         </div>
-//       </form>
-//       {items?.map(item => (
-//         <div className='card' key={item._id}>
-//           <div className='card-image waves-effect waves-block waves-light'>
-//             <img
-//               className='activator'
-//               style={{ width: '100%', height: 300 }}
-//               src={item.image}
-//             />
-//           </div>
-//           <div className='card-content'>
-//             <span className='card-title activator grey-text text-darken-4'>
-//               {item.title}
-//             </span>
-//           </div>
-//         </div>
-//       ))}
-//     </div>
-//   );
-// };
-// export default EditPhoto;
+  const handleChange = email => e => {
+    const value = email === 'image' ? e.target.files[0] : e.target.value;
+    setUserPhoto({ ...userPhoto, [email]: value });
+  };
+
+  const handleSubmit = async () => {
+    let formData = new FormData();
+    formData.append('image', userPhoto.image);
+    formData.append('user_id', loggedInUser.id);
+    formData.append('email', loggedInUser.email);
+
+    await fetch(`${REACT_APP_SERVER_URL}/api/photo`, {
+      method: 'POST',
+      body: formData,
+    })
+      .then(response => response.json())
+      .then(res => {
+        window.location.reload();
+        if (res.status === 200) {
+          // setAlert({ alertType: 'success', message: messageTypes.success });
+          setUserPhoto(formData);
+          console.log('all good');
+        } else {
+          console.log('UPLOAD FUCKED UP');
+          // setAlert({ alertType: 'danger', message: messageTypes.fail });
+        }
+      });
+  };
+
+  return (
+    <div className='edit-photo-cont'>
+      <div className='alert-cont'>
+        {alert && (
+          <p className={`alert alert-${alert.alertType}`}>{alert.message}</p>
+        )}
+      </div>
+      <div className='inner'>
+        <h2>Profilkép</h2>
+        {userPhoto.image !== '' ? (
+          <img className='userPhoto' src={userPhoto.image} alt='' />
+        ) : (
+          <img className='blankUserPhoto' src={user} alt='' />
+        )}
+        <p>Név: {loggedInUser.firstName}</p>
+        <p>Email cím: {loggedInUser.email}</p>
+        <div className='mb-3'>
+          <input
+            className='form-control'
+            // placeholder='Fájl'
+            name='image'
+            // value={photo.image}
+            type='file'
+            accept='image/*'
+            onChange={handleChange('image')}
+          />
+        </div>
+        <div className='text-center'>
+          <button className='photo-btn' onClick={handleSubmit}>
+            Küldés
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default EditPhoto;

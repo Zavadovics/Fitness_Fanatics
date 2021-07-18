@@ -3,10 +3,10 @@ import { useParams } from 'react-router';
 import ActivityForm from '../../common/ActivityForm/ActivityForm';
 import './editActivity.scss';
 
-const EditActivity = (/* { activity, setActivity } */) => {
+const EditActivity = () => {
   const { REACT_APP_SERVER_URL } = process.env;
   const { id } = useParams();
-  const [activity, setActivity] = useState(null);
+  const [activity, setActivity] = useState('');
   const [error, setError] = useState(null);
   // console.log('EditActivity', activity);
 
@@ -31,6 +31,7 @@ const EditActivity = (/* { activity, setActivity } */) => {
           activityType: jsonRes.activityType,
           duration: jsonRes.duration,
           comment: jsonRes.comment,
+          // photoUrl: jsonRes.photoUrl,
         });
         setError(null);
         // console.log(error);

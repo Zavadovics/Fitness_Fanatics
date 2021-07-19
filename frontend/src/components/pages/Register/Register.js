@@ -161,7 +161,7 @@ const Register = () => {
             });
             setTimeout(() => {
               history.push('/login');
-            }, 3000);
+            }, 2000);
             console.log('sikeres regisztráció');
           } else {
             setAlert({ alertType: 'danger', message: messageTypes.fail });

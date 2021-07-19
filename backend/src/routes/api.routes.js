@@ -47,11 +47,39 @@ router.post('/photo', upload.single('image'), async (req, res) => {
   }
 });
 
+router.put('/photo/:id', upload.single('image'), async (req, res) => {
+  try {
+    let photo = await Photo.find({ user_id: req.params.id });
+    // Delete image from cloudinary
+    // await cloudinary.uploader.destroy(photo.cloudinary_id);
+    // Upload image to cloudinary
+    let result;
+    if (req.file) {
+      result = await cloudinary.uploader.upload(req.file.path);
+    }
+    const data = {
+      user_id: req.body.user_id,
+      avatar: result.secure_url,
+      cloudinary_id: result.public_id,
+    };
+    photo = await Photo.updateOne(
+      { user_id: req.params.id },
+      { $set: { data } },
+      {
+        upsert: true,
+      }
+    );
+    res.json(photo);
+  } catch (err) {
+    console.log(err);
+  }
+});
+
 router.get('/photo/:id', async (req, res) => {
   try {
     // Find photo by id
     let photo = await Photo.find({ user_id: req.params.id });
-    console.log('req.params.id', req.params.id);
+    // console.log('req.params.id', req.params.id);
     // let photo = await Photo.findById(req.params.id);
     res.json(photo);
   } catch (err) {
@@ -63,7 +91,7 @@ router.get('/photo/:id', async (req, res) => {
 router.get('/cities', cityController.get);
 
 // router.get('/activities/:id', getActivityByIdController.get);
-router.get('/activities', activityController.get);
+router.get('/activities/:id', activityController.get);
 router.get('/activities/:id', activityController.getId);
 router.post('/activities', activityController.post);
 router.put('/activities/:id', activityController.put);

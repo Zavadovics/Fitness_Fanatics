@@ -5,7 +5,7 @@ import './activities.scss';
 /* TO-DO
 - filter by activity type and duration
 */
-const Activities = ({ profile }) => {
+const Activities = ({ profile, loggedInUser }) => {
   const { REACT_APP_SERVER_URL } = process.env;
   const [activities, setActivities] = useState([]);
   const [error, setError] = useState(null);
@@ -13,7 +13,7 @@ const Activities = ({ profile }) => {
   /* Get all activities */
 
   useEffect(() => {
-    fetch(`${REACT_APP_SERVER_URL}/api/activities`)
+    fetch(`${REACT_APP_SERVER_URL}/api/activities/${loggedInUser.id}`)
       .then(res => {
         if (res.status < 200 || res.status >= 300) {
           throw Error(
@@ -41,7 +41,7 @@ const Activities = ({ profile }) => {
           </p>
         ) : (
           <>
-            {activities.map(activity => (
+            {activities.map((activity, index) => (
               <div className='card-cont' key={activity._id}>
                 <Card profile={profile} activity={activity} />
               </div>

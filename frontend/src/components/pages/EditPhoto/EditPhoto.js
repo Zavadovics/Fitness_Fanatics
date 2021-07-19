@@ -4,15 +4,18 @@ import './editPhoto.scss';
 /* TO-DO
 - can't get response 200 to display correct alert
 - can/t reload page without window.location.reload
+- check if user has a photo in db already
  */
 const EditPhoto = ({ loggedInUser, userPhoto, setUserPhoto }) => {
   const { REACT_APP_SERVER_URL } = process.env;
   const [alert, setAlert] = useState(null);
+
   // const [userPhoto, setUserPhoto] = useState({
   //   user_id: loggedInUser.id,
   //   image: '',
   // });
-  const [error, setError] = useState(null);
+
+  // const [error, setError] = useState(null);
 
   const messageTypes = Object.freeze({
     success: `Sikeres fotó feltöltés.`,
@@ -21,43 +24,41 @@ const EditPhoto = ({ loggedInUser, userPhoto, setUserPhoto }) => {
 
   // console.log('userPhoto', userPhoto);
 
-  useEffect(() => {
-    const getPhoto = async () => {
-      fetch(`${REACT_APP_SERVER_URL}/api/photo/${loggedInUser.id}`)
-        .then(res => {
-          if (res.status < 200 || res.status >= 300) {
-            throw Error(
-              `could not fetch the data from database, error ${res.status}`
-            );
-          }
-          return res.json();
-        })
-        .then(jsonRes => {
-          setUserPhoto({
-            user_id: jsonRes[0].user_id,
-            image: jsonRes[0].avatar,
-          });
-          // console.log('json data', jsonRes);
-          setError(null);
-          // console.log(error);
-        })
-        .catch(err => {
-          setError(err.message);
-        });
-    };
-    getPhoto();
-  }, [REACT_APP_SERVER_URL, loggedInUser.id]);
+  // useEffect(() => {
+  //   const getPhoto = async () => {
+  //     fetch(`${REACT_APP_SERVER_URL}/api/photo/${loggedInUser.id}`)
+  //       .then(res => {
+  //         if (res.status < 200 || res.status >= 300) {
+  //           throw Error(
+  //             `could not fetch the data from database, error ${res.status}`
+  //           );
+  //         }
+  //         return res.json();
+  //       })
+  //       .then(jsonRes => {
+  //         setUserPhoto({
+  //           user_id: jsonRes[0].user_id,
+  //           image: jsonRes[0].avatar,
+  //         });
+  //         // console.log('json data', jsonRes);
+  //         setError(null);
+  //         // console.log(error);
+  //       })
+  //       .catch(err => {
+  //         setError(err.message);
+  //       });
+  //   };
+  //   getPhoto();
+  // }, []);
 
-  const handleChange = email => e => {
-    const value = email === 'image' ? e.target.files[0] : e.target.value;
-    setUserPhoto({ ...userPhoto, [email]: value });
+  const handleChange = e => {
+    setUserPhoto({ ...userPhoto, image: e.target.files[0] });
   };
 
   const handleSubmit = async () => {
     let formData = new FormData();
     formData.append('image', userPhoto.image);
     formData.append('user_id', loggedInUser.id);
-    formData.append('email', loggedInUser.email);
 
     await fetch(`${REACT_APP_SERVER_URL}/api/photo`, {
       method: 'POST',
@@ -71,7 +72,7 @@ const EditPhoto = ({ loggedInUser, userPhoto, setUserPhoto }) => {
           setUserPhoto(formData);
           console.log('all good');
         } else {
-          console.log('UPLOAD FUCKED UP');
+          console.log('INCORRECT RESPONSE - FIX ME !!!');
           // setAlert({ alertType: 'danger', message: messageTypes.fail });
         }
       });
@@ -87,21 +88,19 @@ const EditPhoto = ({ loggedInUser, userPhoto, setUserPhoto }) => {
       <div className='inner'>
         <h2>Profilkép</h2>
         {userPhoto.image !== '' ? (
-          <img className='userPhoto' src={userPhoto.image} alt='' />
+          <img src={userPhoto.image} alt='' />
         ) : (
-          <img className='blankUserPhoto' src={user} alt='' />
+          <img src={user} alt='' />
         )}
         <p>Név: {loggedInUser.firstName}</p>
         <p>Email cím: {loggedInUser.email}</p>
         <div className='mb-3'>
           <input
             className='form-control'
-            // placeholder='Fájl'
             name='image'
-            // value={photo.image}
             type='file'
             accept='image/*'
-            onChange={handleChange('image')}
+            onChange={handleChange}
           />
         </div>
         <div className='text-center'>

@@ -1,4 +1,4 @@
-import { React, useState } from 'react';
+import { React, useState, useEffect } from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import './App.scss';
 import Home from './components/pages/Home/Home';
@@ -20,17 +20,45 @@ const newUser = localStorage.getItem('loggedInUser')
   : null;
 
 const App = () => {
+  const { REACT_APP_SERVER_URL } = process.env;
   const [loggedInUser, setLoggedInUser] = useState(newUser);
 
   const [profile, setProfile] = useState('');
+
+  const [error, setError] = useState(null);
 
   const [userPhoto, setUserPhoto] = useState({
     user_id: loggedInUser.id,
     image: '',
   });
-  // console.log('newUser - app.js', newUser);
 
-  // console.log(loggedInUser);
+  useEffect(() => {
+    const getPhoto = async () => {
+      fetch(`${REACT_APP_SERVER_URL}/api/photo/${loggedInUser.id}`)
+        .then(res => {
+          if (res.status < 200 || res.status >= 300) {
+            throw Error(
+              `could not fetch data from database, error ${res.status}`
+            );
+          }
+          return res.json();
+        })
+        .then(jsonRes => {
+          setUserPhoto({
+            user_id: jsonRes[0].user_id,
+            image: jsonRes[0].avatar,
+          });
+          // console.log('json data', jsonRes);
+          setError(null);
+          // console.log(error);
+        })
+        .catch(err => {
+          setError(err.message);
+        });
+    };
+    getPhoto();
+  }, []);
+
   return (
     <>
       <Router>
@@ -45,10 +73,10 @@ const App = () => {
                 <Sidebar loggedInUser={loggedInUser} />
                 <div className='content-cont'>
                   <Route exact path='/activities'>
-                    <Activities profile={profile} />
+                    <Activities profile={profile} loggedInUser={loggedInUser} />
                   </Route>
                   <Route exact path='/activities/new'>
-                    <NewActivity />
+                    <NewActivity loggedInUser={loggedInUser} />
                   </Route>
                   <Route exact path='/activities/edit/:id'>
                     <EditActivity />
@@ -56,6 +84,7 @@ const App = () => {
                   <Route exact path='/profile'>
                     <Profile
                       loggedInUser={loggedInUser}
+                      userPhoto={userPhoto}
                       profile={profile}
                       setProfile={setProfile}
                     />

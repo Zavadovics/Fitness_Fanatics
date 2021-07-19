@@ -43,7 +43,6 @@ const EditProfile = ({ loggedInUser }) => {
           return res.json();
         })
         .then(jsonRes => {
-          console.log('EditProfile: jsonRes - ', jsonRes);
           setProfile({
             userName: jsonRes.userName,
             firstName: jsonRes.firstName,
@@ -56,7 +55,6 @@ const EditProfile = ({ loggedInUser }) => {
             birthDate: jsonRes.birthDate,
             motivation: jsonRes.motivation,
           });
-          console.log('Profile: profile - ', profile);
           setError(null);
           // console.log(error);
         })

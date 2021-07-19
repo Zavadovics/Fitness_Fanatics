@@ -3,6 +3,9 @@ const { model, Schema } = pkg;
 
 const ActivitySchema = new Schema(
   {
+    user_id: {
+      type: String,
+    },
     activityDate: {
       type: Date,
       required: true,
@@ -33,11 +36,11 @@ const ActivitySchema = new Schema(
       required: true,
       min: 1,
     },
-    photoUrl: {
-      type: String,
-      required: true,
-      min: 1,
-    },
+    // photoUrl: {
+    //   type: String,
+    //   required: true,
+    //   min: 1,
+    // },
   },
   { timestamps: true }
 );

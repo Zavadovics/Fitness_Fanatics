@@ -8,10 +8,8 @@ import './activityForm.scss';
 - form doesn't load data in edit mode
 - validation not perfect, perhaps date validation should be added
 */
-const ActivityForm = props => {
-  const { type, activity } = props;
+const ActivityForm = ({ type, activity, loggedInUser }) => {
   // console.log('ActivityForm-props', activity);
-
   const { REACT_APP_SERVER_URL } = process.env;
   const id = type === 'edit' ? activity._id : null;
 
@@ -169,7 +167,6 @@ const ActivityForm = props => {
 
   const handleInputChange = e => {
     const { name, value } = e.target;
-    console.log('e.target.value', e.target.value);
     setFormData({
       ...formData,
       [name]: value,
@@ -191,7 +188,6 @@ const ActivityForm = props => {
       activityType: '',
       distance: '',
       comment: '',
-      // photoUrl: '',
     });
     setFormWasValidated(false);
     const isValid = isFormValid();
@@ -202,9 +198,16 @@ const ActivityForm = props => {
           method: 'post',
           headers: {
             'Content-Type': 'application/json',
-            // 'Content-Type': 'multipart/form-data',
           },
-          body: JSON.stringify(formData),
+          body: JSON.stringify({
+            user_id: loggedInUser.id,
+            activityDate: formData.activityDate,
+            activityTime: formData.activityTime,
+            duration: formData.duration,
+            activityType: formData.activityType,
+            distance: formData.distance,
+            comment: formData.comment,
+          }),
         })
           // .then(response => response.json())
           .then(res => {
@@ -220,7 +223,6 @@ const ActivityForm = props => {
                 activityType: '',
                 distance: '',
                 comment: '',
-                // photoUrl: '',
               });
               e.target.reset();
               console.log('új tevékenység sikeresen elmentve');
@@ -247,18 +249,15 @@ const ActivityForm = props => {
             'Content-Type': 'application/json',
             // 'Content-Type': 'multipart/form-data',
           },
-          body: JSON.stringify(
-            /* formData */ {
-              // activityDate: new Date(formData.activityDate).toISOString(),
-              activityDate: formData.activityDate,
-              activityTime: formData.activityTime,
-              duration: formData.duration,
-              activityType: formData.activityType,
-              distance: formData.distance,
-              comment: formData.comment,
-              // photoUrl: formData.photoUrl,
-            }
-          ),
+          body: JSON.stringify({
+            user_id: loggedInUser.id,
+            activityDate: formData.activityDate,
+            activityTime: formData.activityTime,
+            duration: formData.duration,
+            activityType: formData.activityType,
+            distance: formData.distance,
+            comment: formData.comment,
+          }),
         })
           .then(response => response.json())
           .then(res => {

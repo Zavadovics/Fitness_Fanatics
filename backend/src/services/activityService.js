@@ -9,12 +9,14 @@ export const activityService = {
     try {
       const { error } = activityValidation(activityData);
       if (error) {
+        console.error(error);
         return {
           status: 400,
           message: error.details[0].message,
         };
       }
       const activity = new Activity(activityData);
+
       await activity.save();
       return {
         status: 200,

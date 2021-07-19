@@ -12,7 +12,7 @@ const Navbar = props => {
 
   const handleLogout = () => {
     localStorage.clear();
-    setLoggedInUser(null);
+    setLoggedInUser('');
     history.push('/');
   };
 

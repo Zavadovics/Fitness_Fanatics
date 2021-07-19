@@ -2,17 +2,18 @@ import Activity from '../models/Activity.js';
 import { activityService } from '../services/activityService.js';
 
 export const activityController = {
-  /* ⬇️ get all activities - OK */
+  /* ⬇️ get all activities by the user' Id - OK */
   async get(req, res, next) {
+    console.log('controller', req.params.id);
     try {
-      await Activity.find()
+      await Activity.find({ user_id: req.params.id })
         .sort({ createdAt: -1 })
         .then(foundActivities => res.status(200).json(foundActivities));
     } catch (err) {
       next(err);
     }
   },
-  /* ⬆️ get all activities - OK */
+  /* ⬆️ get all activities by the user' Id - OK */
 
   /* ⬇️ save new activity - OK */
   async post(req, res, next) {
@@ -20,6 +21,7 @@ export const activityController = {
       const data = await activityService.saveActivity(req.body);
       res.status(data.status).json(data);
     } catch (err) {
+      console.error(err);
       next(err);
     }
   },

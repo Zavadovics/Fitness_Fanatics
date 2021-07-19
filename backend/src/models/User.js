@@ -54,7 +54,7 @@ const UserSchema = new Schema(
     birthDate: {
       type: Date,
       required: false,
-      default: null,
+      default: 0,
     },
     motivation: {
       type: String,
@@ -62,7 +62,7 @@ const UserSchema = new Schema(
       default: '',
     },
   },
-  { timestamps: false }
+  { timestamps: true }
 );
 
 export default model('User', UserSchema);

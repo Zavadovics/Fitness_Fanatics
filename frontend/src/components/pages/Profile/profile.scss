@@ -28,14 +28,18 @@
     box-shadow: 0px 10px 40px #000;
 }
 
-.profile-card img {
-    width: 80px;
-    padding-bottom: 2em;
+.user-photo-cont {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    overflow: hidden;
+    border-radius: 50%;
+    margin: 2em 0;
 }
 
-.view-profile-cont img {
-    width: 150px;
-    padding: 2em 0;
+.user-photo-cont img {
+    width: 100%;
+    height: auto;
 }
 
 .text-cont {
@@ -58,13 +62,12 @@
 .text-row p:first-of-type {
     font-weight: bold;
     color: variables.$color-darkgrey;
-    // background: variables.$color-lightorange;
 }
 
-// .text-row p:last-of-type {
-//     background: variables.$color-darkorange;
-//     align-self: end;
-// }
+.text-row p:last-of-type {
+    color: variables.$color-blue;
+}
+
 .prof-mod-btn {
     background: variables.$color-lightorange;
     padding: 0.8em 1.6em;

@@ -36,11 +36,6 @@ const ActivitySchema = new Schema(
       required: true,
       min: 1,
     },
-    // photoUrl: {
-    //   type: String,
-    //   required: true,
-    //   min: 1,
-    // },
   },
   { timestamps: true }
 );

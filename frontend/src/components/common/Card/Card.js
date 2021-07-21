@@ -12,9 +12,11 @@ import 'moment/locale/hu';
 const Card = ({ profile, activity }) => {
   const { REACT_APP_SERVER_URL } = process.env;
   const [error, setError] = useState(null);
-  const weight =
-    profile.weight === 0 || profile.weight === undefined ? 80 : profile.weight;
-
+  // const weight =
+  //   profile.weight === 0 || profile.weight === undefined ? 80 : profile.weight;
+  const weight = 1;
+  // console.log(activity);
+  // console.log(profile);
   /* Delete event */
 
   const deleteActivityHandler = activityId => {

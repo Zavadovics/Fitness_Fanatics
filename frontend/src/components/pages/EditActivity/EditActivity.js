@@ -8,8 +8,8 @@ const EditActivity = () => {
   const { id } = useParams();
   const [activity, setActivity] = useState('');
   const [error, setError] = useState(null);
-  // console.log('EditActivity', activity);
 
+  console.log(id);
   useEffect(() => {
     fetch(`${REACT_APP_SERVER_URL}/api/activities/${id}`)
       .then(res => {
@@ -21,20 +21,18 @@ const EditActivity = () => {
         return res.json();
       })
       .then(jsonRes => {
-        // console.log('jsonRes', jsonRes);
-        // console.log(jsonRes.activityDate.substring(0, 10));
+        console.log('jsonRes', jsonRes);
 
         setActivity({
-          activityDate: jsonRes.activityDate.substring(0, 10),
+          activityDate: jsonRes.activityDate,
           activityTime: jsonRes.activityTime,
           distance: jsonRes.distance,
           activityType: jsonRes.activityType,
           duration: jsonRes.duration,
           comment: jsonRes.comment,
-          // photoUrl: jsonRes.photoUrl,
         });
+        console.log(activity);
         setError(null);
-        // console.log(error);
       })
       .catch(err => {
         setError(err.message);

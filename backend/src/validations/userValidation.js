@@ -10,7 +10,7 @@ export const userValidation = data => {
     gender: Joi.string(),
     cityOfResidence: Joi.string(),
     weight: Joi.number(),
-    // birthDate: Joi.date(),
+    birthDate: Joi.date(),
     motivation: Joi.string(),
   });
   return schema.validate(data);

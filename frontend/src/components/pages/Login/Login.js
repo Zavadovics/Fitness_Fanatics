@@ -1,16 +1,16 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
+import ReCAPTCHA from 'react-google-recaptcha';
 import validator from 'validator';
 import Navbar from '../../common/Navbar/Navbar';
 import Footer from '../../common/Footer/Footer';
 import InputField from '../../common/InputField/InputField';
 import './login.scss';
 
-const Login = props => {
-  const { REACT_APP_SERVER_URL } = process.env;
+const Login = ({ loggedInUser, setLoggedInUser }) => {
+  const { REACT_APP_SERVER_URL, REACT_APP_GOOGLE_RECAPTCHA_KEY } = process.env;
 
-  const { loggedInUser, setLoggedInUser } = props;
-  // console.log('loggedInUser - dashboard/navbar.js', loggedInUser);
+  const [verified, setVerified] = useState(false);
   const history = useHistory();
 
   const [formData, setFormData] = useState({
@@ -38,8 +38,8 @@ const Login = props => {
   });
 
   const messageTypes = Object.freeze({
-    // success: `You are now successfully logged in.`,
     fail: `Az általad megadott email cím vagy jelszó helytelen.`,
+    failCaptcha: `Kérlek bizonyítsd be hogy nem vagy robot 🤖`,
   });
 
   const isFieldEmpty = value => {
@@ -105,6 +105,10 @@ const Login = props => {
     return isValid;
   };
 
+  const onChange = () => {
+    setVerified(true);
+  };
+
   const handleInputChange = e => {
     const { name, value } = e.target;
     setFormData({
@@ -128,7 +132,8 @@ const Login = props => {
 
     setFormWasValidated(false);
     const isValid = isFormValid();
-    if (isValid) {
+    if (isValid && verified) {
+      console.log('verified');
       await fetch(`${REACT_APP_SERVER_URL}/api/login`, {
         method: 'post',
         headers: {
@@ -142,19 +147,24 @@ const Login = props => {
           if (res.status >= 200 && res.status < 300) {
             const user = res;
             localStorage.setItem('loggedInUser', JSON.stringify(user));
-
-            // setAlert({ alertType: 'success', message: messageTypes.success });
             setFormData({
               email: '',
               password: '',
             });
+            setVerified(false);
+            setAlert(null);
             history.push('/activities');
             window.location.reload();
           } else {
-            console.log('sikertelen bejelentkezés');
             setAlert({ alertType: 'danger', message: messageTypes.fail });
           }
         });
+    } else if (!verified) {
+      console.log('not verified');
+      setAlert({
+        alertType: 'danger',
+        message: messageTypes.failCaptcha,
+      });
     } else {
       setFormWasValidated(true);
     }
@@ -198,6 +208,12 @@ const Login = props => {
               reference={references.password}
               error={formErrors.password}
             />
+            <div className='captcha'>
+              <ReCAPTCHA
+                sitekey={REACT_APP_GOOGLE_RECAPTCHA_KEY}
+                onChange={onChange}
+              />
+            </div>
           </div>
           <button type='submit' className='custom-btn'>
             BEJELENTKEZÉS

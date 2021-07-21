@@ -2,7 +2,7 @@ import User from '../models/User.js';
 import { userService } from '../services/userService.js';
 
 export const userController = {
-  /* ⬇️ get user by ID - OK */
+  /* ⬇️ get user by ID (used to get profile)- OK */
   async get(req, res, next) {
     try {
       User.findById(req.params.id).then(foundUser =>
@@ -25,7 +25,7 @@ export const userController = {
   },
   /* ⬆️ save new user - OK */
 
-  /* ⬇️ find user in db by Id - OK */
+  /* ⬇️ find user in database by Id - OK */
   async getId(req, res) {
     try {
       const user = await User.findById(req.params.id);
@@ -34,55 +34,10 @@ export const userController = {
       res.status(500).json(err);
     }
   },
-  /* ⬆️ find user in db by Id - OK */
+  /* ⬆️ find user in database by Id - OK */
 
-  /* mukodokepes */
-  // async get(req, res, next) {
-  //   try {
-  //     await User.find({ email: 'zava@gmail.com' }).then(foundUsers =>
-  //       res.status(200).json(foundUsers)
-  //     );
-  //   } catch (err) {
-  //     next(err);
-  //   }
-  // },
-  /* mukodokepes */
+  /* ⬇️ update user in database - OK */
 
-  // async put(req, res, next) {
-  //   try {
-  //     const user = await User.findById(req.params.id);
-  //     if (user.email === req.body.email)
-  //       try {
-  //         const updatedUser = await User.findByIdAndUpdate(
-  //           req.params.id,
-  //           {
-  //             $set: req.body,
-  //           },
-  //           { desc: req.body.desc }
-  //         );
-  //         res.status(200).json(updatedUser);
-  //       } catch (err) {
-  //         res.status(500).json(err);
-  //       }
-  //     else {
-  //       res.status(401).json('Problem in the system :) !');
-  //     }
-  //   } catch (err) {
-  //     next(err);
-  //   }
-  // },
-
-  /* my solution */
-  // async put(req, res, next) {
-  //   try {
-  //     const data = await userService.updateUser(req.body);
-  //     res.status(data.status).json(data);
-  //   } catch (err) {
-  //     next(err);
-  //   }
-  // },
-
-  /* KIG AVT-32 - edit event */
   async put(req, res, next) {
     try {
       const { id } = req.params;
@@ -91,16 +46,9 @@ export const userController = {
       const data = await userService.updateUser(id, reqData);
       res.status(data.status).json(data);
     } catch (err) {
+      console.error(err);
       next(err);
     }
   },
-
-  // async delete(req, res, next) {
-  //   try {
-  //     const data = await userService.deleteUser(req.body);
-  //     res.status(data.status).json(data);
-  //   } catch (err) {
-  //     next(err);
-  //   }
-  // },
+  /* ⬆️ update user in database - OK */
 };

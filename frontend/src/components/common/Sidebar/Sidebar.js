@@ -41,7 +41,7 @@ const Sidebar = ({ loggedInUser }) => {
               activeClassName='activeClicked'
             >
               <CDBSidebarMenuItem icon='plus-square'>
-                Új hozzáadása
+                Új tevékenység
               </CDBSidebarMenuItem>
             </NavLink>
 

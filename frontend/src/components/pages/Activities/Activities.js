@@ -9,7 +9,6 @@ const Activities = ({ profile, loggedInUser }) => {
   const { REACT_APP_SERVER_URL } = process.env;
   const [activities, setActivities] = useState([]);
   const [error, setError] = useState(null);
-
   /* Get all activities */
 
   useEffect(() => {

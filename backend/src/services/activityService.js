@@ -1,5 +1,4 @@
 import logger from '../logger.js';
-// import logger from 'logger';
 import Activity from '../models/Activity.js';
 import { activityValidation } from '../validations/activityValidation.js';
 

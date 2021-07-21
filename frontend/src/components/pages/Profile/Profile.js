@@ -7,12 +7,9 @@ import './profile.scss';
 - fix birthDate display when it's not set
  */
 const Profile = ({ loggedInUser, profile, setProfile, userPhoto }) => {
-  // const { loggedInUser } = props;
   const { REACT_APP_SERVER_URL } = process.env;
-  // const [profile, setProfile] = useState('');
-  // console.log('profile on page load', profile);
   const [error, setError] = useState(null);
-  // console.log('Profile:', loggedInUser.id);
+
   useEffect(() => {
     const getProfile = async () => {
       fetch(`${REACT_APP_SERVER_URL}/api/user/${loggedInUser.id}`)
@@ -25,9 +22,7 @@ const Profile = ({ loggedInUser, profile, setProfile, userPhoto }) => {
           return res.json();
         })
         .then(jsonRes => {
-          // console.log('Profile: jsonRes - ', jsonRes);
           setProfile(jsonRes);
-          // console.log('Profile: profile - ', profile);
           setError(null);
           // console.log(error);
         })
@@ -43,12 +38,13 @@ const Profile = ({ loggedInUser, profile, setProfile, userPhoto }) => {
       <div className='view-profile-cont'>
         <h2>Saját profil</h2>
         <div className='profile-card'>
-          {/* <img src={user} alt='user' /> */}
-          {userPhoto.image !== '' ? (
-            <img src={userPhoto.image} alt='' />
-          ) : (
-            <img src={user} alt='' />
-          )}
+          <div className='user-photo-cont'>
+            {userPhoto.image !== '' ? (
+              <img src={userPhoto.image} alt='' />
+            ) : (
+              <img src={user} alt='' />
+            )}
+          </div>
           <div className='text-cont'>
             <div className='text-row'>
               <p>Felhasználónév:</p>
@@ -80,11 +76,6 @@ const Profile = ({ loggedInUser, profile, setProfile, userPhoto }) => {
             </div>
             <div className='text-row'>
               <p>Születés dátuma:</p>
-              {profile.birthDate === '1970-01-01T00:00:00.000Z' ? (
-                <p>születésnap nincs beállítva</p>
-              ) : (
-                <p>{profile.birthDate}</p>
-              )}
               <p>{profile.birthDate}</p>
             </div>
             <div className='text-row'>

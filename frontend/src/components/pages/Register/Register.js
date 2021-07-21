@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react';
 import { useHistory } from 'react-router-dom';
-// import { BrowserRouter as Link } from 'react-router-dom';
+import ReCAPTCHA from 'react-google-recaptcha';
 import validator from 'validator';
 import Navbar from '../../common/Navbar/Navbar';
 import Footer from '../../common/Footer/Footer';
@@ -8,8 +8,9 @@ import InputField from '../../common/InputField/InputField';
 import './register.scss';
 
 const Register = () => {
-  const { REACT_APP_SERVER_URL } = process.env;
+  const { REACT_APP_SERVER_URL, REACT_APP_GOOGLE_RECAPTCHA_KEY } = process.env;
 
+  const [verified, setVerified] = useState(false);
   const history = useHistory();
 
   const [formData, setFormData] = useState({
@@ -45,6 +46,7 @@ const Register = () => {
   const messageTypes = Object.freeze({
     success: `Sikeres regisztráció. Máris átirányítunk a bejelentkezés oldalra.`,
     fail: `Sikertelen regisztráció. Az általad megadott adat/adatok már szerepelnek az adatbázisban.`,
+    failCaptcha: `Kérlek bizonyítsd be hogy nem vagy robot 🤖`,
   });
 
   const isFieldEmpty = value => {
@@ -116,6 +118,10 @@ const Register = () => {
     return isValid;
   };
 
+  const onChange = () => {
+    setVerified(true);
+  };
+
   const handleInputChange = e => {
     const { name, value } = e.target;
     setFormData({
@@ -141,7 +147,7 @@ const Register = () => {
 
     setFormWasValidated(false);
     const isValid = isFormValid();
-    if (isValid) {
+    if (isValid && verified) {
       await fetch(`${REACT_APP_SERVER_URL}/api/user`, {
         method: 'post',
         headers: {
@@ -159,15 +165,19 @@ const Register = () => {
               email: '',
               password: '',
             });
+            setVerified(false);
             setTimeout(() => {
               history.push('/login');
             }, 2000);
-            console.log('sikeres regisztráció');
           } else {
             setAlert({ alertType: 'danger', message: messageTypes.fail });
-            console.log('regisztrációs hiba történt');
           }
         });
+    } else if (!verified) {
+      setAlert({
+        alertType: 'danger',
+        message: messageTypes.failCaptcha,
+      });
     } else {
       setFormWasValidated(true);
     }
@@ -230,6 +240,12 @@ const Register = () => {
               reference={references.password}
               error={formErrors.password}
             />
+            <div className='captcha'>
+              <ReCAPTCHA
+                sitekey={REACT_APP_GOOGLE_RECAPTCHA_KEY}
+                onChange={onChange}
+              />
+            </div>
           </div>
           <button type='submit' className='register-btn'>
             REGISZTRÁCÓ

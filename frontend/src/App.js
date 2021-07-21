@@ -23,42 +23,38 @@ const App = () => {
   const { REACT_APP_SERVER_URL } = process.env;
   const [loggedInUser, setLoggedInUser] = useState(newUser);
 
-  const [profile, setProfile] = useState('');
-
+  const [profile, setProfile] = useState({});
   const [error, setError] = useState(null);
 
   const [userPhoto, setUserPhoto] = useState({
-    user_id: loggedInUser.id,
     image: '',
   });
 
   useEffect(() => {
-    const getPhoto = async () => {
-      fetch(`${REACT_APP_SERVER_URL}/api/photo/${loggedInUser.id}`)
-        .then(res => {
-          if (res.status < 200 || res.status >= 300) {
-            throw Error(
-              `could not fetch data from database, error ${res.status}`
-            );
-          }
-          return res.json();
-        })
-        .then(jsonRes => {
-          setUserPhoto({
-            user_id: jsonRes[0].user_id,
-            image: jsonRes[0].avatar,
+    if (loggedInUser) {
+      const getPhoto = async () => {
+        fetch(`${REACT_APP_SERVER_URL}/api/photo/${loggedInUser.id}`)
+          .then(res => {
+            if (res.status < 200 || res.status >= 300) {
+              throw Error(
+                `could not fetch data from database, error ${res.status}`
+              );
+            }
+            return res.json();
+          })
+          .then(jsonRes => {
+            setUserPhoto({
+              image: jsonRes[0].avatar,
+            });
+            setError(null);
+          })
+          .catch(err => {
+            setError(err.message);
           });
-          // console.log('json data', jsonRes);
-          setError(null);
-          // console.log(error);
-        })
-        .catch(err => {
-          setError(err.message);
-        });
-    };
-    getPhoto();
+      };
+      getPhoto();
+    }
   }, []);
-
   return (
     <>
       <Router>
@@ -73,13 +69,21 @@ const App = () => {
                 <Sidebar loggedInUser={loggedInUser} />
                 <div className='content-cont'>
                   <Route exact path='/activities'>
-                    <Activities profile={profile} loggedInUser={loggedInUser} />
+                    <Activities
+                      profile={profile}
+                      loggedInUser={loggedInUser}
+                      // activities={activities}
+                      // setActivities={setActivities}
+                    />
                   </Route>
                   <Route exact path='/activities/new'>
                     <NewActivity loggedInUser={loggedInUser} />
                   </Route>
                   <Route exact path='/activities/edit/:id'>
-                    <EditActivity />
+                    <EditActivity
+                    // activities={activities}
+                    // setActivities={setActivities}
+                    />
                   </Route>
                   <Route exact path='/profile'>
                     <Profile

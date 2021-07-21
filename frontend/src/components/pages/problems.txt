@@ -1,0 +1,8 @@
+- clearing cache while logged in crashes app. App.js useEffect fails as user.id missing
+
+EditPhoto
+- can't get response 200 to display correct alert
+- can/t reload page without window.location.reload
+
+NewActivity
+- if form tries to be sent before filling, it validates but the onblur doesn't work anymore

@@ -2,9 +2,8 @@ import Activity from '../models/Activity.js';
 import { activityService } from '../services/activityService.js';
 
 export const activityController = {
-  /* ⬇️ get all activities by the user' Id - OK */
+  /* ⬇️ get all activities by the user's Id - OK */
   async get(req, res, next) {
-    console.log('controller', req.params.id);
     try {
       await Activity.find({ user_id: req.params.id })
         .sort({ createdAt: -1 })
@@ -27,26 +26,20 @@ export const activityController = {
   },
   /* ⬆️ save new activity - OK */
 
-  /* ⬇️ find activity in db by Id - OK */
+  /* ⬇️ find an activity in db by Id - OK */
   async getId(req, res) {
+    console.log('hahaha');
     try {
-      const activity = await Activity.findById(req.params.id);
+      const activity = await console.log('req.param.id', req.param.id);
+      Activity.findById(req.params.id);
       res.status(200).json(activity);
+      console.log(activity);
     } catch (err) {
+      console.error(err);
       res.status(500).json(err);
     }
   },
-  /* ⬆️ find activity in db by Id - OK */
-
-  // async get(req, res, next) {
-  //   try {
-  //     Activity.findById(req.params.id).then(foundActivity =>
-  //       res.status(200).json(foundActivity)
-  //     );
-  //   } catch (err) {
-  //     next(err);
-  //   }
-  // },
+  /* ⬆️ find an activity in db by Id - OK */
 
   async put(req, res) {
     const { id } = req.params;

@@ -1,12 +1,12 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import CreatableSelect from 'react-select/creatable';
 import InputField from '../../common/InputField/InputField';
 import SelectField from '../../common/SelectField/SelectField';
+import validator from 'validator';
 import './editProfile.scss';
 
-const EditProfile = ({ loggedInUser }) => {
+const EditProfile = ({ loggedInUser, profile, setProfile }) => {
   const { REACT_APP_SERVER_URL } = process.env;
-  // console.log('EditProfile - ', profile);
 
   const [cities, setCities] = useState([]);
   const [citySelected, setCitySelected] = useState('');
@@ -15,12 +15,15 @@ const EditProfile = ({ loggedInUser }) => {
 
   const genderList = ['férfi', 'nő', 'nem szeretném megadni'];
 
-  const [profile, setProfile] = useState('');
+  const [formData, setFormData] = useState({
+    lastName: '',
+    firstName: '',
+    password: '',
+    email: '',
+  });
+
   // const [profile, setProfile] = useState({
   //   userName: '',
-  //   password: '',
-  //   lastName: '',
-  //   firstName: '',
   //   gender: '',
   //   cityOfResidence: '',
   //   weight: '',
@@ -29,7 +32,7 @@ const EditProfile = ({ loggedInUser }) => {
   // });
 
   const [alert, setAlert] = useState(null);
-  // const [formWasValidated, setFormWasValidated] = useState(false);
+  const [formWasValidated, setFormWasValidated] = useState(false);
 
   useEffect(() => {
     const getProfile = async () => {
@@ -43,27 +46,18 @@ const EditProfile = ({ loggedInUser }) => {
           return res.json();
         })
         .then(jsonRes => {
-          setProfile({
-            userName: jsonRes.userName,
-            firstName: jsonRes.firstName,
-            lastName: jsonRes.lastName,
-            email: jsonRes.email,
-            password: jsonRes.password,
-            gender: jsonRes.gender,
-            cityOfResidence: jsonRes.cityOfResidence,
-            weight: jsonRes.weight,
-            birthDate: jsonRes.birthDate,
-            motivation: jsonRes.motivation,
-          });
+          const { password, ...rest } = jsonRes;
+          setFormData(rest);
           setError(null);
           // console.log(error);
         })
         .catch(err => {
+          // console.error(err);
           setError(err.message);
         });
     };
     getProfile();
-  }, [REACT_APP_SERVER_URL, error]);
+  }, []);
 
   /* City selector */
 
@@ -90,9 +84,6 @@ const EditProfile = ({ loggedInUser }) => {
     // console.groupEnd();
   };
 
-  // console.log(citySelected);
-  // console.log(cityToBeAdded);
-
   /* get cities */
   useEffect(() => {
     fetch(`${REACT_APP_SERVER_URL}/api/cities`)
@@ -105,231 +96,190 @@ const EditProfile = ({ loggedInUser }) => {
         return res.json();
       })
       .then(jsonRes => {
-        // console.log(jsonRes);
         setCities(jsonRes);
         setError(null);
-        // console.log(error);
       })
-      // const cityList = [];
-      // jsonRes.map(city => {
-      //   cityList.push(city.name);
-      //   return cityList;
       .catch(err => {
         setError(err.message);
       });
-  }, [REACT_APP_SERVER_URL, error]);
-
-  // const references = {
-  //   userName: useRef(),
-  //   password: useRef(),
-  //   lastName: useRef(),
-  //   firstName: useRef(),
-  //   gender: useRef(),
-  //   cityOfResidence: useRef(),
-  //   weight: useRef(),
-  //   birthDate: useRef(),
-  //   motivation: useRef(),
-  // };
-
-  // const formErrorTypes = Object.freeze({
-  //   required: `A mező kitöltése kötelező`,
-  //   positive: `A megadott érték nem lehet negativ.`,
-  // });
-
-  // const [formErrors, setFormErrors] = useState({
-  //   userName: '',
-  //   password: '',
-  //   lastName: '',
-  //   firstName: '',
-  //   gender: '',
-  //   cityOfResidence: '',
-  //   weight: '',
-  //   birthDate: '',
-  //   motivation: '',
-  // });
+  }, []);
 
   const messageTypes = Object.freeze({
     success: `Sikeres mentés. Az adatokat hozzádtuk az adatbázishoz`,
     fail: `Sikertelen mentés. Adatbázis probléma.`,
   });
 
-  // const isFieldEmpty = value => {
-  //   return value !== '';
-  // };
+  const references = {
+    firstName: useRef(),
+    lastName: useRef(),
+    email: useRef(),
+    password: useRef(),
+  };
 
-  // const isValueNegative = value => {
-  //   return value >= 0;
-  // };
+  const formErrorTypes = Object.freeze({
+    required: `A mező kitöltése kötelező`,
+    passwordLength: `A jelszó legalább 6 karakter hosszú kell legyen`,
+    validEmail: `Nem megfelelő email formátum`,
+  });
 
-  // const validators = {
-  //   userName: {
-  //     required: isFieldEmpty,
-  //   },
-  //   password: {
-  //     required: isFieldEmpty,
-  //   },
-  //   firstName: {
-  //     required: isFieldEmpty,
-  //   },
-  //   lastName: {
-  //     required: isFieldEmpty,
-  //   },
-  //   gender: {
-  //     required: isFieldEmpty,
-  //   },
-  //   cityOfResidence: {
-  //     required: isFieldEmpty,
-  //   },
-  //   weight: {
-  //     required: isFieldEmpty,
-  //     positive: isValueNegative,
-  //   },
-  //   birthDate: {
-  //     required: isFieldEmpty,
-  //   },
-  //   motivation: {
-  //     required: isFieldEmpty,
-  //   },
-  // };
+  const [formErrors, setFormErrors] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    password: '',
+  });
 
-  // const validateField = fieldName => {
-  //   const value = profile[fieldName];
-  //   let isValid = true;
-  //   setFormErrors(prev => ({
-  //     ...prev,
-  //     [fieldName]: '',
-  //   }));
-  //   references[fieldName].current.setCustomValidity('');
+  const isFieldEmpty = value => {
+    return value !== '';
+  };
 
-  //   if (validators[fieldName] !== undefined) {
-  //     for (const [validationType, validatorFn] of Object.entries(
-  //       validators[fieldName]
-  //     )) {
-  //       if (isValid) {
-  //         isValid = validatorFn(value);
-  //         if (!isValid) {
-  //           const errorText = formErrorTypes[validationType];
-  //           setFormErrors(prev => ({
-  //             ...prev,
-  //             [fieldName]: errorText,
-  //           }));
-  //           references[fieldName].current.setCustomValidity(errorText);
-  //         }
-  //       }
-  //     }
-  //   }
-  //   return isValid;
-  // };
+  const isEmailInvalid = value => {
+    return validator.isEmail(value);
+  };
 
-  // const isFormValid = () => {
-  //   let isValid = true;
-  //   for (const fieldName of Object.keys(profile)) {
-  //     const isFieldValid = validateField(fieldName);
-  //     if (!isFieldValid) {
-  //       isValid = false;
-  //     }
-  //   }
-  //   return isValid;
-  // };
+  const isPasswordValid = value => {
+    return value.length >= 6;
+  };
+
+  const validators = {
+    firstName: {
+      required: isFieldEmpty,
+    },
+    lastName: {
+      required: isFieldEmpty,
+    },
+    email: {
+      required: isFieldEmpty,
+      validEmail: isEmailInvalid,
+    },
+    password: {
+      required: isFieldEmpty,
+      passwordLength: isPasswordValid,
+    },
+  };
+
+  const validateField = fieldName => {
+    const value = formData[fieldName];
+    let isValid = true;
+    setFormErrors(prev => ({
+      ...prev,
+      [fieldName]: '',
+    }));
+    // references[fieldName].current.setCustomValidity('');
+
+    if (validators[fieldName] !== undefined) {
+      for (const [validationType, validatorFn] of Object.entries(
+        validators[fieldName]
+      )) {
+        if (isValid !== false) {
+          isValid = validatorFn(value);
+          if (!isValid) {
+            const errorText = formErrorTypes[validationType];
+            setFormErrors(prev => ({
+              ...prev,
+              [fieldName]: errorText,
+            }));
+            references[fieldName].current.setCustomValidity(errorText);
+          }
+        }
+      }
+    }
+    return isValid;
+  };
+
+  const isFormValid = () => {
+    let isValid = true;
+    for (const fieldName of Object.keys(formData)) {
+      const isFieldValid = validateField(fieldName);
+      if (!isFieldValid) {
+        isValid = false;
+      }
+    }
+    return isValid;
+  };
+
+  const handleInputBlur = e => {
+    const { name } = e.target;
+    validateField(name);
+  };
 
   const handleInputChange = e => {
     const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
     setProfile({
       ...profile,
       [name]: value,
     });
   };
 
-  // const handleInputBlur = e => {
-  //   const { name } = e.target;
-  //   validateField(name);
-  // };
-
   const handleSubmit = async e => {
     e.preventDefault();
     setAlert(null);
-    // setFormErrors({
-    //   userName: '',
-    //   password: '',
-    //   lastName: '',
-    //   firstName: '',
-    //   gender: '',
-    //   cityOfResidence: '',
-    //   weight: '',
-    //   birthDate: '',
-    //   motivation: '',
-    // });
+    setFormErrors({
+      firstName: '',
+      lastName: '',
+      email: '',
+      password: '',
+    });
     if (citySelected !== '') {
-      profile.cityOfResidence = citySelected.value;
+      formData.cityOfResidence = citySelected.value;
     }
     if (cityToBeAdded !== '') {
-      profile.cityOfResidence = cityToBeAdded;
+      formData.cityOfResidence = cityToBeAdded;
       /* fetch to cities db to add new city */
     }
-    // setFormWasValidated(false);
-    // const isValid = isFormValid();
-    // if (isValid) {
-    console.log('profile', profile);
-    // console.log('citySelected', citySelected);
-    // console.log('cityToBeAdded', cityToBeAdded);
-    await fetch(`${REACT_APP_SERVER_URL}/api/user/${loggedInUser.id}`, {
-      method: 'post',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(profile),
-      // body: JSON.stringify({
-      //   userName: profile.userName,
-      //   password: profile.password,
-      //   email: profile.email,
-      //   firstName: profile.firstName,
-      //   lastName: profile.lastName,
-      //   gender: profile.gender,
-      //   cityOfResidence: citySelected,
-      //   weight: profile.weight,
-      //   birthDate: profile.birthDate,
-      //   motivation: profile.motivation,
-      // }),
-    })
-      .then(response => response.json())
-      .then(res => {
-        if (res.status >= 200 && res.status < 300) {
-          setTimeout(() => {
-            setAlert({ alertType: 'success', message: messageTypes.success });
-          }, 3000);
-          setProfile({
-            userName: '',
-            lastName: '',
-            firstName: '',
-            email: '',
-            password: '',
-            gender: '',
-            cityOfResidence: '',
-            weight: '',
-            birthDate: '',
-            motivation: '',
-          });
-          setCitySelected('');
-          setCityToBeAdded('');
-          console.log('új adatok sikeresen mentve');
-        } else {
-          setAlert({ alertType: 'danger', message: messageTypes.fail });
-          console.log('új adatok mentése sikertelen');
-        }
-      });
-    // } else {
-    //   setFormWasValidated(true);
-    // }
+
+    setFormWasValidated(false);
+    const isValid = isFormValid();
+    if (isValid) {
+      console.log(formData);
+      await fetch(`${REACT_APP_SERVER_URL}/api/user/${loggedInUser.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData, profile),
+      })
+        .then(response => response.json())
+        .then(res => {
+          if (res.status >= 200 && res.status < 300) {
+            setTimeout(() => {
+              setAlert({ alertType: 'success', message: messageTypes.success });
+            }, 3000);
+            setFormData({
+              lastName: '',
+              firstName: '',
+              email: '',
+              password: '',
+            });
+            setProfile({
+              userName: '',
+              cityOfResidence: '',
+              gender: '',
+              weight: '',
+              birthDate: '',
+              motivation: '',
+            });
+            setCitySelected('');
+            setCityToBeAdded('');
+            console.log('új adatok sikeresen mentve');
+          } else {
+            setAlert({ alertType: 'danger', message: messageTypes.fail });
+            console.log('új adatok mentése sikertelen');
+          }
+        });
+    } else {
+      setFormWasValidated(true);
+    }
   };
 
   return (
     <>
       <div className='profile-edit-cont'>
         <h2>Profil módosítása</h2>
-        {/* <p>{profile.lastName}</p>
-        <p>{profile.firstName}</p>
-        <p>{profile.email}</p> */}
-        <hr />
         <div className='alert-cont'>
           {alert && (
             <p className={`alert alert-${alert.alertType}`}>{alert.message}</p>
@@ -338,7 +288,7 @@ const EditProfile = ({ loggedInUser }) => {
         <form
           noValidate
           onSubmit={handleSubmit}
-          // className={`needs-validation ${formWasValidated && 'was-validated'}`}
+          className={`needs-validation ${formWasValidated && 'was-validated'}`}
         >
           <div className='input'>
             <InputField
@@ -347,7 +297,7 @@ const EditProfile = ({ loggedInUser }) => {
               labelText='Felhasználónév'
               onChange={handleInputChange}
               // onBlur={handleInputBlur}
-              value={profile.userName}
+              value={formData.userName}
               // reference={references.userName}
               // formError={formErrors.userName}
             />
@@ -356,9 +306,9 @@ const EditProfile = ({ loggedInUser }) => {
               type='text'
               labelText='Vezetéknév'
               onChange={handleInputChange}
-              // onBlur={handleInputBlur}
-              value={profile.lastName}
-              // reference={references.lastName}
+              onBlur={handleInputBlur}
+              value={formData.lastName}
+              reference={references.lastName}
               // formError={formErrors.lastName}
             />
             <InputField
@@ -366,30 +316,30 @@ const EditProfile = ({ loggedInUser }) => {
               type='text'
               labelText='Keresztnév'
               onChange={handleInputChange}
-              // onBlur={handleInputBlur}
-              value={profile.firstName}
-              // reference={references.firstName}
-              // formError={formErrors.firstName}
+              onBlur={handleInputBlur}
+              value={formData.firstName}
+              reference={references.firstName}
+              formError={formErrors.firstName}
             />
             <InputField
               name='email'
               type='email'
               labelText='Email'
               onChange={handleInputChange}
-              // onBlur={handleInputBlur}
-              value={profile.email}
-              // reference={references.email}
-              // formError={formErrors.email}
+              onBlur={handleInputBlur}
+              value={formData.email}
+              reference={references.email}
+              formError={formErrors.email}
             />
             <InputField
               name='password'
               type='password'
               labelText='Jelszó'
               onChange={handleInputChange}
-              // onBlur={handleInputBlur}
-              value={profile.password}
-              // reference={references.password}
-              // formError={formErrors.password}
+              onBlur={handleInputBlur}
+              value={formData.password}
+              reference={references.password}
+              formError={formErrors.password}
             />
             <SelectField
               labelText='Nem'
@@ -397,7 +347,7 @@ const EditProfile = ({ loggedInUser }) => {
               id='gender'
               valueList={genderList}
               onChange={handleInputChange}
-              value={profile.gender}
+              value={formData.gender}
               // reference={references.gender}
               // formError={formErrors.gender}
             />
@@ -407,7 +357,7 @@ const EditProfile = ({ loggedInUser }) => {
               id='cityOfResidence'
               valueList={cities}
               onChange={handleInputChange}
-              value={profile.cityOfResidence}
+              value={formData.cityOfResidence}
               reference={references.cityOfResidence}
               formError={formErrors.cityOfResidence}
             /> */}
@@ -430,7 +380,7 @@ const EditProfile = ({ loggedInUser }) => {
               labelText='Testsúly'
               onChange={handleInputChange}
               // onBlur={handleInputBlur}
-              value={profile.weight}
+              value={formData.weight}
               // reference={references.weight}
               // formError={formErrors.weight}
             />
@@ -440,7 +390,7 @@ const EditProfile = ({ loggedInUser }) => {
               labelText='Születési dátum'
               onChange={handleInputChange}
               // onBlur={handleInputBlur}
-              value={profile.birthDate}
+              value={formData.birthDate}
               // reference={references.birthDate}
               // formError={formErrors.birthDate}
             />
@@ -450,7 +400,7 @@ const EditProfile = ({ loggedInUser }) => {
               labelText='Motivációs szöveg'
               onChange={handleInputChange}
               // onBlur={handleInputBlur}
-              value={profile.motivation}
+              value={formData.motivation}
               // reference={references.motivation}
               // formError={formErrors.motivation}
             />
@@ -459,12 +409,6 @@ const EditProfile = ({ loggedInUser }) => {
             MENTÉS
           </button>
         </form>
-
-        {/* {cities.map(city => (
-          <div className='card-cont' key={city._id}>
-            <p>{city.name}</p>
-          </div>
-        ))} */}
       </div>
     </>
   );

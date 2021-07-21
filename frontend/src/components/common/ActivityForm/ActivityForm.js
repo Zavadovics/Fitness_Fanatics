@@ -9,11 +9,8 @@ import './activityForm.scss';
 - validation not perfect, perhaps date validation should be added
 */
 const ActivityForm = ({ type, activity, loggedInUser }) => {
-  // console.log('ActivityForm-props', activity);
   const { REACT_APP_SERVER_URL } = process.env;
   const id = type === 'edit' ? activity._id : null;
-
-  // console.log('props', activityDate);
 
   const activityTypeList = ['futás', 'kerékpározás', 'úszás'];
 
@@ -27,10 +24,8 @@ const ActivityForm = ({ type, activity, loggedInUser }) => {
           activityType: '',
           distance: '',
           comment: '',
-          // photoUrl: '',
         }
   );
-  // console.log('formData', formData);
 
   const [alert, setAlert] = useState(null);
   const [formWasValidated, setFormWasValidated] = useState(false);
@@ -42,7 +37,6 @@ const ActivityForm = ({ type, activity, loggedInUser }) => {
     activityType: useRef(),
     distance: useRef(),
     comment: useRef(),
-    // photoUrl: useRef(),
   };
 
   const formErrorTypes = Object.freeze({
@@ -57,7 +51,6 @@ const ActivityForm = ({ type, activity, loggedInUser }) => {
     activityType: '',
     distance: '',
     comment: '',
-    // photoUrl: '',
   });
 
   const messageTypes = Object.freeze({
@@ -144,26 +137,26 @@ const ActivityForm = ({ type, activity, loggedInUser }) => {
     return isValid;
   };
 
-  const isFormValid = () => {
-    let isValid = true;
-    for (const fieldName of Object.keys(formData)) {
-      const isFieldValid = validateField(fieldName);
-      if (!isFieldValid) {
-        isValid = false;
-      }
-    }
-    return isValid;
-  };
   // const isFormValid = () => {
   //   let isValid = true;
-  //   Object.keys(formData).forEach(fieldName => {
+  //   for (const fieldName of Object.keys(formData)) {
   //     const isFieldValid = validateField(fieldName);
   //     if (!isFieldValid) {
   //       isValid = false;
   //     }
-  //   });
+  //   }
   //   return isValid;
   // };
+  const isFormValid = () => {
+    let isValid = true;
+    Object.keys(formData).forEach(fieldName => {
+      const isFieldValid = validateField(fieldName);
+      if (!isFieldValid) {
+        isValid = false;
+      }
+    });
+    return isValid;
+  };
 
   const handleInputChange = e => {
     const { name, value } = e.target;
@@ -389,17 +382,6 @@ const ActivityForm = ({ type, activity, loggedInUser }) => {
               reference={references.comment}
               error={formErrors.comment}
             />
-            {/* <InputField
-              name='photoUrl'
-              id='photoUrl'
-              type='file'
-              labelText='Fotó'
-              onChange={handleInputChange}
-              onBlur={handleInputBlur}
-              value={formData.photoUrl}
-              reference={references.photoUrl}
-              error={formErrors.photoUrl}
-            /> */}
           </div>
           <button type='submit' className='custom-btn'>
             MENTÉS

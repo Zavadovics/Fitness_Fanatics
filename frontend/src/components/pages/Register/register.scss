@@ -32,6 +32,10 @@
     box-shadow: 0px 10px 40px #000;
 }
 
+.register-cont .captcha {
+    padding-top: 2em;
+}
+
 .input {
     width: 80%;
 }
@@ -71,5 +75,23 @@
     }
     .register-cont form {
         width: 80%;
+    }
+}
+
+@media screen and (max-width: 500px) {
+    .captcha {
+        padding-left: 20%;
+        transform: scale(0.7);
+        transform-origin: 0 0;
+        -webkit-transform: scale(0.7);
+        -webkit-transform-origin: 0 0;
+    }
+}
+
+@media screen and (max-width: 400px) {
+    .captcha {
+        padding-left: 7%;
+        transform: scale(0.6);
+        -webkit-transform: scale(0.6);
     }
 }

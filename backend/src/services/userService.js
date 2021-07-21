@@ -1,5 +1,4 @@
 import logger from '../logger.js';
-// import logger from 'logger';
 import bcrypt from 'bcryptjs';
 import User from '../models/User.js';
 import { userValidation } from '../validations/userValidation.js';
@@ -54,8 +53,11 @@ export const userService = {
   },
   /* ⬆️ save new user - OK */
 
-  async updateUser(userData, id) {
-    const { error } = userValidation(userData);
+  /* ⬇️ update existing user - OK */
+  async updateUser(id, reqData) {
+    const { _id, __v, updatedAt, createdAt, ...others } = reqData;
+    const { error } = userValidation(others);
+
     if (error) {
       return {
         status: 400,
@@ -63,20 +65,12 @@ export const userService = {
       };
     }
 
-    // const idExists = await User.findOne({ _id: id });
-    const userExists = await User.findOne({ email: userData.email });
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(reqData.password, salt);
 
-    if (!userExists)
-      return {
-        status: 400,
-        message: 'No user found in database!',
-      };
-
-    // const salt = await bcrypt.genSalt(10);
-    // const hashedPassword = await bcrypt.hash(userData.password, salt);
-
+    reqData.password = hashedPassword;
     try {
-      await User.findByIdAndUpdate(userData, id, {
+      await User.findByIdAndUpdate(id, reqData, {
         useFindAndModify: false,
       });
       return {
@@ -91,4 +85,5 @@ export const userService = {
       };
     }
   },
+  /* ⬆️ update existing user - OK */
 };

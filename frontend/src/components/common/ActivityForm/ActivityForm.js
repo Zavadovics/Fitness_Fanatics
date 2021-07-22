@@ -5,14 +5,14 @@ import './activityForm.scss';
 
 /* TO-DO !!!
 - select field does not validate on blur 
-- form doesn't load data in edit mode
 - validation not perfect, perhaps date validation should be added
 */
+
 const ActivityForm = ({ type, activity, loggedInUser }) => {
   const { REACT_APP_SERVER_URL } = process.env;
-  const id = type === 'edit' ? activity._id : null;
+  // const id = type === 'edit' ? activity._id : null;
 
-  const activityTypeList = ['futás', 'kerékpározás', 'úszás'];
+  const activityTypeList = ['futás', 'kerékpározás', 'úszás', 'aerobic'];
 
   const [formData, setFormData] = useState(
     type === 'edit'
@@ -100,9 +100,6 @@ const ActivityForm = ({ type, activity, loggedInUser }) => {
     comment: {
       required: isFieldEmpty,
     },
-    // photoUrl: {
-    //   required: isFieldEmpty,
-    // },
   };
 
   const validateField = fieldName => {
@@ -185,8 +182,9 @@ const ActivityForm = ({ type, activity, loggedInUser }) => {
     setFormWasValidated(false);
     const isValid = isFormValid();
     if (isValid) {
-      console.log('new - handleSubmit', formData.activityDate);
+      console.log('new - handleSubmit', formData);
       if (type === 'new') {
+        console.log('new', loggedInUser.email);
         await fetch(`${REACT_APP_SERVER_URL}/api/activities`, {
           method: 'post',
           headers: {
@@ -194,6 +192,7 @@ const ActivityForm = ({ type, activity, loggedInUser }) => {
           },
           body: JSON.stringify({
             user_id: loggedInUser.id,
+            email: loggedInUser.email,
             activityDate: formData.activityDate,
             activityTime: formData.activityTime,
             duration: formData.duration,
@@ -204,6 +203,7 @@ const ActivityForm = ({ type, activity, loggedInUser }) => {
         })
           // .then(response => response.json())
           .then(res => {
+            console.log('res', res);
             if (res.status >= 200 && res.status < 300) {
               setAlert({
                 alertType: 'success',
@@ -229,21 +229,17 @@ const ActivityForm = ({ type, activity, loggedInUser }) => {
           });
       }
       if (type === 'edit') {
-        console.log(
-          'formData - handleSubmit',
-          formData
-          // new Date(formData.activityDate).toISOString()
-        );
+        /* !!!!!! can not get activity id or activity */
         console.log('edit - handleSubmit', formData);
-
-        await fetch(`${REACT_APP_SERVER_URL}/api/activities/${id}`, {
+        console.log('loggedInUser.id', loggedInUser.id);
+        await fetch(`${REACT_APP_SERVER_URL}/api/activities/${activity._id}`, {
           method: 'put',
           headers: {
             'Content-Type': 'application/json',
-            // 'Content-Type': 'multipart/form-data',
           },
           body: JSON.stringify({
             user_id: loggedInUser.id,
+            email: loggedInUser.email,
             activityDate: formData.activityDate,
             activityTime: formData.activityTime,
             duration: formData.duration,
@@ -254,20 +250,18 @@ const ActivityForm = ({ type, activity, loggedInUser }) => {
         })
           .then(response => response.json())
           .then(res => {
-            if (res.status >= 200 && res.status < 300) {
+            if (res.status === 200) {
               setTimeout(() => {
                 setAlert({
                   alertType: 'success',
                   message: messageTypes.modifySuccess,
                 });
               }, 3000);
-              console.log('tevékenység sikeresen frissítve');
             } else {
               setAlert({
                 alertType: 'danger',
                 message: messageTypes.modifyFail,
               });
-              console.log('tevékenység frissítése sikertelen');
             }
           });
       }

@@ -28,12 +28,10 @@ export const activityController = {
 
   /* ⬇️ find an activity in db by Id - OK */
   async getId(req, res) {
-    console.log('hahaha');
+    console.log('haha');
     try {
-      const activity = await console.log('req.param.id', req.param.id);
-      Activity.findById(req.params.id);
+      const activity = await Activity.findById(req.params.id);
       res.status(200).json(activity);
-      console.log(activity);
     } catch (err) {
       console.error(err);
       res.status(500).json(err);
@@ -41,63 +39,43 @@ export const activityController = {
   },
   /* ⬆️ find an activity in db by Id - OK */
 
-  async put(req, res) {
-    const { id } = req.params;
-    const reqData = req.body;
-
-    const data = await activityService.updateActivity(id, reqData);
-    res.status(data.status).json(data);
-  },
-
-  /* ------------ */
-  // async put(req, res, next) {
-  //   try {
-  //     const activity = await Activity.findById(req.params.id);
-  //     if (activity.id === req.body.id)
-  //       try {
-  //         const updatedActivity = await Activity.findByIdAndUpdate(
-  //           req.params.id,
-  //           {
-  //             $set: req.body,
-  //           },
-  //           { desc: req.body.desc }
-  //         );
-  //         res.status(200).json(updatedActivity);
-  //       } catch (err) {
-  //         res.status(500).json(err);
-  //       }
-  //     else {
-  //       res.status(401).json('Activity update unsuccessful!');
-  //     }
-  //   } catch (err) {
-  //     next(err);
-  //   }
-  // },
-  /* ------------- */
-
-  // async put(req, res) {
-  //   const { id } = req.params;
-  //   const reqData = req.body;
-
-  //   const data = await activityService.updateActivity(id, reqData);
-  //   res.status(data.status).json(data);
-  // },
-
-  async delete(req, res, next) {
+  async put(req, res, next) {
     try {
       const activity = await Activity.findById(req.params.id);
-      if (activity.id === req.body.id) {
-        try {
-          await activity.delete();
-          res.status(200).json('Activity has been deleted');
-        } catch (err) {
-          res.status(500).json(err);
-        }
-      } else {
-        res.status(401).json('Activity deletion unsuccessful!');
+      // if (activity.username === req.body.username)
+      try {
+        const updatedActivity = await Activity.findByIdAndUpdate(
+          req.params.id,
+          {
+            $set: req.body,
+          },
+          { desc: req.body.desc }
+        );
+        res.status(200).json({
+          status: 200,
+          message: 'ALL GOOD',
+        });
+      } catch (err) {
+        console.error(err);
+        res.status(500).json(err);
       }
+      // else {
+      //   res.status(401).json('You can update only your activity!');
+      // }
     } catch (err) {
       next(err);
+    }
+  },
+
+  async delete(req, res) {
+    const deleteId = req.params.id;
+
+    try {
+      const activityData = await Activity.findByIdAndDelete(deleteId);
+      if (!activityData) return res.sendStatus(404);
+      return res.status(200).send({ message: 'Activity was deleted' });
+    } catch (err) {
+      return res.status(400).send(err);
     }
   },
 };

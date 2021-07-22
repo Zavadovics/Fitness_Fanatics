@@ -11,5 +11,9 @@ export const minsToHoursAndMins = num => {
 export const calorieCounter = (durationInMins, weight) => {
   const MET = 10; /* metabolic equivalent for task */
   const caloriesBurned = (durationInMins * (MET * 3.5 * weight)) / 200;
+  // if (weight === 0) {
+  //   weight = 70;
+  //   return caloriesBurned;
+  // }
   return caloriesBurned;
 };

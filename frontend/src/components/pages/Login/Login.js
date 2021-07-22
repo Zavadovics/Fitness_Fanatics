@@ -210,6 +210,7 @@ const Login = ({ loggedInUser, setLoggedInUser }) => {
             />
             <div className='captcha'>
               <ReCAPTCHA
+                className='captcha'
                 sitekey={REACT_APP_GOOGLE_RECAPTCHA_KEY}
                 onChange={onChange}
               />

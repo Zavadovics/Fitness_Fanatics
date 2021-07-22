@@ -9,7 +9,7 @@ import './editPhoto.scss';
 const EditPhoto = ({ loggedInUser, userPhoto, setUserPhoto }) => {
   const { REACT_APP_SERVER_URL } = process.env;
   const [alert, setAlert] = useState(null);
-  console.log('userPhoto', userPhoto);
+
   const messageTypes = Object.freeze({
     uploadSuccess: `Sikeres fotó feltöltés.`,
     uploadFail: `Fotó feltöltés sikertelen.`,

@@ -5,6 +5,7 @@ import SelectField from '../../common/SelectField/SelectField';
 import validator from 'validator';
 import './editProfile.scss';
 
+/* FIX PASSWORD VALIDATION */
 const EditProfile = ({ loggedInUser, profile, setProfile }) => {
   const { REACT_APP_SERVER_URL } = process.env;
 
@@ -249,20 +250,6 @@ const EditProfile = ({ loggedInUser, profile, setProfile }) => {
             setTimeout(() => {
               setAlert({ alertType: 'success', message: messageTypes.success });
             }, 3000);
-            setFormData({
-              lastName: '',
-              firstName: '',
-              email: '',
-              password: '',
-            });
-            setProfile({
-              userName: '',
-              cityOfResidence: '',
-              gender: '',
-              weight: '',
-              birthDate: '',
-              motivation: '',
-            });
             setCitySelected('');
             setCityToBeAdded('');
             console.log('új adatok sikeresen mentve');

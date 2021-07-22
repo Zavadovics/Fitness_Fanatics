@@ -5,9 +5,18 @@ const ActivitySchema = new Schema(
   {
     user_id: {
       type: String,
+      required: true,
+      max: 20,
+      min: 1,
+    },
+    email: {
+      type: String,
+      required: true,
+      max: 20,
+      min: 1,
     },
     activityDate: {
-      type: Date,
+      type: String,
       required: true,
       min: 1,
     },

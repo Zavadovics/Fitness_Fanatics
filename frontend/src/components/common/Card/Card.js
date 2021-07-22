@@ -9,23 +9,23 @@ import './card.scss';
 import Moment from 'react-moment';
 import 'moment/locale/hu';
 
-const Card = ({ profile, activity }) => {
+const Card = ({ profile, activity, activities, setActivities }) => {
   const { REACT_APP_SERVER_URL } = process.env;
+  const [alert, setAlert] = useState(null);
   const [error, setError] = useState(null);
-  // const weight =
-  //   profile.weight === 0 || profile.weight === undefined ? 80 : profile.weight;
-  const weight = 1;
-  // console.log(activity);
-  // console.log(profile);
-  /* Delete event */
 
-  const deleteActivityHandler = activityId => {
-    fetch(`${REACT_APP_SERVER_URL}/api/activities/${activityId}`, {
+  const messageTypes = Object.freeze({
+    deleteSuccess: `Tevékenység sikeresen törölve.`,
+    deleteFail: `Tevékenység törlése sikertelen.`,
+  });
+
+  /* Delete event */
+  const deleteActivityHandler = () => {
+    fetch(`${REACT_APP_SERVER_URL}/api/activities/${activity._id}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ _id: activityId }),
     })
       .then(res => {
         if (res.status < 200 || res.status >= 300) {
@@ -36,21 +36,32 @@ const Card = ({ profile, activity }) => {
         return res.json();
       })
       .then(jsonRes => {
-        console.log(`activity has been deleted, ${jsonRes}`);
-        setError(null);
+        setAlert(null);
+        setAlert({
+          alertType: 'success',
+          message: messageTypes.deleteSuccess,
+        });
+        setActivities(
+          activities.filter(
+            updatedActivities => updatedActivities._id !== activity._id
+          )
+        );
       })
       .catch(err => {
-        setError(err.message);
-        console.log(error);
+        setAlert({ alertType: 'danger', message: messageTypes.deleteFail });
       });
   };
 
   return (
     <>
+      <div className='alert-cont'>
+        {alert && (
+          <p className={`alert alert-${alert.alertType}`}>{alert.message}</p>
+        )}
+      </div>
       <div className='card'>
         <div className='card-body'>
           <h5 className='card-title'>
-            {/* <div>{activity.photoUrl}</div> */}
             <Moment format='LL'>{activity.activityDate}</Moment>-{' '}
             <span>{activity.activityTime}</span>
           </h5>
@@ -59,8 +70,14 @@ const Card = ({ profile, activity }) => {
           </h5>
           <h6 className='card-subtitle mb-2 text-muted'>
             {minsToHoursAndMins(activity.duration)} -{' '}
-            {meterToKilometers(activity.distance)} KM -{' '}
-            {calorieCounter(activity.duration, weight)} kalória
+            {meterToKilometers(activity.distance)} KM
+            {!profile.weight ? (
+              <p></p>
+            ) : (
+              <span className='card-subtitle mb-2 text-muted'>
+                {calorieCounter(activity.duration, profile.weight)} kalória
+              </span>
+            )}
           </h6>
           <p className='card-text pt-2 comment'>{activity.comment}</p>
         </div>

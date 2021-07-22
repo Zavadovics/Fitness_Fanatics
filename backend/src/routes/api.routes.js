@@ -5,10 +5,9 @@ import { loginController } from '../controllers/loginController.js';
 import { userController } from '../controllers/userController.js';
 import { cityController } from '../controllers/cityController.js';
 import { activityController } from '../controllers/activityController.js';
-// import { photoController } from '../controllers/photoController.js';
 // import { getActivityByIdController } from '../controllers/getActivityByIdController.js';
 import upload from '../middlewares/multer.js';
-import cloudinary from '../middlewares/cloudinary.js';
+import cloudinary from '../cloudinary.js';
 import Photo from '../models/Photo.js';
 
 const router = express.Router();
@@ -26,8 +25,12 @@ router.get('/cities', cityController.get);
 /* to fill fields of EditActivity */
 // router.get('/activities/:id', getActivityByIdController.get);
 router.post('/activities', activityController.post);
+
+// router.get('/activities/:id', activityController.get);
+// router.get('/activities', activityController.get);
 router.get('/activities/:id', activityController.get);
-router.get('/activities/:id', activityController.getId);
+// router.get('/activity/:id', activityController.getId);
+
 router.put('/activities/:id', activityController.put);
 router.delete('/activities/:id', activityController.delete);
 /* Upload or update image in Mongo & Cloudinary */

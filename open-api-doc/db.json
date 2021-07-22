@@ -1,0 +1,39 @@
+{
+    "activities": [{
+            "user_id": "60f55b2e406f3d3ec1e2aaaa",
+            "activityDate": "2033-06-30T00:00:00.000+00:00",
+            "activityTime": "13:00",
+            "duration": "65",
+            "activityType": "úszás",
+            "distance": "2297",
+            "comment": "beestem a tóba",
+            "createdAt": "2021-07-19T11:01:08.246+00:00",
+            "updatedAt": "2021-07-19T11:01:08.246+00:00",
+            "__v": "0"
+        },
+        {
+            "user_id": "60f55b2e406f3d3ec1e2bbbb",
+            "activityDate": "1998-02-30T00:00:00.000+00:00",
+            "activityTime": "14:04",
+            "duration": "120",
+            "activityType": "kerékpározás",
+            "distance": "12000",
+            "comment": "nem nagyon ért le a lábam",
+            "createdAt": "2021-07-19T11:04:08.192+00:00",
+            "updatedAt": "2021-07-19T11:04:08.192+00:00",
+            "__v": "0"
+        },
+        {
+            "user_id": "60f55cc9406f3d3ec1e2cccc",
+            "activityDate": "2021-06-29T00:00:00.000+00:00",
+            "activityTime": "22:07",
+            "duration": "110",
+            "activityType": "futás",
+            "distance": "8300",
+            "comment": "éjszakai macska kergetés",
+            "createdAt": "2021-07-19T11:08:01.770+00:00",
+            "updatedAt": "2021-07-19T11:08:01.770+00:00",
+            "__v": "0"
+        }
+    ]
+}

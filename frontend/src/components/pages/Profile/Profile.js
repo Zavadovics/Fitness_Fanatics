@@ -3,13 +3,9 @@ import { NavLink } from 'react-router-dom';
 import user from '../../../images/user.png';
 import './profile.scss';
 
-/* 
-- fix birthDate display when it's not set
- */
 const Profile = ({ loggedInUser, profile, setProfile, userPhoto }) => {
   const { REACT_APP_SERVER_URL } = process.env;
   const [error, setError] = useState(null);
-
   useEffect(() => {
     const getProfile = async () => {
       fetch(`${REACT_APP_SERVER_URL}/api/user/${loggedInUser.id}`)
@@ -75,8 +71,14 @@ const Profile = ({ loggedInUser, profile, setProfile, userPhoto }) => {
               {profile.weight === 0 ? <p></p> : <p>{profile.weight}</p>}
             </div>
             <div className='text-row'>
-              <p>Születés dátuma:</p>
-              <p>{profile.birthDate}</p>
+              <p>Születési dátum:</p>
+              {profile.birthDate ===
+                'Thu Jan 01 1970 01:00:00 GMT+0100 (Central European Standard Time)' ||
+              profile.birthDate === '' ? (
+                <p></p>
+              ) : (
+                <p>{profile.weight}</p>
+              )}
             </div>
             <div className='text-row'>
               <p>Motivációs szöveg:</p>

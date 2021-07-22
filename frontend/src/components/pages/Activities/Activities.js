@@ -8,13 +8,18 @@ import './activities.scss';
 const Activities = ({ profile, loggedInUser }) => {
   const { REACT_APP_SERVER_URL } = process.env;
   const [activities, setActivities] = useState([]);
-  const [error, setError] = useState(null);
-  /* Get all activities */
+  const [alert, setAlert] = useState(null);
 
+  const messageTypes = Object.freeze({
+    dbProblem: `Adatbázis probléma.`,
+  });
+
+  /* Get all activities */
   useEffect(() => {
     fetch(`${REACT_APP_SERVER_URL}/api/activities/${loggedInUser.id}`)
       .then(res => {
         if (res.status < 200 || res.status >= 300) {
+          setAlert({ alertType: 'danger', message: messageTypes.dbProblem });
           throw Error(
             `could not fetch the data from database, error ${res.status}`
           );
@@ -23,16 +28,20 @@ const Activities = ({ profile, loggedInUser }) => {
       })
       .then(jsonRes => {
         setActivities(jsonRes);
-        setError(null);
       })
       .catch(err => {
-        setError(err.message);
+        setAlert({ alertType: 'danger', message: err });
       });
-  }, [REACT_APP_SERVER_URL, error]);
+  }, []);
 
   return (
     <>
       <div className='activities-cont'>
+        <div className='alert-cont'>
+          {alert && (
+            <p className={`alert alert-${alert.alertType}`}>{alert.message}</p>
+          )}
+        </div>
         <h2>Tevékenységek</h2>
         {activities.length === 0 ? (
           <p className='no-activities'>
@@ -40,9 +49,14 @@ const Activities = ({ profile, loggedInUser }) => {
           </p>
         ) : (
           <>
-            {activities.map((activity, index) => (
+            {activities.map(activity => (
               <div className='card-cont' key={activity._id}>
-                <Card profile={profile} activity={activity} />
+                <Card
+                  profile={profile}
+                  activity={activity}
+                  activities={activities}
+                  setActivities={setActivities}
+                />
               </div>
             ))}
           </>

@@ -22,7 +22,6 @@ const newUser = localStorage.getItem('loggedInUser')
 const App = () => {
   const { REACT_APP_SERVER_URL } = process.env;
   const [loggedInUser, setLoggedInUser] = useState(newUser);
-
   const [profile, setProfile] = useState({});
   const [error, setError] = useState(null);
 
@@ -55,6 +54,7 @@ const App = () => {
       getPhoto();
     }
   }, []);
+
   return (
     <>
       <Router>
@@ -69,21 +69,13 @@ const App = () => {
                 <Sidebar loggedInUser={loggedInUser} />
                 <div className='content-cont'>
                   <Route exact path='/activities'>
-                    <Activities
-                      profile={profile}
-                      loggedInUser={loggedInUser}
-                      // activities={activities}
-                      // setActivities={setActivities}
-                    />
+                    <Activities profile={profile} loggedInUser={loggedInUser} />
                   </Route>
                   <Route exact path='/activities/new'>
                     <NewActivity loggedInUser={loggedInUser} />
                   </Route>
                   <Route exact path='/activities/edit/:id'>
-                    <EditActivity
-                    // activities={activities}
-                    // setActivities={setActivities}
-                    />
+                    <EditActivity loggedInUser={loggedInUser} />
                   </Route>
                   <Route exact path='/profile'>
                     <Profile

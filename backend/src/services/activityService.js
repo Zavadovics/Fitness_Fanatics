@@ -60,36 +60,4 @@ export const activityService = {
       };
     }
   },
-
-  // async deleteActivity(id, userData) {
-  //   try {
-  //     const { error } = activityValidation(userData);
-  //     if (error) {
-  //       return {
-  //         status: 400,
-  //         message: error.details[0].message,
-  //       };
-  //     }
-
-  //     const idExists = await Activity.findOne({
-  //       id: userData.id,
-  //     });
-  //     if (idExists)
-  //       return {
-  //         status: 400,
-  //         message: 'Activity already exists!',
-  //       };
-  //     await Activity.remove({ duration: 22 });
-  //     return {
-  //       status: 200,
-  //       message: 'Activity deleted',
-  //     };
-  //   } catch (err) {
-  //     logger.error(err);
-  //     return {
-  //       status: 500,
-  //       message: 'Something went wrong',
-  //     };
-  //   }
-  // },
 };

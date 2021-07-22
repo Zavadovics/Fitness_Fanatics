@@ -44,8 +44,8 @@ const UserSchema = new Schema(
       default: 0,
     },
     birthDate: {
-      type: Date,
-      default: new Date(),
+      type: String,
+      default: '',
     },
     motivation: {
       type: String,

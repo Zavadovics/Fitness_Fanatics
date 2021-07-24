@@ -1,38 +1,31 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
+import upload from '../middlewares/multer.js';
+import cloudinary from '../cloudinary.js';
+import Photo from '../models/Photo.js';
+import verify from '../middlewares/tokenVerification.js';
 import { loginController } from '../controllers/loginController.js';
 import { userController } from '../controllers/userController.js';
 import { cityController } from '../controllers/cityController.js';
 import { activityController } from '../controllers/activityController.js';
-// import { getActivityByIdController } from '../controllers/getActivityByIdController.js';
-import upload from '../middlewares/multer.js';
-import cloudinary from '../cloudinary.js';
-import Photo from '../models/Photo.js';
 
 const router = express.Router();
 router.use(cors());
 router.use(express.json());
 
-router.post('/login', loginController.post);
+router.post('/login', verify, loginController.post);
 router.post('/user', userController.post);
 router.get('/user/:id', userController.get);
 router.put('/user/:id', userController.put);
-// router.get('/user/:id', userController.getId);
 
 router.get('/cities', cityController.get);
 
-/* to fill fields of EditActivity */
-// router.get('/activities/:id', getActivityByIdController.get);
 router.post('/activities', activityController.post);
-
-// router.get('/activities/:id', activityController.get);
-// router.get('/activities', activityController.get);
 router.get('/activities/:id', activityController.get);
-// router.get('/activity/:id', activityController.getId);
-
 router.put('/activities/:id', activityController.put);
 router.delete('/activities/:id', activityController.delete);
+
 /* Upload or update image in Mongo & Cloudinary */
 router.put('/photo/:id', upload.single('image'), async (req, res) => {
   try {

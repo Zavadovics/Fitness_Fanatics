@@ -233,7 +233,7 @@ const Register = () => {
             <InputField
               name='password'
               type='password'
-              labelText='Jelszó'
+              labelText='Jelszó - (legalább 8 karakter)'
               value={formData.password}
               onChange={handleInputChange}
               onBlur={handleInputBlur}

@@ -9,6 +9,7 @@ const Activities = ({ profile, loggedInUser }) => {
   const { REACT_APP_SERVER_URL } = process.env;
   const [activities, setActivities] = useState([]);
   const [alert, setAlert] = useState(null);
+  console.log(loggedInUser);
 
   const messageTypes = Object.freeze({
     dbProblem: `Adatbázis probléma.`,

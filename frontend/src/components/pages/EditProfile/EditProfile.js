@@ -1,36 +1,19 @@
 import { useEffect, useState, useRef } from 'react';
-import CreatableSelect from 'react-select/creatable';
 import InputField from '../../common/InputField/InputField';
-import SelectField from '../../common/SelectField/SelectField';
 import validator from 'validator';
 import './editProfile.scss';
 
-/* FIX PASSWORD VALIDATION */
-const EditProfile = ({ loggedInUser, profile, setProfile }) => {
+const EditProfile = ({ loggedInUser }) => {
   const { REACT_APP_SERVER_URL } = process.env;
-
   const [cities, setCities] = useState([]);
-  const [citySelected, setCitySelected] = useState('');
-  const [cityToBeAdded, setCityToBeAdded] = useState('');
   const [error, setError] = useState(null);
 
   const genderList = ['férfi', 'nő', 'nem szeretném megadni'];
 
-  const [formData, setFormData] = useState({
-    lastName: '',
-    firstName: '',
-    password: '',
-    email: '',
-  });
-
-  // const [profile, setProfile] = useState({
-  //   userName: '',
-  //   gender: '',
-  //   cityOfResidence: '',
-  //   weight: '',
-  //   birthDate: '',
-  //   motivation: '',
-  // });
+  const [formData, setFormData] = useState('');
+  // if (formData && formData.password.length > 10) {
+  //   formData.password = '';
+  // }
 
   const [alert, setAlert] = useState(null);
   const [formWasValidated, setFormWasValidated] = useState(false);
@@ -49,8 +32,10 @@ const EditProfile = ({ loggedInUser, profile, setProfile }) => {
         .then(jsonRes => {
           const { password, ...rest } = jsonRes;
           setFormData(rest);
+          // setFormData(jsonRes);
+          console.log(formData);
           setError(null);
-          // console.log(error);
+          console.log(error);
         })
         .catch(err => {
           // console.error(err);
@@ -59,31 +44,6 @@ const EditProfile = ({ loggedInUser, profile, setProfile }) => {
     };
     getProfile();
   }, []);
-
-  /* City selector */
-
-  // const customStyles = {
-  //   input: (provided, state) => ({
-  //     ...provided,
-  //     color: 'red',
-  //     width: '110%',
-  //   }),
-  // };
-
-  const handleSelectChange = (newValue, actionMeta) => {
-    // console.group('Value Changed');
-    // console.log(newValue);
-    setCitySelected(newValue);
-    // console.log(`action: ${actionMeta.action}`);
-    // console.groupEnd();
-  };
-  const handleSelectInputChange = (inputValue, actionMeta) => {
-    // console.group('Input Changed');
-    // console.log(inputValue);
-    setCityToBeAdded(inputValue);
-    // console.log(`action: ${actionMeta.action}`);
-    // console.groupEnd();
-  };
 
   /* get cities */
   useEffect(() => {
@@ -97,7 +57,11 @@ const EditProfile = ({ loggedInUser, profile, setProfile }) => {
         return res.json();
       })
       .then(jsonRes => {
-        setCities(jsonRes);
+        const cityValues = [];
+        for (let i = 0; i < jsonRes.length; i++) {
+          cityValues.push(jsonRes[i].value);
+        }
+        setCities(cityValues);
         setError(null);
       })
       .catch(err => {
@@ -111,10 +75,15 @@ const EditProfile = ({ loggedInUser, profile, setProfile }) => {
   });
 
   const references = {
+    userName: useRef(),
     firstName: useRef(),
     lastName: useRef(),
     email: useRef(),
-    password: useRef(),
+    gender: useRef(),
+    cityOfResidence: useRef(),
+    weight: useRef(),
+    birthDate: useRef(),
+    motivation: useRef(),
   };
 
   const formErrorTypes = Object.freeze({
@@ -124,10 +93,16 @@ const EditProfile = ({ loggedInUser, profile, setProfile }) => {
   });
 
   const [formErrors, setFormErrors] = useState({
+    userName: '',
     firstName: '',
     lastName: '',
     email: '',
     password: '',
+    gender: '',
+    cityOfResidence: '',
+    weight: '',
+    birthDate: '',
+    motivation: '',
   });
 
   const isFieldEmpty = value => {
@@ -143,6 +118,9 @@ const EditProfile = ({ loggedInUser, profile, setProfile }) => {
   };
 
   const validators = {
+    userName: {
+      required: isFieldEmpty,
+    },
     firstName: {
       required: isFieldEmpty,
     },
@@ -157,9 +135,32 @@ const EditProfile = ({ loggedInUser, profile, setProfile }) => {
       required: isFieldEmpty,
       passwordLength: isPasswordValid,
     },
+    gender: {
+      required: isFieldEmpty,
+    },
+    cityOfResidence: {
+      required: isFieldEmpty,
+    },
+    weight: {
+      required: isFieldEmpty,
+    },
+    birthDate: {
+      required: isFieldEmpty,
+    },
+    motivation: {
+      required: isFieldEmpty,
+    },
   };
 
   const validateField = fieldName => {
+    // if (
+    //   fieldName === '_id' ||
+    //   fieldName === 'createdAt' ||
+    //   fieldName === 'updatedAt' ||
+    //   fieldName === '__v'
+    // )
+    //   return true;
+
     const value = formData[fieldName];
     let isValid = true;
     setFormErrors(prev => ({
@@ -190,12 +191,12 @@ const EditProfile = ({ loggedInUser, profile, setProfile }) => {
 
   const isFormValid = () => {
     let isValid = true;
-    for (const fieldName of Object.keys(formData)) {
+    Object.keys(formData).forEach(fieldName => {
       const isFieldValid = validateField(fieldName);
       if (!isFieldValid) {
         isValid = false;
       }
-    }
+    });
     return isValid;
   };
 
@@ -210,28 +211,23 @@ const EditProfile = ({ loggedInUser, profile, setProfile }) => {
       ...formData,
       [name]: value,
     });
-    setProfile({
-      ...profile,
-      [name]: value,
-    });
   };
 
   const handleSubmit = async e => {
     e.preventDefault();
     setAlert(null);
     setFormErrors({
+      userName: '',
       firstName: '',
       lastName: '',
       email: '',
       password: '',
+      gender: '',
+      cityOfResidence: '',
+      weight: '',
+      birthDate: '',
+      motivation: '',
     });
-    if (citySelected !== '') {
-      formData.cityOfResidence = citySelected.value;
-    }
-    if (cityToBeAdded !== '') {
-      formData.cityOfResidence = cityToBeAdded;
-      /* fetch to cities db to add new city */
-    }
 
     setFormWasValidated(false);
     const isValid = isFormValid();
@@ -242,7 +238,18 @@ const EditProfile = ({ loggedInUser, profile, setProfile }) => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData, profile),
+        body: JSON.stringify({
+          userName: formData.userName,
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          email: formData.email,
+          password: formData.password,
+          gender: formData.gender,
+          cityOfResidence: formData.cityOfResidence,
+          weight: formData.weight,
+          birthDate: formData.birthDate,
+          motivation: formData.motivation,
+        }),
       })
         .then(response => response.json())
         .then(res => {
@@ -250,8 +257,6 @@ const EditProfile = ({ loggedInUser, profile, setProfile }) => {
             setTimeout(() => {
               setAlert({ alertType: 'success', message: messageTypes.success });
             }, 3000);
-            setCitySelected('');
-            setCityToBeAdded('');
             console.log('új adatok sikeresen mentve');
           } else {
             setAlert({ alertType: 'danger', message: messageTypes.fail });
@@ -283,28 +288,28 @@ const EditProfile = ({ loggedInUser, profile, setProfile }) => {
               type='text'
               labelText='Felhasználónév'
               onChange={handleInputChange}
-              // onBlur={handleInputBlur}
               value={formData.userName}
-              // reference={references.userName}
-              // formError={formErrors.userName}
+              onBlur={handleInputBlur}
+              reference={references.userName}
+              formError={formErrors.userName}
             />
             <InputField
-              name='lastName'
+              // name='lastName'
               type='text'
               labelText='Vezetéknév'
               onChange={handleInputChange}
-              onBlur={handleInputBlur}
               value={formData.lastName}
+              onBlur={handleInputBlur}
               reference={references.lastName}
-              // formError={formErrors.lastName}
+              formError={formErrors.lastName}
             />
             <InputField
               name='firstName'
               type='text'
               labelText='Keresztnév'
               onChange={handleInputChange}
-              onBlur={handleInputBlur}
               value={formData.firstName}
+              onBlur={handleInputBlur}
               reference={references.firstName}
               formError={formErrors.firstName}
             />
@@ -313,83 +318,89 @@ const EditProfile = ({ loggedInUser, profile, setProfile }) => {
               type='email'
               labelText='Email'
               onChange={handleInputChange}
-              onBlur={handleInputBlur}
               value={formData.email}
+              onBlur={handleInputBlur}
               reference={references.email}
               formError={formErrors.email}
             />
             <InputField
               name='password'
               type='password'
-              labelText='Jelszó'
+              labelText='Jelszó - (min 6 karakter)'
+              placeholder='jelenlegi vagy új jelszó'
               onChange={handleInputChange}
-              onBlur={handleInputBlur}
               value={formData.password}
+              onBlur={handleInputBlur}
               reference={references.password}
               formError={formErrors.password}
             />
-            <SelectField
-              labelText='Nem'
-              name='gender'
+            <label className='form-label m-2' htmlFor='activityType'>
+              Típus
+            </label>
+            <select
+              className='form-select m-2'
               id='gender'
-              valueList={genderList}
-              onChange={handleInputChange}
+              name='gender'
               value={formData.gender}
-              // reference={references.gender}
-              // formError={formErrors.gender}
-            />
-            {/* <SelectField
-              labelText='Tartózkodási hely'
-              name='cityOfResidence'
-              id='cityOfResidence'
-              valueList={cities}
               onChange={handleInputChange}
+              onBlur={handleInputBlur}
+              reference={references.gender}
+              error={formErrors.gender}
+            >
+              {genderList.map(gender => (
+                <option value={gender} key={gender}>
+                  {gender}
+                </option>
+              ))}
+            </select>
+            <label className='form-label m-2' htmlFor='activityType'>
+              Típus
+            </label>
+            <select
+              className='form-select m-2'
+              id='cityOfResidence'
+              name='cityOfResidence'
               value={formData.cityOfResidence}
+              onChange={handleInputChange}
+              onBlur={handleInputBlur}
               reference={references.cityOfResidence}
-              formError={formErrors.cityOfResidence}
-            /> */}
-            <div className='citySelect'>
-              <label htmlFor='cityOfResidence'>Tartózkodási hely</label>
-              <CreatableSelect
-                id='cityOfResidence'
-                isClearable
-                onChange={handleSelectChange}
-                onInputChange={handleSelectInputChange}
-                options={cities}
-                placeholder='Válassz!'
-                // styles={customStyles}
-              />
-            </div>
-
+              error={formErrors.cityOfResidence}
+            >
+              {cities.map(city => (
+                <option value={city} key={city}>
+                  {city}
+                </option>
+              ))}
+            </select>
             <InputField
               name='weight'
               type='number'
               labelText='Testsúly'
               onChange={handleInputChange}
-              // onBlur={handleInputBlur}
               value={formData.weight}
-              // reference={references.weight}
-              // formError={formErrors.weight}
+              onBlur={handleInputBlur}
+              reference={references.weight}
+              formError={formErrors.weight}
             />
             <InputField
               name='birthDate'
               type='date'
               labelText='Születési dátum'
               onChange={handleInputChange}
-              // onBlur={handleInputBlur}
               value={formData.birthDate}
-              // reference={references.birthDate}
-              // formError={formErrors.birthDate}
+              onBlur={handleInputBlur}
+              reference={references.birthDate}
+              formError={formErrors.birthDate}
             />
             <InputField
               name='motivation'
               type='motivation'
               labelText='Motivációs szöveg'
               onChange={handleInputChange}
-              // onBlur={handleInputBlur}
               value={formData.motivation}
-              // reference={references.motivation}
-              // formError={formErrors.motivation}
+              onBlur={handleInputBlur}
+              reference={references.motivation}
+              formError={formErrors.motivation}
             />
           </div>
           <button type='submit' className='profile-edit-btn'>

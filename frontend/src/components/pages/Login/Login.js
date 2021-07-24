@@ -9,7 +9,6 @@ import './login.scss';
 
 const Login = ({ loggedInUser, setLoggedInUser }) => {
   const { REACT_APP_SERVER_URL, REACT_APP_GOOGLE_RECAPTCHA_KEY } = process.env;
-
   const [verified, setVerified] = useState(false);
   const history = useHistory();
 

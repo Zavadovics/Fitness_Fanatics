@@ -9,31 +9,26 @@ const EditActivity = ({ loggedInUser }) => {
   const [activity, setActivity] = useState('');
   const [error, setError] = useState(null);
 
-  useEffect(
-    () => {
-      fetch(`${REACT_APP_SERVER_URL}/api/activities/${loggedInUser.id}`)
-        .then(res => {
-          if (res.status < 200 || res.status >= 300) {
-            throw Error(
-              `could not fetch the data from database, error ${res.status}`
-            );
-          }
-          return res.json();
-        })
-        .then(jsonRes => {
-          setActivity(
-            jsonRes.filter(singleActivity => singleActivity._id === id)
+  useEffect(() => {
+    fetch(`${REACT_APP_SERVER_URL}/api/activities/${loggedInUser.id}`)
+      .then(res => {
+        if (res.status < 200 || res.status >= 300) {
+          throw Error(
+            `could not fetch the data from database, error ${res.status}`
           );
-          setError(null);
-        })
-        .catch(err => {
-          setError(err.message);
-        });
-    },
-    [
-      /* activity */
-    ]
-  );
+        }
+        return res.json();
+      })
+      .then(jsonRes => {
+        setActivity(
+          jsonRes.filter(singleActivity => singleActivity._id === id)
+        );
+        setError(null);
+      })
+      .catch(err => {
+        setError(err.message);
+      });
+  }, []);
 
   return (
     <main className='edit-activity-cont'>

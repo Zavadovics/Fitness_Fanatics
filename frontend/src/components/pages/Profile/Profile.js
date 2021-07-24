@@ -4,8 +4,10 @@ import user from '../../../images/user.png';
 import './profile.scss';
 
 const Profile = ({ loggedInUser, profile, setProfile, userPhoto }) => {
+  console.log('profile', profile);
   const { REACT_APP_SERVER_URL } = process.env;
   const [error, setError] = useState(null);
+
   useEffect(() => {
     const getProfile = async () => {
       fetch(`${REACT_APP_SERVER_URL}/api/user/${loggedInUser.id}`)

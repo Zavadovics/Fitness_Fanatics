@@ -4,7 +4,6 @@ import user from '../../../images/user.png';
 import './profile.scss';
 
 const Profile = ({ loggedInUser, profile, setProfile, userPhoto }) => {
-  console.log('profile', profile);
   const { REACT_APP_SERVER_URL } = process.env;
   const [error, setError] = useState(null);
 
@@ -37,8 +36,8 @@ const Profile = ({ loggedInUser, profile, setProfile, userPhoto }) => {
         <h2>Saját profil</h2>
         <div className='profile-card'>
           <div className='user-photo-cont'>
-            {userPhoto.image !== '' ? (
-              <img src={userPhoto.image} alt='' />
+            {userPhoto !== '' ? (
+              <img src={userPhoto} alt='' />
             ) : (
               <img src={user} alt='' />
             )}

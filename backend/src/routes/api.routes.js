@@ -9,12 +9,13 @@ import { loginController } from '../controllers/loginController.js';
 import { userController } from '../controllers/userController.js';
 import { cityController } from '../controllers/cityController.js';
 import { activityController } from '../controllers/activityController.js';
+// import { photoController } from '../controllers/photoController.js';
 
 const router = express.Router();
 router.use(cors());
 router.use(express.json());
 
-router.post('/login', verify, loginController.post);
+router.post('/login', /* verify, */ loginController.post);
 router.post('/user', userController.post);
 router.get('/user/:id', userController.get);
 router.put('/user/:id', userController.put);
@@ -26,11 +27,15 @@ router.get('/activities/:id', activityController.get);
 router.put('/activities/:id', activityController.put);
 router.delete('/activities/:id', activityController.delete);
 
+// router.get('/photo/:id', photoController.get);
+// router.put('/photo/:id', photoController.put);
+// router.delete('/photo/:id', photoController.delete);
+
 /* Upload or update image in Mongo & Cloudinary */
 router.put('/photo/:id', upload.single('image'), async (req, res) => {
   try {
     let photo = await Photo.find({ user_id: req.params.id });
-
+      console.log('photo', photo.length);
     if (photo.length !== 0) {
       // Delete image from Cloudinary
       await cloudinary.v2.uploader.destroy(
@@ -48,7 +53,8 @@ router.put('/photo/:id', upload.single('image'), async (req, res) => {
         [
           {
             $set: {
-              user_id: req.params.id,
+              user_id: req.body.user_id,
+              user_email: req.body.user_email,
               avatar: result.secure_url,
               cloudinary_id: result.public_id,
             },
@@ -56,9 +62,11 @@ router.put('/photo/:id', upload.single('image'), async (req, res) => {
         ],
         { upsert: true }
       );
+
       res.status(200).json({
         status: 200,
         message: 'upload successful',
+        image: result.secure_url,
       });
     } else {
       // Upload image to cloudinary
@@ -66,13 +74,15 @@ router.put('/photo/:id', upload.single('image'), async (req, res) => {
       if (req.file) {
         result = await cloudinary.uploader.upload(req.file.path);
       }
+
       // Save image in MongoDB
       photo = await Photo.updateOne(
         { user_id: req.params.id },
         [
           {
             $set: {
-              user_id: req.params.id,
+              user_id: req.body.user_id,
+              user_email: req.body.user_email,      
               avatar: result.secure_url,
               cloudinary_id: result.public_id,
             },
@@ -80,11 +90,12 @@ router.put('/photo/:id', upload.single('image'), async (req, res) => {
         ],
         { upsert: true }
       );
-    }
     res.status(200).json({
       status: 200,
       message: 'upload successful',
+      image: result.secure_url,
     });
+    }
   } catch (err) {
     console.error(err);
   }

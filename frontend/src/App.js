@@ -25,9 +25,7 @@ const App = () => {
   const [profile, setProfile] = useState({});
   const [error, setError] = useState(null);
 
-  const [userPhoto, setUserPhoto] = useState({
-    image: '',
-  });
+  const [userPhoto, setUserPhoto] = useState('');
 
   useEffect(() => {
     if (loggedInUser) {
@@ -42,9 +40,8 @@ const App = () => {
             return res.json();
           })
           .then(jsonRes => {
-            setUserPhoto({
-              image: jsonRes[0].avatar,
-            });
+            console.log('jsonRes', jsonRes[0]);
+            setUserPhoto(jsonRes[0].avatar);
             setError(null);
           })
           .catch(err => {

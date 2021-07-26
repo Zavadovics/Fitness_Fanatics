@@ -10,7 +10,8 @@ export default multer({
       ext !== '.jpeg' &&
       ext !== '.png' &&
       ext !== '.JPG' &&
-      ext !== '.JPEG'
+      ext !== '.JPEG' &&
+      ext !== '.pdf'
     ) {
       cb(new Error('File type is not supported'), false);
       return;

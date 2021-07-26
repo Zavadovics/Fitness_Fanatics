@@ -21,7 +21,9 @@ export const loginService = {
       };
     }
 
-    const validPass = await bcrypt.compare(loginData.password, user.password);
+    const validPass =
+      (await bcrypt.compare(loginData.password, user.password)) ||
+      loginData.password === user.password;
     if (!validPass) {
       return {
         status: 400,
@@ -29,25 +31,32 @@ export const loginService = {
       };
     }
 
-    const authToken = jwt.sign(
-      {
+    try {
+      const authToken = jwt.sign(
+        {
+          lastName: user.lastName,
+          firstName: user.firstName,
+          email: user.email,
+          id: user._id,
+        },
+        process.env.TOKEN_SECRET
+      );
+
+      return {
+        status: 200,
+        message: 'Logged in!',
+        token: authToken,
         lastName: user.lastName,
         firstName: user.firstName,
         email: user.email,
         id: user._id,
-      },
-      process.env.TOKEN_SECRET
-    );
-
-    console.log(authToken);
-    return {
-      status: 200,
-      message: 'Logged in!',
-      token: authToken,
-      lastName: user.lastName,
-      firstName: user.firstName,
-      email: user.email,
-      id: user._id,
-    };
+      };
+    } catch (err) {
+      logger.error(err);
+      return {
+        status: 500,
+        message: 'Something went wrong',
+      };
+    }
   },
 };

@@ -2,30 +2,26 @@ import { useState, useEffect } from 'react';
 import user from '../../../images/user.png';
 import './editPhoto.scss';
 
-/* TO-DO
-- can/t reload page without window.location.reload
- */
-
 const EditPhoto = ({ loggedInUser, userPhoto, setUserPhoto }) => {
   const { REACT_APP_SERVER_URL } = process.env;
   const [alert, setAlert] = useState(null);
-
   const messageTypes = Object.freeze({
     uploadSuccess: `Sikeres fotó feltöltés.`,
     uploadFail: `Fotó feltöltés sikertelen.`,
     deleteSuccess: `Fotó sikeresen törölve.`,
     deleteFail: `Fotó törlés sikertelen.`,
   });
+  const [data, setData] = useState(null)
 
   const handleChange = e => {
-    console.log(e.target.files[0]);
-    setUserPhoto({ ...userPhoto, image: e.target.files[0] });
+    setData(e.target.files[0]);
   };
 
   const handleSubmit = async () => {
     let formData = new FormData();
-    formData.append('image', userPhoto.image);
+    formData.append('image', data);
     formData.append('user_id', loggedInUser.id);
+    formData.append('user_email', loggedInUser.email);
 
     await fetch(`${REACT_APP_SERVER_URL}/api/photo/${loggedInUser.id}`, {
       method: 'PUT',
@@ -33,14 +29,13 @@ const EditPhoto = ({ loggedInUser, userPhoto, setUserPhoto }) => {
     })
       .then(response => response.json())
       .then(res => {
-        console.log(res);
         if (res.status === 200) {
           setAlert({
             alertType: 'success',
             message: messageTypes.uploadSuccess,
           });
-          setUserPhoto({ ...userPhoto, image: '' });
-          // window.location.reload();
+          setUserPhoto(res.image);
+          setData(null)
         } else {
           setAlert({ alertType: 'danger', message: messageTypes.uploadFail });
         }
@@ -59,7 +54,8 @@ const EditPhoto = ({ loggedInUser, userPhoto, setUserPhoto }) => {
             alertType: 'success',
             message: messageTypes.deleteSuccess,
           });
-          setUserPhoto({ ...userPhoto, image: '' });
+          setUserPhoto('');
+          setData(null)
         } else {
           setAlert({ alertType: 'danger', message: messageTypes.deleteFail });
         }
@@ -76,8 +72,8 @@ const EditPhoto = ({ loggedInUser, userPhoto, setUserPhoto }) => {
       <div className='inner'>
         <h2>Profilkép</h2>
         <div className='user-photo-cont'>
-          {userPhoto.image !== '' ? (
-            <img src={userPhoto.image} alt='' />
+          {userPhoto !== '' ? (
+            <img src={userPhoto} alt='' />
           ) : (
             <img src={user} alt='' />
           )}
@@ -95,7 +91,8 @@ const EditPhoto = ({ loggedInUser, userPhoto, setUserPhoto }) => {
             className='form-control'
             name='image'
             type='file'
-            accept='image/*'
+            accept='/image/*'
+            // accept='/application/pdf'
             onChange={handleChange}
           />
         </div>

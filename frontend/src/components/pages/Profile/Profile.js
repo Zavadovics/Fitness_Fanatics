@@ -3,32 +3,10 @@ import { NavLink } from 'react-router-dom';
 import user from '../../../images/user.png';
 import './profile.scss';
 
-const Profile = ({ loggedInUser, profile, setProfile, userPhoto }) => {
+const Profile = ({ loggedInUser, profile, userPhoto }) => {
+
   const { REACT_APP_SERVER_URL } = process.env;
   const [error, setError] = useState(null);
-
-  useEffect(() => {
-    const getProfile = async () => {
-      fetch(`${REACT_APP_SERVER_URL}/api/user/${loggedInUser.id}`)
-        .then(res => {
-          if (res.status < 200 || res.status >= 300) {
-            throw Error(
-              `could not fetch the data from database, error ${res.status}`
-            );
-          }
-          return res.json();
-        })
-        .then(jsonRes => {
-          setProfile(jsonRes);
-          setError(null);
-          // console.log(error);
-        })
-        .catch(err => {
-          setError(err.message);
-        });
-    };
-    getProfile();
-  }, [REACT_APP_SERVER_URL, error, loggedInUser.id, setProfile]);
 
   return (
     <>
@@ -86,7 +64,6 @@ const Profile = ({ loggedInUser, profile, setProfile, userPhoto }) => {
               <p>{profile.motivation}</p>
             </div>
           </div>
-
           <NavLink to={`/profile/edit/${loggedInUser.id}`}>
             <button type='button' className='prof-mod-btn'>
               MÓDOSÍTÁS

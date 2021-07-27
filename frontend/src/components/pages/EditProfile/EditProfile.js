@@ -3,47 +3,18 @@ import InputField from '../../common/InputField/InputField';
 import validator from 'validator';
 import './editProfile.scss';
 
-const EditProfile = ({ loggedInUser }) => {
+const EditProfile = ({ profile, setProfile, loggedInUser }) => {
+
   const { REACT_APP_SERVER_URL } = process.env;
   const [cities, setCities] = useState([]);
   const [error, setError] = useState(null);
-
   const genderList = ['férfi', 'nő', 'nem szeretném megadni'];
-
-  const [formData, setFormData] = useState('');
-  // if (formData && formData.password.length > 10) {
-  //   formData.password = '';
-  // }
-
+  const [formData, setFormData] = useState(profile);
   const [alert, setAlert] = useState(null);
   const [formWasValidated, setFormWasValidated] = useState(false);
 
-  useEffect(() => {
-    const getProfile = async () => {
-      fetch(`${REACT_APP_SERVER_URL}/api/user/${loggedInUser.id}`)
-        .then(res => {
-          if (res.status < 200 || res.status >= 300) {
-            throw Error(
-              `could not fetch the data from database, error ${res.status}`
-            );
-          }
-          return res.json();
-        })
-        .then(jsonRes => {
-          const { password, ...rest } = jsonRes;
-          setFormData(rest);
-          // setFormData(jsonRes);
-          console.log(formData);
-          setError(null);
-          console.log(error);
-        })
-        .catch(err => {
-          // console.error(err);
-          setError(err.message);
-        });
-    };
-    getProfile();
-  }, []);
+// console.log('props - profile', profile);
+// console.log('start - formData', formData);
 
   /* get cities */
   useEffect(() => {
@@ -97,7 +68,6 @@ const EditProfile = ({ loggedInUser }) => {
     firstName: '',
     lastName: '',
     email: '',
-    password: '',
     gender: '',
     cityOfResidence: '',
     weight: '',
@@ -131,10 +101,6 @@ const EditProfile = ({ loggedInUser }) => {
       required: isFieldEmpty,
       validEmail: isEmailInvalid,
     },
-    password: {
-      required: isFieldEmpty,
-      passwordLength: isPasswordValid,
-    },
     gender: {
       required: isFieldEmpty,
     },
@@ -153,14 +119,6 @@ const EditProfile = ({ loggedInUser }) => {
   };
 
   const validateField = fieldName => {
-    // if (
-    //   fieldName === '_id' ||
-    //   fieldName === 'createdAt' ||
-    //   fieldName === 'updatedAt' ||
-    //   fieldName === '__v'
-    // )
-    //   return true;
-
     const value = formData[fieldName];
     let isValid = true;
     setFormErrors(prev => ({
@@ -221,7 +179,6 @@ const EditProfile = ({ loggedInUser }) => {
       firstName: '',
       lastName: '',
       email: '',
-      password: '',
       gender: '',
       cityOfResidence: '',
       weight: '',
@@ -237,13 +194,14 @@ const EditProfile = ({ loggedInUser }) => {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${loggedInUser.token}`,
         },
         body: JSON.stringify({
           userName: formData.userName,
           firstName: formData.firstName,
           lastName: formData.lastName,
           email: formData.email,
-          password: formData.password,
+          password: profile.password,
           gender: formData.gender,
           cityOfResidence: formData.cityOfResidence,
           weight: formData.weight,
@@ -253,10 +211,12 @@ const EditProfile = ({ loggedInUser }) => {
       })
         .then(response => response.json())
         .then(res => {
-          if (res.status >= 200 && res.status < 300) {
+          if (res.status === 200) {
+            console.log('after submit formData', formData);
             setTimeout(() => {
               setAlert({ alertType: 'success', message: messageTypes.success });
             }, 3000);
+            setProfile(formData)
             console.log('új adatok sikeresen mentve');
           } else {
             setAlert({ alertType: 'danger', message: messageTypes.fail });
@@ -294,7 +254,7 @@ const EditProfile = ({ loggedInUser }) => {
               formError={formErrors.userName}
             />
             <InputField
-              // name='lastName'
+              name='lastName'
               type='text'
               labelText='Vezetéknév'
               onChange={handleInputChange}
@@ -322,17 +282,6 @@ const EditProfile = ({ loggedInUser }) => {
               onBlur={handleInputBlur}
               reference={references.email}
               formError={formErrors.email}
-            />
-            <InputField
-              name='password'
-              type='password'
-              labelText='Jelszó - (min 6 karakter)'
-              placeholder='jelenlegi vagy új jelszó'
-              onChange={handleInputChange}
-              value={formData.password}
-              onBlur={handleInputBlur}
-              reference={references.password}
-              formError={formErrors.password}
             />
             <label className='form-label m-2' htmlFor='activityType'>
               Típus

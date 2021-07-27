@@ -20,19 +20,25 @@ const newUser = localStorage.getItem('loggedInUser')
   : null;
 
 const App = () => {
+
   const { REACT_APP_SERVER_URL } = process.env;
   const [loggedInUser, setLoggedInUser] = useState(newUser);
-  const [profile, setProfile] = useState({});
+  const [profile, setProfile] = useState('');
   const [error, setError] = useState(null);
-
   const [userPhoto, setUserPhoto] = useState('');
 
   useEffect(() => {
     if (loggedInUser) {
       const getPhoto = async () => {
-        fetch(`${REACT_APP_SERVER_URL}/api/photo/${loggedInUser.id}`)
+        fetch(`${REACT_APP_SERVER_URL}/api/photo/${loggedInUser.id}`, {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+        Authorization: `Bearer ${loggedInUser.token}`,
+      },
+        })
           .then(res => {
-            if (res.status < 200 || res.status >= 300) {
+            if (res.status !== 200) {
               throw Error(
                 `could not fetch data from database, error ${res.status}`
               );
@@ -40,7 +46,7 @@ const App = () => {
             return res.json();
           })
           .then(jsonRes => {
-            console.log('jsonRes', jsonRes[0]);
+            console.log('jsonRes', jsonRes);
             setUserPhoto(jsonRes[0].avatar);
             setError(null);
           })
@@ -50,6 +56,39 @@ const App = () => {
       };
       getPhoto();
     }
+  }, []);
+
+
+useEffect(() => {
+      if (loggedInUser) {
+    const getProfile = async () => {
+      fetch(`${REACT_APP_SERVER_URL}/api/user/${loggedInUser.id}`, {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+        Authorization: `Bearer ${loggedInUser.token}`,
+      },
+      })
+        .then(res => {
+          // console.log('res', res);
+          if (res.status !== 200) {
+            throw Error(
+              `could not fetch the data from database, error ${res.status}`
+            );
+          }
+          return res.json();
+        })
+        .then(jsonRes => {
+          setProfile(jsonRes);
+          // console.log('profile', profile);
+          setError(null);
+        })
+        .catch(err => {
+          setError(err.message);
+        });
+    };
+    getProfile();
+      }
   }, []);
 
   return (
@@ -79,7 +118,6 @@ const App = () => {
                       loggedInUser={loggedInUser}
                       userPhoto={userPhoto}
                       profile={profile}
-                      setProfile={setProfile}
                     />
                   </Route>
                   <Route exact path={`/profile/edit/${loggedInUser.id}`}>

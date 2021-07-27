@@ -28,7 +28,6 @@ export const activityController = {
 
   /* ⬇️ find an activity in db by Id - OK */
   async getId(req, res) {
-    console.log('haha');
     try {
       const activity = await Activity.findById(req.params.id);
       res.status(200).json(activity);

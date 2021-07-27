@@ -60,6 +60,10 @@
     background: variables.$color-darkorange;
 }
 
+.link {
+    text-decoration: none;
+}
+
 @media screen and (max-width: 768px) {
     .alert-cont {
         width: 70%;

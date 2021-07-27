@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useHistory, Link } from 'react-router-dom';
 import ReCAPTCHA from 'react-google-recaptcha';
 import validator from 'validator';
 import Navbar from '../../common/Navbar/Navbar';
@@ -215,6 +215,11 @@ const Login = ({ loggedInUser, setLoggedInUser }) => {
               />
             </div>
           </div>
+          <p className='link'>
+            <Link to='/register' className='link'>
+                  Még nem regisztráltál? Itt megteheted.
+            </Link>
+          </p>
           <button type='submit' className='custom-btn'>
             BEJELENTKEZÉS
           </button>

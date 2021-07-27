@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useHistory, Link } from 'react-router-dom';
 import ReCAPTCHA from 'react-google-recaptcha';
 import validator from 'validator';
 import Navbar from '../../common/Navbar/Navbar';
@@ -247,14 +247,14 @@ const Register = () => {
               />
             </div>
           </div>
+        <p className='link'>
+          <Link to='/login' className='link'>
+              Már regisztráltál? Itt bejelentkezhetsz.
+          </Link>
+        </p>
           <button type='submit' className='register-btn'>
             REGISZTRÁCÓ
           </button>
-          {/* <Link to='/login' className='link'>
-            <button type='button' className='link-btn'>
-              Már regisztráltál? Itt bejelentkezhetsz
-            </button>
-          </Link> */}
         </form>
       </div>
       <Footer />

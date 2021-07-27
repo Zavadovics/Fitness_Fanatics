@@ -9,13 +9,12 @@ import './card.scss';
 import Moment from 'react-moment';
 import 'moment/locale/hu';
 
-const Card = ({ profile, activity, activities, setActivities }) => {
+const Card = ({ loggedInUser, profile, activity, activities, setActivities }) => {
   const { REACT_APP_SERVER_URL } = process.env;
   const [alert, setAlert] = useState(null);
   const [error, setError] = useState(null);
 
   const messageTypes = Object.freeze({
-    deleteSuccess: `Tevékenység sikeresen törölve.`,
     deleteFail: `Tevékenység törlése sikertelen.`,
   });
 
@@ -25,10 +24,11 @@ const Card = ({ profile, activity, activities, setActivities }) => {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${loggedInUser.token}`,
       },
     })
       .then(res => {
-        if (res.status < 200 || res.status >= 300) {
+        if (res.status !== 200) {
           throw Error(
             `could not delete data from database, error status ${res.status}`
           );
@@ -37,10 +37,6 @@ const Card = ({ profile, activity, activities, setActivities }) => {
       })
       .then(jsonRes => {
         setAlert(null);
-        setAlert({
-          alertType: 'success',
-          message: messageTypes.deleteSuccess,
-        });
         setActivities(
           activities.filter(
             updatedActivities => updatedActivities._id !== activity._id

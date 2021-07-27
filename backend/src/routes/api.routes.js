@@ -10,32 +10,33 @@ import { userController } from '../controllers/userController.js';
 import { cityController } from '../controllers/cityController.js';
 import { activityController } from '../controllers/activityController.js';
 // import { photoController } from '../controllers/photoController.js';
+import swaggerJsDoc from "swagger-jsdoc";
+import swaggerUi from "swagger-ui-express";
 
 const router = express.Router();
 router.use(cors());
 router.use(express.json());
 
-router.post('/login', /* verify, */ loginController.post);
+router.post('/login', loginController.post);
 router.post('/user', userController.post);
-router.get('/user/:id', userController.get);
-router.put('/user/:id', userController.put);
+router.get('/user/:id', verify, userController.get);
+router.put('/user/:id', verify, userController.put);
 
 router.get('/cities', cityController.get);
 
-router.post('/activities', activityController.post);
-router.get('/activities/:id', activityController.get);
-router.put('/activities/:id', activityController.put);
-router.delete('/activities/:id', activityController.delete);
+router.post('/activities', verify, activityController.post);
+router.get('/activities/:id', verify, activityController.get);
+router.put('/activities/:id', verify, activityController.put);
+router.delete('/activities/:id', verify, activityController.delete);
 
 // router.get('/photo/:id', photoController.get);
 // router.put('/photo/:id', photoController.put);
 // router.delete('/photo/:id', photoController.delete);
 
 /* Upload or update image in Mongo & Cloudinary */
-router.put('/photo/:id', upload.single('image'), async (req, res) => {
+router.put('/photo/:id', verify, upload.single('image'), async (req, res) => {
   try {
     let photo = await Photo.find({ user_id: req.params.id });
-      console.log('photo', photo.length);
     if (photo.length !== 0) {
       // Delete image from Cloudinary
       await cloudinary.v2.uploader.destroy(
@@ -102,7 +103,7 @@ router.put('/photo/:id', upload.single('image'), async (req, res) => {
 });
 
 /*  */
-router.get('/photo/:id', async (req, res) => {
+router.get('/photo/:id', verify, async (req, res) => {
   try {
     // Find photo by id
     const photo = await Photo.find({ user_id: req.params.id });
@@ -112,7 +113,7 @@ router.get('/photo/:id', async (req, res) => {
   }
 });
 
-router.delete('/photo/:id', async (req, res) => {
+router.delete('/photo/:id', verify, async (req, res) => {
   try {
     // Find photo by id
     const photo = await Photo.find({ user_id: req.params.id });

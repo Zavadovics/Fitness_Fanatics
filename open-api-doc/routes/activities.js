@@ -1,6 +1,6 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
-const { nanoid } = require('nanoid');
+import { nanoid } from 'nanoid';
 
 const idLength = 24;
 
@@ -58,10 +58,17 @@ const idLength = 24;
 
 /**
  * @swagger
- * /activities/:id:
+ * /activities/{id}:
  *   get:
- *     summary: Returns the list of all the activities of the logged in user
- *     tags: [Activities]
+ *     summary: gets all activities of the logged in user
+ *     tags: [Activity]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The user id
  *     responses:
  *       200:
  *         description: The list of the activities
@@ -81,4 +88,4 @@ router.get('/:id', (req, res) => {
   res.send(activities);
 });
 
-module.exports = router;
+export default router;

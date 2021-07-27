@@ -10,9 +10,15 @@ const EditActivity = ({ loggedInUser }) => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetch(`${REACT_APP_SERVER_URL}/api/activities/${loggedInUser.id}`)
+    fetch(`${REACT_APP_SERVER_URL}/api/activities/${loggedInUser.id}`, {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+        Authorization: `Bearer ${loggedInUser.token}`,
+      },
+        })
       .then(res => {
-        if (res.status < 200 || res.status >= 300) {
+        if (res.status !== 200) {
           throw Error(
             `could not fetch the data from database, error ${res.status}`
           );

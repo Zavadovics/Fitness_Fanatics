@@ -12,7 +12,7 @@ const ActivityForm = ({ type, activity, loggedInUser }) => {
   const { REACT_APP_SERVER_URL } = process.env;
   // const id = type === 'edit' ? activity._id : null;
 
-  const activityTypeList = ['futás', 'kerékpározás', 'úszás', 'aerobic'];
+  const activityTypeList = ['futás', 'kerékpározás', 'úszás'];
 
   const [formData, setFormData] = useState(
     type === 'edit'
@@ -182,13 +182,14 @@ const ActivityForm = ({ type, activity, loggedInUser }) => {
     setFormWasValidated(false);
     const isValid = isFormValid();
     if (isValid) {
-      console.log('new - handleSubmit', formData);
+      // console.log('new - handleSubmit', formData);
       if (type === 'new') {
-        console.log('new', loggedInUser.email);
+        // console.log('new', loggedInUser.email);
         await fetch(`${REACT_APP_SERVER_URL}/api/activities`, {
           method: 'post',
           headers: {
             'Content-Type': 'application/json',
+            Authorization: `Bearer ${loggedInUser.token}`,
           },
           body: JSON.stringify({
             user_id: loggedInUser.id,
@@ -203,8 +204,8 @@ const ActivityForm = ({ type, activity, loggedInUser }) => {
         })
           // .then(response => response.json())
           .then(res => {
-            console.log('res', res);
-            if (res.status >= 200 && res.status < 300) {
+            // console.log('res', res);
+            if (res.status === 200) {
               setAlert({
                 alertType: 'success',
                 message: messageTypes.createSuccess,
@@ -218,24 +219,24 @@ const ActivityForm = ({ type, activity, loggedInUser }) => {
                 comment: '',
               });
               e.target.reset();
-              console.log('új tevékenység sikeresen elmentve');
+              // console.log('új tevékenység sikeresen elmentve');
             } else {
               setAlert({
                 alertType: 'danger',
                 message: messageTypes.createFail,
               });
-              console.log('új tevékenység mentése sikertelen');
+              // console.log('új tevékenység mentése sikertelen');
             }
           });
       }
       if (type === 'edit') {
-        /* !!!!!! can not get activity id or activity */
-        console.log('edit - handleSubmit', formData);
-        console.log('loggedInUser.id', loggedInUser.id);
+        // console.log('edit - handleSubmit', formData);
+        // console.log('loggedInUser.id', loggedInUser.id);
         await fetch(`${REACT_APP_SERVER_URL}/api/activities/${activity._id}`, {
           method: 'put',
           headers: {
             'Content-Type': 'application/json',
+            Authorization: `Bearer ${loggedInUser.token}`,
           },
           body: JSON.stringify({
             user_id: loggedInUser.id,

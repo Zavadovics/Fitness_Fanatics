@@ -3,6 +3,7 @@ import user from '../../../images/user.png';
 import './editPhoto.scss';
 
 const EditPhoto = ({ loggedInUser, userPhoto, setUserPhoto }) => {
+
   const { REACT_APP_SERVER_URL } = process.env;
   const [alert, setAlert] = useState(null);
   const messageTypes = Object.freeze({
@@ -25,6 +26,9 @@ const EditPhoto = ({ loggedInUser, userPhoto, setUserPhoto }) => {
 
     await fetch(`${REACT_APP_SERVER_URL}/api/photo/${loggedInUser.id}`, {
       method: 'PUT',
+      headers: {
+      Authorization: `Bearer ${loggedInUser.token}`,
+    },
       body: formData,
     })
       .then(response => response.json())
@@ -45,7 +49,10 @@ const EditPhoto = ({ loggedInUser, userPhoto, setUserPhoto }) => {
   const handleDelete = async () => {
     await fetch(`${REACT_APP_SERVER_URL}/api/photo/${loggedInUser.id}`, {
       method: 'DELETE',
-    })
+      headers: {
+            Authorization: `Bearer ${loggedInUser.token}`,
+          },
+        })
       .then(response => response.json())
       .then(res => {
         console.log(res);

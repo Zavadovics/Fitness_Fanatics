@@ -9,7 +9,6 @@ const Activities = ({ profile, loggedInUser }) => {
   const { REACT_APP_SERVER_URL } = process.env;
   const [activities, setActivities] = useState([]);
   const [alert, setAlert] = useState(null);
-  console.log(loggedInUser);
 
   const messageTypes = Object.freeze({
     dbProblem: `Adatbázis probléma.`,
@@ -17,9 +16,15 @@ const Activities = ({ profile, loggedInUser }) => {
 
   /* Get all activities */
   useEffect(() => {
-    fetch(`${REACT_APP_SERVER_URL}/api/activities/${loggedInUser.id}`)
+    fetch(`${REACT_APP_SERVER_URL}/api/activities/${loggedInUser.id}`, {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+        Authorization: `Bearer ${loggedInUser.token}`,
+      },
+        })
       .then(res => {
-        if (res.status < 200 || res.status >= 300) {
+        if (res.status !== 200) {
           setAlert({ alertType: 'danger', message: messageTypes.dbProblem });
           throw Error(
             `could not fetch the data from database, error ${res.status}`
@@ -57,6 +62,7 @@ const Activities = ({ profile, loggedInUser }) => {
                   activity={activity}
                   activities={activities}
                   setActivities={setActivities}
+                  loggedInUser={loggedInUser}
                 />
               </div>
             ))}

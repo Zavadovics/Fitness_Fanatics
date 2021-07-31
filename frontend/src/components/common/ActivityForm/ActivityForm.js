@@ -182,9 +182,7 @@ const ActivityForm = ({ type, activity, loggedInUser }) => {
     setFormWasValidated(false);
     const isValid = isFormValid();
     if (isValid) {
-      // console.log('new - handleSubmit', formData);
       if (type === 'new') {
-        // console.log('new', loggedInUser.email);
         await fetch(`${REACT_APP_SERVER_URL}/api/activities`, {
           method: 'post',
           headers: {
@@ -201,37 +199,30 @@ const ActivityForm = ({ type, activity, loggedInUser }) => {
             distance: formData.distance,
             comment: formData.comment,
           }),
-        })
-          // .then(response => response.json())
-          .then(res => {
-            // console.log('res', res);
-            if (res.status === 200) {
-              setAlert({
-                alertType: 'success',
-                message: messageTypes.createSuccess,
-              });
-              setFormData({
-                activityDate: '',
-                activityTime: '',
-                duration: '',
-                activityType: '',
-                distance: '',
-                comment: '',
-              });
-              e.target.reset();
-              // console.log('új tevékenység sikeresen elmentve');
-            } else {
-              setAlert({
-                alertType: 'danger',
-                message: messageTypes.createFail,
-              });
-              // console.log('új tevékenység mentése sikertelen');
-            }
-          });
+        }).then(res => {
+          if (res.status === 200) {
+            setAlert({
+              alertType: 'success',
+              message: messageTypes.createSuccess,
+            });
+            setFormData({
+              activityDate: '',
+              activityTime: '',
+              duration: '',
+              activityType: '',
+              distance: '',
+              comment: '',
+            });
+            e.target.reset();
+          } else {
+            setAlert({
+              alertType: 'danger',
+              message: messageTypes.createFail,
+            });
+          }
+        });
       }
       if (type === 'edit') {
-        // console.log('edit - handleSubmit', formData);
-        // console.log('loggedInUser.id', loggedInUser.id);
         await fetch(`${REACT_APP_SERVER_URL}/api/activities/${activity._id}`, {
           method: 'put',
           headers: {

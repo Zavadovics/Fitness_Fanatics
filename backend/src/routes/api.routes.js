@@ -28,6 +28,7 @@ router.get('/user/:id', verify, userController.get);
 router.put('/user/:id', verify, userController.put);
 
 router.get('/cities', cityController.get);
+/* to-do ---> post */
 
 router.post('/activities', /* verify, */ activityController.post);
 router.get('/activities/:id', /* verify, */ activityController.get);

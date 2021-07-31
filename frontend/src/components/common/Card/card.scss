@@ -15,6 +15,10 @@
     color: black;
 }
 
+.card-body {
+    background: variables.$color-test;
+}
+
 .card .comment {
     border-top: 2px solid variables.$color-lightorange;
 }

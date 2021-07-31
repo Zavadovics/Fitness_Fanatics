@@ -26,14 +26,14 @@ export const userController = {
   /* ⬆️ save new user - OK */
 
   /* ⬇️ find user in database by Id - OK */
-  async getId(req, res) {
-    try {
-      const user = await User.findById(req.params.id);
-      res.status(200).json(user);
-    } catch (err) {
-      res.status(500).json(err);
-    }
-  },
+  // async getId(req, res) {
+  //   try {
+  //     const user = await User.findById(req.params.id);
+  //     res.status(200).json(user);
+  //   } catch (err) {
+  //     res.status(500).json(err);
+  //   }
+  // },
   /* ⬆️ find user in database by Id - OK */
 
   /* ⬇️ update user in database - OK */
@@ -51,4 +51,18 @@ export const userController = {
     }
   },
   /* ⬆️ update user in database - OK */
+
+  /* ⬇️ update user password in database - OK */
+
+  async putPassword(req, res, next) {
+    try {
+      const data = await userService.updateUserPassword(req.body);
+      console.log('controller - req.body', req.body);
+      res.status(data.status).json(data);
+    } catch (err) {
+      console.error(err);
+      next(err);
+    }
+  },
+  /* ⬆️ update user password in database - OK */
 };

@@ -378,7 +378,7 @@ const ActivityForm = ({ type, activity, loggedInUser }) => {
               error={formErrors.comment}
             />
           </div>
-          <button type='submit' className='custom-btn'>
+          <button type='submit' className='activity-btn'>
             MENTÉS
           </button>
         </form>

@@ -4,10 +4,12 @@ import user from '../../../images/user.png';
 import './profile.scss';
 
 const Profile = ({ loggedInUser, profile, userPhoto }) => {
-
   const { REACT_APP_SERVER_URL } = process.env;
   const [error, setError] = useState(null);
 
+  // console.log('loggedInUser', loggedInUser);
+  // console.log('profile', profile);
+  // console.log('userPhoto', userPhoto);
   return (
     <>
       <div className='view-profile-cont'>
@@ -30,11 +32,11 @@ const Profile = ({ loggedInUser, profile, userPhoto }) => {
               <p>{profile.lastName}</p>
             </div>
             <div className='text-row'>
-              <p>Keresztnév</p>
+              <p>Keresztnév:</p>
               <p>{profile.firstName}</p>
             </div>
             <div className='text-row'>
-              <p>Email cím</p>
+              <p>Email cím:</p>
               <p>{profile.email}</p>
             </div>
             <div className='text-row'>
@@ -56,7 +58,7 @@ const Profile = ({ loggedInUser, profile, userPhoto }) => {
               profile.birthDate === '' ? (
                 <p></p>
               ) : (
-                <p>{profile.weight}</p>
+                <p>{profile.birthDate}</p>
               )}
             </div>
             <div className='text-row'>

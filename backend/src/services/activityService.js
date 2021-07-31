@@ -14,12 +14,13 @@ export const activityService = {
           message: error.details[0].message,
         };
       }
-      const activity = new Activity(activityData);
+      const newActivity = new Activity(activityData);
 
-      await activity.save();
+      await newActivity.save();
       return {
         status: 200,
         message: 'Activity saved',
+        newActivity: newActivity
       };
     } catch (err) {
       logger.error(err);

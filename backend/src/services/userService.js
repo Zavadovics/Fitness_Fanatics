@@ -86,4 +86,32 @@ export const userService = {
     }
   },
   /* ⬆️ update existing user - OK */
+
+  /* ⬇️ update user password- OK */
+  async updateUserPassword(reqData) {
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(reqData.password, salt);
+
+    reqData.password = hashedPassword;
+    console.log('reqData', reqData);
+    try {
+      await User.update(
+        { email: reqData.email },
+        { $set: { password: reqData.password } },
+        { upsert: true }
+      );
+
+      return {
+        status: 200,
+        message: 'User password has been updated',
+      };
+    } catch (err) {
+      logger.error(err);
+      return {
+        status: 500,
+        message: 'Something went wrong',
+      };
+    }
+  },
+  /* ⬆️ update user password - OK */
 };

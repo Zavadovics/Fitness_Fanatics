@@ -4,17 +4,27 @@ import validator from 'validator';
 import './editProfile.scss';
 
 const EditProfile = ({ profile, setProfile, loggedInUser }) => {
-
   const { REACT_APP_SERVER_URL } = process.env;
   const [cities, setCities] = useState([]);
   const [error, setError] = useState(null);
   const genderList = ['férfi', 'nő', 'nem szeretném megadni'];
   const [formData, setFormData] = useState(profile);
+  // const [formData, setFormData] = useState({
+  //   userName: profile.userName,
+  //   firstName: profile.firstName,
+  //   lastName: profile.lastName,
+  //   email: profile.email,
+  //   gender: profile.gender,
+  //   cityOfResidence: profile.cityOfResidence,
+  //   weight: profile.weight === 0 ? profile.weight === '',
+  //   birthDate: profile.birthDate,
+  //   motivation: profile.motivation,
+  // });
   const [alert, setAlert] = useState(null);
   const [formWasValidated, setFormWasValidated] = useState(false);
 
-// console.log('props - profile', profile);
-// console.log('start - formData', formData);
+  // console.log('props - profile', profile);
+  // console.log('start - formData', formData);
 
   /* get cities */
   useEffect(() => {
@@ -81,10 +91,6 @@ const EditProfile = ({ profile, setProfile, loggedInUser }) => {
 
   const isEmailInvalid = value => {
     return validator.isEmail(value);
-  };
-
-  const isPasswordValid = value => {
-    return value.length >= 6;
   };
 
   const validators = {
@@ -189,7 +195,6 @@ const EditProfile = ({ profile, setProfile, loggedInUser }) => {
     setFormWasValidated(false);
     const isValid = isFormValid();
     if (isValid) {
-      console.log(formData);
       await fetch(`${REACT_APP_SERVER_URL}/api/user/${loggedInUser.id}`, {
         method: 'PUT',
         headers: {
@@ -212,15 +217,14 @@ const EditProfile = ({ profile, setProfile, loggedInUser }) => {
         .then(response => response.json())
         .then(res => {
           if (res.status === 200) {
-            console.log('after submit formData', formData);
             setTimeout(() => {
               setAlert({ alertType: 'success', message: messageTypes.success });
             }, 3000);
-            setProfile(formData)
-            console.log('új adatok sikeresen mentve');
+            setProfile(formData);
+            // console.log('új adatok sikeresen mentve');
           } else {
             setAlert({ alertType: 'danger', message: messageTypes.fail });
-            console.log('új adatok mentése sikertelen');
+            // console.log('új adatok mentése sikertelen');
           }
         });
     } else {
@@ -284,7 +288,7 @@ const EditProfile = ({ profile, setProfile, loggedInUser }) => {
               formError={formErrors.email}
             />
             <label className='form-label m-2' htmlFor='activityType'>
-              Típus
+              Nem
             </label>
             <select
               className='form-select m-2'
@@ -303,7 +307,7 @@ const EditProfile = ({ profile, setProfile, loggedInUser }) => {
               ))}
             </select>
             <label className='form-label m-2' htmlFor='activityType'>
-              Típus
+              Tartózkodási hely
             </label>
             <select
               className='form-select m-2'

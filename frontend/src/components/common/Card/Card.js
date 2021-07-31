@@ -9,10 +9,16 @@ import './card.scss';
 import Moment from 'react-moment';
 import 'moment/locale/hu';
 
-const Card = ({ loggedInUser, profile, activity, activities, setActivities }) => {
+const Card = ({
+  loggedInUser,
+  profile,
+  activity,
+  activities,
+  setActivities,
+}) => {
   const { REACT_APP_SERVER_URL } = process.env;
   const [alert, setAlert] = useState(null);
-  const [error, setError] = useState(null);
+  // const [error, setError] = useState(null);
 
   const messageTypes = Object.freeze({
     deleteFail: `Tevékenység törlése sikertelen.`,
@@ -71,6 +77,7 @@ const Card = ({ loggedInUser, profile, activity, activities, setActivities }) =>
               <p></p>
             ) : (
               <span className='card-subtitle mb-2 text-muted'>
+                {' - '}
                 {calorieCounter(activity.duration, profile.weight)} kalória
               </span>
             )}

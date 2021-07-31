@@ -4,7 +4,8 @@
     "description": "",
     "main": "index.js",
     "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1",
+        "test": "jest",
+        "test:watch": "jest --watch",
         "start": "nodemon src/index.js"
     },
     "keywords": [],
@@ -31,5 +32,10 @@
         "swagger-ui-express": "^4.1.6",
         "uuid": "^8.3.2",
         "winston": "^3.3.3"
+    },
+    "devDependencies": {
+        "@babel/plugin-transform-modules-commonjs": "^7.14.5",
+        "jest": "^27.0.6",
+        "supertest": "^6.1.4"
     }
 }

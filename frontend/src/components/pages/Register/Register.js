@@ -32,7 +32,7 @@ const Register = () => {
 
   const formErrorTypes = Object.freeze({
     required: `A mező kitöltése kötelező`,
-    passwordLength: `A jelszó legalább 6 karakter hosszú kell legyen`,
+    passwordLength: `A jelszó legalább 8 karakter hosszú kell legyen`,
     validEmail: `Nem megfelelő email formátum`,
   });
 
@@ -58,7 +58,7 @@ const Register = () => {
   };
 
   const isPasswordValid = value => {
-    return value.length >= 6;
+    return value.length >= 8;
   };
 
   const validators = {
@@ -247,11 +247,11 @@ const Register = () => {
               />
             </div>
           </div>
-        <p className='link'>
-          <Link to='/login' className='link'>
+          <p>
+            <Link to='/login' className='text-link'>
               Már regisztráltál? Itt bejelentkezhetsz.
-          </Link>
-        </p>
+            </Link>
+          </p>
           <button type='submit' className='register-btn'>
             REGISZTRÁCÓ
           </button>

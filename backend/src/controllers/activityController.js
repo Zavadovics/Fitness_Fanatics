@@ -55,7 +55,7 @@ export const activityController = {
     // const activity = await Activity.findById(req.params.id);
     // if (activity.username === req.body.username)
     try {
-      const updatedActivity = await Activity.findByIdAndUpdate(
+      await Activity.findByIdAndUpdate(
         req.params.id,
         {
           $set: req.body,

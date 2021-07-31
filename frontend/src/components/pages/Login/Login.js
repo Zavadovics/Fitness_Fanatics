@@ -27,7 +27,7 @@ const Login = ({ loggedInUser, setLoggedInUser }) => {
 
   const formErrorTypes = Object.freeze({
     required: `A mező kitöltése kötelező`,
-    passwordLength: `A jelszó legalább 6 karakter hosszú kell legyen`,
+    passwordLength: `A jelszó legalább 8 karakter hosszú kell legyen`,
     validEmail: `Nem megfelelő email formátum`,
   });
 
@@ -50,7 +50,7 @@ const Login = ({ loggedInUser, setLoggedInUser }) => {
   };
 
   const isPasswordValid = value => {
-    return value.length >= 6;
+    return value.length >= 8;
   };
 
   const validators = {
@@ -132,7 +132,6 @@ const Login = ({ loggedInUser, setLoggedInUser }) => {
     setFormWasValidated(false);
     const isValid = isFormValid();
     if (isValid && verified) {
-      console.log('verified');
       await fetch(`${REACT_APP_SERVER_URL}/api/login`, {
         method: 'post',
         headers: {
@@ -159,7 +158,6 @@ const Login = ({ loggedInUser, setLoggedInUser }) => {
           }
         });
     } else if (!verified) {
-      console.log('not verified');
       setAlert({
         alertType: 'danger',
         message: messageTypes.failCaptcha,
@@ -215,12 +213,17 @@ const Login = ({ loggedInUser, setLoggedInUser }) => {
               />
             </div>
           </div>
-          <p className='link'>
-            <Link to='/register' className='link'>
-                  Még nem regisztráltál? Itt megteheted.
+          <p>
+            <Link to='/register' className='text-link'>
+              Még nem regisztráltál? Itt megteheted.
             </Link>
           </p>
-          <button type='submit' className='custom-btn'>
+          <p>
+            <Link to='/user/password' className='text-link'>
+              Elfelejtetted a jelszavad? Itt kérhetsz újat.
+            </Link>
+          </p>
+          <button type='submit' className='login-btn'>
             BEJELENTKEZÉS
           </button>
         </form>

@@ -3,7 +3,6 @@ import user from '../../../images/user.png';
 import './editPhoto.scss';
 
 const EditPhoto = ({ loggedInUser, userPhoto, setUserPhoto }) => {
-
   const { REACT_APP_SERVER_URL } = process.env;
   const [alert, setAlert] = useState(null);
   const messageTypes = Object.freeze({
@@ -12,7 +11,7 @@ const EditPhoto = ({ loggedInUser, userPhoto, setUserPhoto }) => {
     deleteSuccess: `Fotó sikeresen törölve.`,
     deleteFail: `Fotó törlés sikertelen.`,
   });
-  const [data, setData] = useState(null)
+  const [data, setData] = useState(null);
 
   const handleChange = e => {
     setData(e.target.files[0]);
@@ -27,8 +26,8 @@ const EditPhoto = ({ loggedInUser, userPhoto, setUserPhoto }) => {
     await fetch(`${REACT_APP_SERVER_URL}/api/photo/${loggedInUser.id}`, {
       method: 'PUT',
       headers: {
-      Authorization: `Bearer ${loggedInUser.token}`,
-    },
+        Authorization: `Bearer ${loggedInUser.token}`,
+      },
       body: formData,
     })
       .then(response => response.json())
@@ -39,7 +38,7 @@ const EditPhoto = ({ loggedInUser, userPhoto, setUserPhoto }) => {
             message: messageTypes.uploadSuccess,
           });
           setUserPhoto(res.image);
-          setData(null)
+          setData(null);
         } else {
           setAlert({ alertType: 'danger', message: messageTypes.uploadFail });
         }
@@ -50,9 +49,9 @@ const EditPhoto = ({ loggedInUser, userPhoto, setUserPhoto }) => {
     await fetch(`${REACT_APP_SERVER_URL}/api/photo/${loggedInUser.id}`, {
       method: 'DELETE',
       headers: {
-            Authorization: `Bearer ${loggedInUser.token}`,
-          },
-        })
+        Authorization: `Bearer ${loggedInUser.token}`,
+      },
+    })
       .then(response => response.json())
       .then(res => {
         console.log(res);
@@ -62,7 +61,7 @@ const EditPhoto = ({ loggedInUser, userPhoto, setUserPhoto }) => {
             message: messageTypes.deleteSuccess,
           });
           setUserPhoto('');
-          setData(null)
+          setData(null);
         } else {
           setAlert({ alertType: 'danger', message: messageTypes.deleteFail });
         }
@@ -95,13 +94,17 @@ const EditPhoto = ({ loggedInUser, userPhoto, setUserPhoto }) => {
         </p>
         <div className='mb-3'>
           <input
-            className='form-control'
+            className='form-control inputfile'
             name='image'
             type='file'
+            id='file'
             accept='/image/*'
             // accept='/application/pdf'
             onChange={handleChange}
           />
+          <label className='input-label' for='file'>
+            Válassz egy fájlt (Kattints ide)
+          </label>
         </div>
         <div className='text-center'>
           <button className='photo-btn' onClick={handleSubmit}>
@@ -110,7 +113,7 @@ const EditPhoto = ({ loggedInUser, userPhoto, setUserPhoto }) => {
         </div>
         <p>Törölnéd a fotódat? Csak kattints az X-re.</p>
         <button
-          className='btn btn-danger '
+          className='del-btn'
           onClick={() => handleDelete(loggedInUser.id)}
         >
           X

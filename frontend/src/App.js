@@ -4,6 +4,7 @@ import './App.scss';
 import Home from './components/pages/Home/Home';
 import Register from './components/pages/Register/Register';
 import Login from './components/pages/Login/Login';
+import ForgotPassword from './components/pages/ForgotPassword/ForgotPassword';
 import Navbar from './components/common/Navbar/Navbar';
 import Sidebar from './components/common/Sidebar/Sidebar';
 import Footer from './components/common/Footer/Footer';
@@ -14,28 +15,32 @@ import Profile from './components/pages/Profile/Profile';
 import EditProfile from './components/pages/EditProfile/EditProfile';
 import EditPhoto from './components/pages/EditPhoto/EditPhoto';
 import TrainingPlans from './components/pages/TrainingPlans/TrainingPlans';
-
+/* TO-DOs
+- enable frontend to be able to add new city to db
+- complete PDF uploading/viewing
+ */
 const newUser = localStorage.getItem('loggedInUser')
   ? JSON.parse(localStorage.getItem('loggedInUser'))
   : null;
 
 const App = () => {
-
   const { REACT_APP_SERVER_URL } = process.env;
   const [loggedInUser, setLoggedInUser] = useState(newUser);
   const [profile, setProfile] = useState('');
   const [error, setError] = useState(null);
   const [userPhoto, setUserPhoto] = useState('');
 
+  // console.log('userPhoto', typeof userPhoto);
+
   useEffect(() => {
     if (loggedInUser) {
       const getPhoto = async () => {
         fetch(`${REACT_APP_SERVER_URL}/api/photo/${loggedInUser.id}`, {
-      method: 'GET',
-      headers: {
-        Accept: 'application/json',
-        Authorization: `Bearer ${loggedInUser.token}`,
-      },
+          method: 'GET',
+          headers: {
+            Accept: 'application/json',
+            Authorization: `Bearer ${loggedInUser.token}`,
+          },
         })
           .then(res => {
             if (res.status !== 200) {
@@ -46,7 +51,7 @@ const App = () => {
             return res.json();
           })
           .then(jsonRes => {
-            console.log('jsonRes', jsonRes);
+            // console.log('jsonRes', jsonRes);
             setUserPhoto(jsonRes[0].avatar);
             setError(null);
           })
@@ -58,37 +63,36 @@ const App = () => {
     }
   }, []);
 
-
-useEffect(() => {
-      if (loggedInUser) {
-    const getProfile = async () => {
-      fetch(`${REACT_APP_SERVER_URL}/api/user/${loggedInUser.id}`, {
-      method: 'GET',
-      headers: {
-        Accept: 'application/json',
-        Authorization: `Bearer ${loggedInUser.token}`,
-      },
-      })
-        .then(res => {
-          // console.log('res', res);
-          if (res.status !== 200) {
-            throw Error(
-              `could not fetch the data from database, error ${res.status}`
-            );
-          }
-          return res.json();
+  useEffect(() => {
+    if (loggedInUser) {
+      const getProfile = async () => {
+        fetch(`${REACT_APP_SERVER_URL}/api/user/${loggedInUser.id}`, {
+          method: 'GET',
+          headers: {
+            Accept: 'application/json',
+            Authorization: `Bearer ${loggedInUser.token}`,
+          },
         })
-        .then(jsonRes => {
-          setProfile(jsonRes);
-          // console.log('profile', profile);
-          setError(null);
-        })
-        .catch(err => {
-          setError(err.message);
-        });
-    };
-    getProfile();
-      }
+          .then(res => {
+            // console.log('res', res);
+            if (res.status !== 200) {
+              throw Error(
+                `could not fetch the data from database, error ${res.status}`
+              );
+            }
+            return res.json();
+          })
+          .then(jsonRes => {
+            setProfile(jsonRes);
+            // console.log('profile', profile);
+            setError(null);
+          })
+          .catch(err => {
+            setError(err.message);
+          });
+      };
+      getProfile();
+    }
   }, []);
 
   return (
@@ -135,7 +139,7 @@ useEffect(() => {
                     />
                   </Route>
                   <Route path='/training-plans'>
-                    <TrainingPlans />
+                    <TrainingPlans loggedInUser={loggedInUser} />
                   </Route>
                 </div>
               </div>
@@ -154,6 +158,9 @@ useEffect(() => {
                   setLoggedInUser={setLoggedInUser}
                   loggedInUser={loggedInUser}
                 />
+              </Route>
+              <Route path={`/user/password`}>
+                <ForgotPassword />
               </Route>
             </>
           )}

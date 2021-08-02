@@ -132,7 +132,7 @@ const Login = ({ loggedInUser, setLoggedInUser }) => {
     setFormWasValidated(false);
     const isValid = isFormValid();
     if (isValid && verified) {
-      await fetch(`${REACT_APP_SERVER_URL}/api/login`, {
+      await fetch(`${REACT_APP_SERVER_URL}/login`, {
         method: 'post',
         headers: {
           Accept: 'application/json',

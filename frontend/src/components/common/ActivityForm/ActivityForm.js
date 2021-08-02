@@ -183,7 +183,7 @@ const ActivityForm = ({ type, activity, loggedInUser }) => {
     const isValid = isFormValid();
     if (isValid) {
       if (type === 'new') {
-        await fetch(`${REACT_APP_SERVER_URL}/api/activities`, {
+        await fetch(`${REACT_APP_SERVER_URL}/activities`, {
           method: 'post',
           headers: {
             'Content-Type': 'application/json',
@@ -223,7 +223,7 @@ const ActivityForm = ({ type, activity, loggedInUser }) => {
         });
       }
       if (type === 'edit') {
-        await fetch(`${REACT_APP_SERVER_URL}/api/activities/${activity._id}`, {
+        await fetch(`${REACT_APP_SERVER_URL}/activities/${activity._id}`, {
           method: 'put',
           headers: {
             'Content-Type': 'application/json',

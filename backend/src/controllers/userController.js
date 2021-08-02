@@ -46,7 +46,7 @@ export const userController = {
       const data = await userService.updateUser(id, reqData);
       res.status(data.status).json(data);
     } catch (err) {
-      console.error(err);
+      // console.error(err);
       next(err);
     }
   },
@@ -57,10 +57,10 @@ export const userController = {
   async putPassword(req, res, next) {
     try {
       const data = await userService.updateUserPassword(req.body);
-      console.log('controller - req.body', req.body);
+      // console.log('controller - req.body', req.body);
       res.status(data.status).json(data);
     } catch (err) {
-      console.error(err);
+      // console.error(err);
       next(err);
     }
   },

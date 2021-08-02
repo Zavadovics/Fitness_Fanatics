@@ -6,6 +6,12 @@ const planSchema = new Schema(
     user_id: {
       type: String,
     },
+    title: {
+      type: String,
+    },
+    originalName: {
+      type: String,
+    },
     avatar: {
       type: String,
     },

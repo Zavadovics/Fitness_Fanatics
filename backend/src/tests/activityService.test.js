@@ -43,6 +43,8 @@ describe('testing activities', () => {
       .expect(200)
       .then(response => {
         expect(response).toBeTruthy();
+        console.log('header', response.header);
+        console.log('body', response.body);
         activity['id'] = response.body.newActivity._id;
         activity['user_id'] = response.body.newActivity.user_id;
       });

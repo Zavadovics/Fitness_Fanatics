@@ -35,9 +35,10 @@ const App = () => {
   useEffect(() => {
     if (loggedInUser) {
       const getPhoto = async () => {
-        fetch(`${REACT_APP_SERVER_URL}/api/photo/${loggedInUser.id}`, {
+        fetch(`${REACT_APP_SERVER_URL}/photo/${loggedInUser.id}`, {
           method: 'GET',
           headers: {
+            'Access-Control-Allow-Origin': '*',
             Accept: 'application/json',
             Authorization: `Bearer ${loggedInUser.token}`,
           },
@@ -66,7 +67,7 @@ const App = () => {
   useEffect(() => {
     if (loggedInUser) {
       const getProfile = async () => {
-        fetch(`${REACT_APP_SERVER_URL}/api/user/${loggedInUser.id}`, {
+        fetch(`${REACT_APP_SERVER_URL}/user/${loggedInUser.id}`, {
           method: 'GET',
           headers: {
             Accept: 'application/json',

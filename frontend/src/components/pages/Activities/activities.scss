@@ -32,3 +32,9 @@
         width: 95%;
     }
 }
+
+@media screen and (max-width: 480px) {
+    .activities-cont h2 {
+        font-size: 20px;
+    }
+}

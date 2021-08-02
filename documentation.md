@@ -10,13 +10,14 @@
 
 - Regisztráció: Vezetéknév, keresztnév, e-mail és jelszó megadásával.
 - Bejelentkezés: E-mail és jelszó megadásával.
+- Jelszó csere: E-mail és új jelszó kétszeri megadásával.
 - Bejelentkezés utáni főoldal: Az összes tevékenység időrendbeli listázása. A listán szereplő tevékenységeket módosítani vagy törölni lehet.
 - Új tevékenység hozzáadása: Itt lehet új tevékenységet hozzáadni az adatbázishoz.
-- Saját profil: Megjeleníti az adatbázisban szereplő adatainkat. A "módosítás" gombra kattintva átirányít a profil szerkesztése oldalra.
+- Saját profil: Megjeleníti az adatbázisban szereplő adatainkat. A "módosítás" gombra kattintva átirányít a profil szerkesztése oldalra ahol további adatokkal bővíthetjük profilunkat.
 - Saját profil szerkesztése: Az űrlapba betölti azokat az adatokat amiket korábban már megadtunk. Új adatokat adhatunk hozzá az adatbázishoz.
-- Edzéstervek: Az adatbázisban található edzéstervek lekérése.
+- Saját fotó: Itt új fotót adhatunk hozzá a "photos" kollekcióhoz, lecserélhetjük a régi fotónkat, vagy törölhetjük is.
+- Edzéstervek: Az adatbázisban található edzéstervek lekérése és új terv hozzáadása.
 - A "városok" nevű adatbázis kollekcióhoz a profil szerkesztése oldalon található tartózkodási hely nevű select/dropdown-on keresztül lehet hozzaáadni. Ez egyben az adatbázisban szereplő városok listájának megjelenítéséért is felelős.
-- A "fotók" nevű adatbázis kollekció szintén a profil szerkesztése oldalon keresztül manipulálható.
 
 ## Oldalak
 
@@ -25,40 +26,44 @@
 | /                      | Főoldal (ide érkezik a felhasználó a regisztráció és/vagy bejelentkezés előtt) |
 | /register              | Új felhasználó regisztrációja                                                  |
 | /login                 | Felhasználó bejelentkezése                                                     |
+| /user/password         | Jelszó cseréje                                                                 |
 | /activities            | Bejelentkezés utáni főoldal (összes tevékenység időrendbeli listázása)         |
 | /activities/new        | Új tevékenység hozzáadása                                                      |
 | /activities/edit/id    | Tevékenység módosítása                                                         |
 | /profile               | Saját profil megjelenítése                                                     |
 | /profile/edit/id       | Saját profil szerkesztése                                                      |
-| /profile/edit/photo/id | Saját profil fotó szerkesztése                                                 |
-| /training-plans        | Edzés tervek megjelenítése                                                     |
+| /profile/photo/edit/id | Saját profil fotó hozzáadása, cseréje, törlése                                 |
+| /training-plans        | Edzés tervek adatbázisból való lekérése, új terv hozzáadása                    |
 
 ## API végpontok
 
-| API végpontok           | Szerepük                                                              |
-| ----------------------- | --------------------------------------------------------------------- |
-| POST/api/login          | Felhasználó bejelentkezése                                            |
-| POST/api/user           | Új felhasználó regisztrációja                                         |
-| GET/api/user/{id}       | Saját profil adatok lekérése id alapján                               |
-| PUT/api/user/{id}       | Saját profil módosítása id alapján                                    |
-| GET/api/cities          | Összes város lekérése a profil módosításon található legördülő menübe |
-| POST/api/activities     | Új edzés hozzáadása az adatbázishoz                                   |
-| GET/api/activities/{id} | Saját tevékenységek lekérése és megjelenítése                         |
-| PUT/api/activities/{id} | Tevékenység módosítása id alapján                                     |
-| DELETE/activities/{id}  | Tevékenység törlése id alapján                                        |
-| GET/photos/{id}         | Saját fotó lekérése és megjelenítése                                  |
-| PUT/photos/{id}         | Saját fotó módosítása id alapján                                      |
-| DELETE/photo/{id}       | Saját fotó törlése                                                    |
+| API végpontok              | Szerepük                                                              |
+| -------------------------- | --------------------------------------------------------------------- |
+| POST/api/login             | Felhasználó bejelentkezése                                            |
+| POST/api/user              | Új felhasználó regisztrációja                                         |
+| GET/api/user/{id}          | Saját profil adatok lekérése id alapján                               |
+| PUT/api/user/{id}          | Saját profil módosítása id alapján                                    |
+| PUT/api/user/password      | Jelszó cseréje                                                        |
+| GET/api/cities             | Összes város lekérése a profil módosításon található legördülő menübe |
+| GET/api/activities/{id}    | Saját tevékenységek lekérése és megjelenítése                         |
+| PUT/api/activities/{id}    | Tevékenység módosítása id alapján                                     |
+| POST/api/activities        | Új edzés hozzáadása az adatbázishoz                                   |
+| DELETE/api/activities/{id} | Tevékenység törlése id alapján                                        |
+| GET/api/photo/{id}         | Saját fotó lekérése és megjelenítése                                  |
+| PUT/api/photo/{id}         | Saját fotó feltöltése és módosítása id alapján                        |
+| DELETE/api/photo/{id}      | Saját fotó törlése                                                    |
+| GET/api/plan               | Az összes adatbázisban szereplő edzésterv lekérése                    |
+| POST/api/plan              | Új edzésterv hozzáadása az adatbázishoz                               |
 
 ## Adatbázis gyűjtemények
 
-| Nevük          | Tartalmuk            |
-| -------------- | -------------------- |
-| users          | felhasználók         |
-| activities     | tevékenységek        |
-| cities         | Magyarország városai |
-| photos         | felhasználók fotói   |
-| training plans | edzés tervek         |
+| Nevük      | Tartalmuk            |
+| ---------- | -------------------- |
+| users      | felhasználók         |
+| activities | tevékenységek        |
+| cities     | Magyarország városai |
+| photos     | felhasználók fotói   |
+| plans      | edzés tervek         |
 
 ## Technikai követelmények
 

@@ -16,13 +16,13 @@ const Activities = ({ profile, loggedInUser }) => {
 
   /* Get all activities */
   useEffect(() => {
-    fetch(`${REACT_APP_SERVER_URL}/api/activities/${loggedInUser.id}`, {
+    fetch(`${REACT_APP_SERVER_URL}/activities/${loggedInUser.id}`, {
       method: 'GET',
       headers: {
         Accept: 'application/json',
         Authorization: `Bearer ${loggedInUser.token}`,
       },
-        })
+    })
       .then(res => {
         if (res.status !== 200) {
           setAlert({ alertType: 'danger', message: messageTypes.dbProblem });
@@ -36,7 +36,7 @@ const Activities = ({ profile, loggedInUser }) => {
         setActivities(jsonRes);
       })
       .catch(err => {
-        setAlert({ alertType: 'danger', message: err });
+        setAlert({ alertType: 'danger', message: messageTypes.dbProblem });
       });
   }, []);
 

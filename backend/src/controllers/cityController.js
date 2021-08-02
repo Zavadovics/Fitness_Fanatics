@@ -1,5 +1,5 @@
 import City from '../models/City.js';
-import { cityService } from '../services/cityService.js';
+// import { cityService } from '../services/cityService.js';
 
 export const cityController = {
   async get(req, res) {

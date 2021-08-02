@@ -147,7 +147,7 @@ const ForgotPassword = () => {
     setFormWasValidated(false);
     const isValid = isFormValid();
     if (isValid && verified) {
-      await fetch(`${REACT_APP_SERVER_URL}/api/user/password`, {
+      await fetch(`${REACT_APP_SERVER_URL}/user/password`, {
         method: 'put',
         headers: {
           'Content-Type': 'application/json',

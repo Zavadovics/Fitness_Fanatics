@@ -14,6 +14,7 @@ const EditPhoto = ({ loggedInUser, userPhoto, setUserPhoto }) => {
   const [data, setData] = useState(null);
 
   const handleChange = e => {
+    // console.log(e.target.files[0]);
     setData(e.target.files[0]);
   };
 
@@ -22,8 +23,9 @@ const EditPhoto = ({ loggedInUser, userPhoto, setUserPhoto }) => {
     formData.append('image', data);
     formData.append('user_id', loggedInUser.id);
     formData.append('user_email', loggedInUser.email);
-
-    await fetch(`${REACT_APP_SERVER_URL}/api/photo/${loggedInUser.id}`, {
+    // console.log('formData before send', formData);
+    // console.log(loggedInUser.id);
+    await fetch(`${REACT_APP_SERVER_URL}/photo/${loggedInUser.id}`, {
       method: 'PUT',
       headers: {
         Authorization: `Bearer ${loggedInUser.token}`,
@@ -32,6 +34,7 @@ const EditPhoto = ({ loggedInUser, userPhoto, setUserPhoto }) => {
     })
       .then(response => response.json())
       .then(res => {
+        // console.log('res', res);
         if (res.status === 200) {
           setAlert({
             alertType: 'success',
@@ -46,7 +49,7 @@ const EditPhoto = ({ loggedInUser, userPhoto, setUserPhoto }) => {
   };
 
   const handleDelete = async () => {
-    await fetch(`${REACT_APP_SERVER_URL}/api/photo/${loggedInUser.id}`, {
+    await fetch(`${REACT_APP_SERVER_URL}/photo/${loggedInUser.id}`, {
       method: 'DELETE',
       headers: {
         Authorization: `Bearer ${loggedInUser.token}`,
@@ -54,7 +57,7 @@ const EditPhoto = ({ loggedInUser, userPhoto, setUserPhoto }) => {
     })
       .then(response => response.json())
       .then(res => {
-        console.log(res);
+        // console.log(res);
         if (res.status === 200) {
           setAlert({
             alertType: 'success',
@@ -99,10 +102,9 @@ const EditPhoto = ({ loggedInUser, userPhoto, setUserPhoto }) => {
             type='file'
             id='file'
             accept='/image/*'
-            // accept='/application/pdf'
             onChange={handleChange}
           />
-          <label className='input-label' for='file'>
+          <label className='input-label' htmlFor='file'>
             Válassz egy fájlt (Kattints ide)
           </label>
         </div>

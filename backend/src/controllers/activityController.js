@@ -20,7 +20,6 @@ export const activityController = {
       const data = await activityService.saveActivity(req.body);
       res.status(data.status).json(data);
     } catch (err) {
-      console.error(err);
       next(err);
     }
   },
@@ -29,10 +28,9 @@ export const activityController = {
   /* ⬇️ find an activity in db by Id - OK */
   async getId(req, res) {
     try {
-      const activity = await Activity.findById(req.params.id);
-      res.status(200).json(activity);
+      const data = await Activity.findById(req.params.id);
+      res.status(200).json(data);
     } catch (err) {
-      console.error(err);
       res.status(500).json(err);
     }
   },

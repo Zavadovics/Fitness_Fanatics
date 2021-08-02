@@ -28,7 +28,7 @@ const EditProfile = ({ profile, setProfile, loggedInUser }) => {
 
   /* get cities */
   useEffect(() => {
-    fetch(`${REACT_APP_SERVER_URL}/api/cities`)
+    fetch(`${REACT_APP_SERVER_URL}/cities`)
       .then(res => {
         if (res.status < 200 || res.status >= 300) {
           throw Error(
@@ -195,7 +195,7 @@ const EditProfile = ({ profile, setProfile, loggedInUser }) => {
     setFormWasValidated(false);
     const isValid = isFormValid();
     if (isValid) {
-      await fetch(`${REACT_APP_SERVER_URL}/api/user/${loggedInUser.id}`, {
+      await fetch(`${REACT_APP_SERVER_URL}/user/${loggedInUser.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

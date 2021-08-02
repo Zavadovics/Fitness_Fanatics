@@ -93,7 +93,7 @@ export const userService = {
     const hashedPassword = await bcrypt.hash(reqData.password, salt);
 
     reqData.password = hashedPassword;
-    console.log('reqData', reqData);
+    // console.log('reqData', reqData);
     try {
       await User.update(
         { email: reqData.email },

@@ -126,4 +126,14 @@
     .alert-cont {
         width: 70%;
     }
+    .user-photo-cont {
+        width: 150px;
+        height: 150px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .edit-photo-cont .inner {
+        width: 90%;
+    }
 }

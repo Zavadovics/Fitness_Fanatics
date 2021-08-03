@@ -25,17 +25,6 @@ export const userController = {
   },
   /* ⬆️ save new user - OK */
 
-  /* ⬇️ find user in database by Id - OK */
-  // async getId(req, res) {
-  //   try {
-  //     const user = await User.findById(req.params.id);
-  //     res.status(200).json(user);
-  //   } catch (err) {
-  //     res.status(500).json(err);
-  //   }
-  // },
-  /* ⬆️ find user in database by Id - OK */
-
   /* ⬇️ update user in database - OK */
 
   async put(req, res, next) {
@@ -46,7 +35,6 @@ export const userController = {
       const data = await userService.updateUser(id, reqData);
       res.status(data.status).json(data);
     } catch (err) {
-      // console.error(err);
       next(err);
     }
   },
@@ -54,13 +42,23 @@ export const userController = {
 
   /* ⬇️ update user password in database - OK */
 
-  async putPassword(req, res, next) {
+  async sendPasswordResetMail(req, res, next) {
     try {
-      const data = await userService.updateUserPassword(req.body);
-      // console.log('controller - req.body', req.body);
+      const data = await userService.sendPasswordResetMail(req.body);
       res.status(data.status).json(data);
     } catch (err) {
-      // console.error(err);
+      next(err);
+    }
+  },
+
+  async resetPassword(req, res, next) {
+    const { id } = req.params;
+    const reqData = req.body;
+
+    try {
+      const data = await userService.resetPassword(id, reqData);
+      res.status(data.status).json(data);
+    } catch (err) {
       next(err);
     }
   },

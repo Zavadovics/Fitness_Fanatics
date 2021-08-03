@@ -1,3 +1,4 @@
+// import logger from '../logger.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { loginValidation } from '../validations/loginValidation.js';
@@ -24,6 +25,7 @@ export const loginService = {
     const validPass =
       (await bcrypt.compare(loginData.password, user.password)) ||
       loginData.password === user.password;
+
     if (!validPass) {
       return {
         status: 400,
@@ -52,7 +54,7 @@ export const loginService = {
         id: user._id,
       };
     } catch (err) {
-      logger.error(err);
+      next(err);
       return {
         status: 500,
         message: 'Something went wrong',

@@ -16,10 +16,11 @@ router.use(cors());
 router.use(express.json());
 
 router.post('/login', loginController.post);
+router.post('/password', userController.sendPasswordResetMail);
+router.put('/password-reset/:id', userController.resetPassword);
 router.post('/user', userController.post);
 router.get('/user/:id', verify, userController.get);
 router.put('/user/:id', verify, userController.put);
-router.put('/user/password', userController.putPassword);
 
 router.get('/cities', cityController.get);
 /* to-do ---> post */

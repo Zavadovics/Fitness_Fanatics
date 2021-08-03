@@ -25,16 +25,16 @@ export const activityController = {
   },
   /* ⬆️ save new activity - OK */
 
-  /* ⬇️ find an activity in db by Id - OK */
-  async getId(req, res) {
+  /* ⬇️ find an activity by Id - OK */
+  async getId(req, res, next) {
     try {
       const data = await Activity.findById(req.params.id);
-      res.status(200).json(data);
+      res.status(data.status).json(data);
     } catch (err) {
-      res.status(500).json(err);
+      next(err);
     }
   },
-  /* ⬆️ find an activity in db by Id - OK */
+  /* ⬆️ find an activity by Id - OK */
 
   /* ⬇️ update activity - OK */
   async put(req, res, next) {
@@ -51,15 +51,14 @@ export const activityController = {
   /* ⬆️ update activity - OK */
 
   /* ⬇️ delete activity - OK */
-  async delete(req, res) {
+  async delete(req, res, next) {
     const deleteId = req.params.id;
 
     try {
-      const activityData = await Activity.findByIdAndDelete(deleteId);
-      if (!activityData) return res.sendStatus(404);
-      return res.status(200).send({ message: 'Activity has been deleted' });
+      await Activity.findByIdAndDelete(deleteId);
+      res.status(200).json({ message: 'Activity has been deleted' });
     } catch (err) {
-      return res.status(400).send(err);
+      next(err);
     }
   },
   /* ⬆️ delete activity - OK */

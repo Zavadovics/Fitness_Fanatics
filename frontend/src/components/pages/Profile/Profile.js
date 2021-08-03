@@ -1,15 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { NavLink } from 'react-router-dom';
 import user from '../../../images/user.png';
 import './profile.scss';
 
 const Profile = ({ loggedInUser, profile, userPhoto }) => {
-  const { REACT_APP_SERVER_URL } = process.env;
-  const [error, setError] = useState(null);
-
-  // console.log('loggedInUser', loggedInUser);
-  // console.log('profile', profile);
-  // console.log('userPhoto', userPhoto);
   return (
     <>
       <div className='view-profile-cont'>

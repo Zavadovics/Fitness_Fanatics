@@ -36,5 +36,20 @@
       "updatedAt": "2021-07-19T11:08:01.770+00:00",
       "__v": "0"
     }
-  ]
+  ],
+  "cities": [
+    {
+      "name": "London",
+      "value": "London"
+    },
+    {
+      "name": "Barcelona",
+      "value": "Barcelona"
+    },
+    {
+      "name": "Paris",
+      "value": "Paris"
+    }
+  ],
+  "plans": []
 }

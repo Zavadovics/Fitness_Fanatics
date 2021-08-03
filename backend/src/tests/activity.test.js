@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import Activity from '../models/Activity';
 import app from '../app.js';
 import testdb from './test_db.js';
+import jwt from 'jsonwebtoken';
 
 beforeEach(async () => {
   testdb();
@@ -24,6 +25,11 @@ const activity = {
   comment: 'rohadt hideg volt',
 };
 
+const authToken = jwt.sign(
+  { tokenId: activity.user_Id },
+  process.env.TOKEN_SECRET
+);
+
 const updatedActivity = {
   user_id: '60fc016e026bee11115ba1e4',
   email: 'haliho@gmail.com',
@@ -40,11 +46,10 @@ describe('testing activities', () => {
     await request(app)
       .post('/api/activities')
       .send(activity)
+      .set('Authorization', `Bearer ${authToken}`)
       .expect(200)
       .then(response => {
         expect(response).toBeTruthy();
-        console.log('header', response.header);
-        console.log('body', response.body);
         activity['id'] = response.body.newActivity._id;
         activity['user_id'] = response.body.newActivity.user_id;
       });
@@ -54,6 +59,7 @@ describe('testing activities', () => {
     await request(app)
       .put(`/api/activities/${activity.id}`)
       .send(updatedActivity)
+      .set('Authorization', `Bearer ${authToken}`)
       .expect(200)
       .then(response => {
         expect(response.body).toBeTruthy();
@@ -63,6 +69,7 @@ describe('testing activities', () => {
   it('GET /activities/:id should respond with 200', async () => {
     await request(app)
       .get(`/api/activities/${activity.user_id}`)
+      .set('Authorization', `Bearer ${authToken}`)
       .expect(200)
       .then(response => {
         expect(response.body).toBeTruthy();
@@ -72,6 +79,7 @@ describe('testing activities', () => {
   it('DELETE /activities/:id should respond with 200', async () => {
     await request(app)
       .delete(`/api/activities/${activity.id}`)
+      .set('Authorization', `Bearer ${authToken}`)
       .expect(200)
       .then(response => {
         expect(response.body).toBeTruthy();

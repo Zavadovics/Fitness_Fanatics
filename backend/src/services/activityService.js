@@ -1,4 +1,4 @@
-import logger from '../logger.js';
+// import logger from '../logger.js';
 import Activity from '../models/Activity.js';
 import { activityValidation } from '../validations/activityValidation.js';
 
@@ -23,7 +23,7 @@ export const activityService = {
         newActivity: newActivity,
       };
     } catch (err) {
-      logger.error(err);
+      next(err);
       return {
         status: 500,
         message: 'Something went wrong',
@@ -44,7 +44,7 @@ export const activityService = {
         updatedActivity: updatedActivity,
       };
     } catch (err) {
-      logger.error(err);
+      next(err);
       return {
         status: 500,
         message: 'Something went wrong',

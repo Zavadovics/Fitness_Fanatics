@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import user from '../../../images/user.png';
 import './editPhoto.scss';
 
@@ -25,7 +25,7 @@ const EditPhoto = ({ loggedInUser, userPhoto, setUserPhoto }) => {
     formData.append('user_email', loggedInUser.email);
     // console.log('formData before send', formData);
     // console.log(loggedInUser.id);
-    await fetch(`${REACT_APP_SERVER_URL}/photo/${loggedInUser.id}`, {
+    await fetch(`${REACT_APP_SERVER_URL}/api/photo/${loggedInUser.id}`, {
       method: 'PUT',
       headers: {
         Authorization: `Bearer ${loggedInUser.token}`,
@@ -49,7 +49,7 @@ const EditPhoto = ({ loggedInUser, userPhoto, setUserPhoto }) => {
   };
 
   const handleDelete = async () => {
-    await fetch(`${REACT_APP_SERVER_URL}/photo/${loggedInUser.id}`, {
+    await fetch(`${REACT_APP_SERVER_URL}/api/photo/${loggedInUser.id}`, {
       method: 'DELETE',
       headers: {
         Authorization: `Bearer ${loggedInUser.token}`,
@@ -73,13 +73,13 @@ const EditPhoto = ({ loggedInUser, userPhoto, setUserPhoto }) => {
 
   return (
     <div className='edit-photo-cont'>
+      <h2>Profilkép</h2>
       <div className='alert-cont'>
         {alert && (
           <p className={`alert alert-${alert.alertType}`}>{alert.message}</p>
         )}
       </div>
       <div className='inner'>
-        <h2>Profilkép</h2>
         <div className='user-photo-cont'>
           {userPhoto !== '' ? (
             <img src={userPhoto} alt='' />

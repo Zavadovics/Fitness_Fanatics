@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import { useHistory, Link } from 'react-router-dom';
 import ReCAPTCHA from 'react-google-recaptcha';
 import validator from 'validator';
@@ -132,7 +132,7 @@ const Login = ({ loggedInUser, setLoggedInUser }) => {
     setFormWasValidated(false);
     const isValid = isFormValid();
     if (isValid && verified) {
-      await fetch(`${REACT_APP_SERVER_URL}/login`, {
+      await fetch(`${REACT_APP_SERVER_URL}/api/login`, {
         method: 'post',
         headers: {
           Accept: 'application/json',
@@ -142,7 +142,7 @@ const Login = ({ loggedInUser, setLoggedInUser }) => {
       })
         .then(response => response.json())
         .then(res => {
-          if (res.status >= 200 && res.status < 300) {
+          if (res.status === 200) {
             const user = res;
             localStorage.setItem('loggedInUser', JSON.stringify(user));
             setFormData({
@@ -219,7 +219,7 @@ const Login = ({ loggedInUser, setLoggedInUser }) => {
             </Link>
           </p>
           <p>
-            <Link to='/user/password' className='text-link'>
+            <Link to='/password' className='text-link'>
               Elfelejtetted a jelszavad? Itt kérhetsz újat.
             </Link>
           </p>

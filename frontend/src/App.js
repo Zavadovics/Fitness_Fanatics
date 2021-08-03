@@ -5,6 +5,7 @@ import Home from './components/pages/Home/Home';
 import Register from './components/pages/Register/Register';
 import Login from './components/pages/Login/Login';
 import ForgotPassword from './components/pages/ForgotPassword/ForgotPassword';
+import ResetPassword from './components/pages/ResetPassword/ResetPassword';
 import Navbar from './components/common/Navbar/Navbar';
 import Sidebar from './components/common/Sidebar/Sidebar';
 import Footer from './components/common/Footer/Footer';
@@ -27,15 +28,16 @@ const App = () => {
   const { REACT_APP_SERVER_URL } = process.env;
   const [loggedInUser, setLoggedInUser] = useState(newUser);
   const [profile, setProfile] = useState('');
-  const [error, setError] = useState(null);
+  // const [error, setError] = useState(null);
   const [userPhoto, setUserPhoto] = useState('');
 
   // console.log('userPhoto', typeof userPhoto);
+  // console.log(loggedInUser);
 
   useEffect(() => {
     if (loggedInUser) {
       const getPhoto = async () => {
-        fetch(`${REACT_APP_SERVER_URL}/photo/${loggedInUser.id}`, {
+        fetch(`${REACT_APP_SERVER_URL}/api/photo/${loggedInUser.id}`, {
           method: 'GET',
           headers: {
             'Access-Control-Allow-Origin': '*',
@@ -54,10 +56,9 @@ const App = () => {
           .then(jsonRes => {
             // console.log('jsonRes', jsonRes);
             setUserPhoto(jsonRes[0].avatar);
-            setError(null);
           })
           .catch(err => {
-            setError(err.message);
+            console.log(err.message);
           });
       };
       getPhoto();
@@ -67,7 +68,7 @@ const App = () => {
   useEffect(() => {
     if (loggedInUser) {
       const getProfile = async () => {
-        fetch(`${REACT_APP_SERVER_URL}/user/${loggedInUser.id}`, {
+        fetch(`${REACT_APP_SERVER_URL}/api/user/${loggedInUser.id}`, {
           method: 'GET',
           headers: {
             Accept: 'application/json',
@@ -86,10 +87,9 @@ const App = () => {
           .then(jsonRes => {
             setProfile(jsonRes);
             // console.log('profile', profile);
-            setError(null);
           })
           .catch(err => {
-            setError(err.message);
+            console.log(err.message);
           });
       };
       getProfile();
@@ -160,8 +160,11 @@ const App = () => {
                   loggedInUser={loggedInUser}
                 />
               </Route>
-              <Route path={`/user/password`}>
+              <Route path={`/password`}>
                 <ForgotPassword />
+              </Route>
+              <Route path={`/password-reset/:id`}>
+                <ResetPassword />
               </Route>
             </>
           )}

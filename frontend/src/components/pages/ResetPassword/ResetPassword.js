@@ -1,40 +1,45 @@
 import { useState, useRef } from 'react';
 import { useHistory, Link } from 'react-router-dom';
+import { useParams } from 'react-router';
 import ReCAPTCHA from 'react-google-recaptcha';
-import validator from 'validator';
 import Navbar from '../../common/Navbar/Navbar';
 import Footer from '../../common/Footer/Footer';
 import InputField from '../../common/InputField/InputField';
-import './forgotPassword.scss';
+import './resetPassword.scss';
 
-const ForgotPassword = () => {
+const ResetPassword = ({ loggedInUser }) => {
   const { REACT_APP_SERVER_URL, REACT_APP_GOOGLE_RECAPTCHA_KEY } = process.env;
   const [verified, setVerified] = useState(false);
   const history = useHistory();
+  const { id } = useParams();
 
   const [formData, setFormData] = useState({
-    email: '',
+    newPassword: '',
+    confirmPassword: '',
   });
 
   const [alert, setAlert] = useState(null);
   const [formWasValidated, setFormWasValidated] = useState(false);
 
   const references = {
-    email: useRef(),
+    newPassword: useRef(),
+    confirmPassword: useRef(),
   };
 
   const formErrorTypes = Object.freeze({
     required: `A mező kitöltése kötelező`,
-    validEmail: `Nem megfelelő email formátum`,
+    passwordLength: `A jelszó legalább 8 karakter hosszú kell legyen`,
+    passwordMatch: `A megadott jelszavak nem egyeznek.`,
   });
 
   const [formErrors, setFormErrors] = useState({
-    email: '',
+    newPassword: '',
+    confirmPassword: '',
   });
 
   const messageTypes = Object.freeze({
-    success: `A jelszó cseréjéhez kérlek nyitsd meg az e-mailt amit küldtünk.`,
-    fail: `A megadott e-mail nem szerepel a regisztrált felhasználók között.`,
+    success: `A jelszó cseréje sikeresen megtörtént.`,
+    fail: `A jelszó cseréje nem sikerült.`,
     failCaptcha: `Kérlek bizonyítsd be hogy nem vagy robot 🤖`,
   });
 
@@ -42,14 +47,23 @@ const ForgotPassword = () => {
     return value !== '';
   };
 
-  const isEmailInvalid = value => {
-    return validator.isEmail(value);
+  const isPasswordValid = value => {
+    return value.length >= 8;
+  };
+
+  const isConfirmPasswordMatch = value => {
+    return value === formData.newPassword;
   };
 
   const validators = {
-    email: {
+    newPassword: {
       required: isFieldEmpty,
-      validEmail: isEmailInvalid,
+      passwordLength: isPasswordValid,
+    },
+    confirmPassword: {
+      required: isFieldEmpty,
+      passwordLength: isPasswordValid,
+      passwordMatch: isConfirmPasswordMatch,
     },
   };
 
@@ -114,29 +128,34 @@ const ForgotPassword = () => {
     e.preventDefault();
     setAlert(null);
     setFormErrors({
-      email: '',
+      newPassword: '',
+      confirmPassword: '',
     });
 
     setFormWasValidated(false);
     const isValid = isFormValid();
     if (isValid && verified) {
-      await fetch(`${REACT_APP_SERVER_URL}/api/password`, {
-        method: 'post',
+      await fetch(`${REACT_APP_SERVER_URL}/api/password-reset/${id}`, {
+        method: 'put',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          email: formData.email,
+          password: formData.newPassword,
         }),
       })
         .then(response => response.json())
         .then(res => {
           if (res.status === 200) {
             setFormData({
-              email: '',
+              newPassword: '',
+              confirmPassword: '',
             });
             setVerified(false);
             setAlert({ alertType: 'success', message: messageTypes.success });
+            // setTimeout(() => {
+            history.push('/login');
+            // }, 3000);
           } else {
             setAlert({ alertType: 'danger', message: messageTypes.fail });
           }
@@ -154,8 +173,8 @@ const ForgotPassword = () => {
   return (
     <>
       <Navbar />
-      <div className='password-cont'>
-        <h2>Elfelejtett jelszó</h2>
+      <div className='reset-password-cont'>
+        <h2>Jelszó cseréje</h2>
         <div className='alert-cont'>
           {alert && (
             <p className={`alert alert-${alert.alertType}`}>{alert.message}</p>
@@ -168,14 +187,24 @@ const ForgotPassword = () => {
         >
           <div className='input'>
             <InputField
-              name='email'
-              type='email'
-              value={formData.email}
-              labelText='Email cím'
+              name='newPassword'
+              type='password'
+              labelText='Új jelszó - (legalább 8 karakter)'
+              value={formData.newPassword}
               onChange={handleInputChange}
               onBlur={handleInputBlur}
-              reference={references.email}
-              error={formErrors.email}
+              reference={references.newPassword}
+              error={formErrors.newPassword}
+            />
+            <InputField
+              name='confirmPassword'
+              type='password'
+              labelText='Jelszó még egyszer'
+              value={formData.confirmPassword}
+              onChange={handleInputChange}
+              onBlur={handleInputBlur}
+              reference={references.confirmPassword}
+              error={formErrors.confirmPassword}
             />
             <div className='captcha'>
               <ReCAPTCHA
@@ -200,4 +229,4 @@ const ForgotPassword = () => {
   );
 };
 
-export default ForgotPassword;
+export default ResetPassword;

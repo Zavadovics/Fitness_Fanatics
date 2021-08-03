@@ -1,4 +1,4 @@
-import logger from '../logger.js';
+// import logger from '../logger.js';
 import Plan from '../models/Plan.js';
 import cloudinary from '../cloudinary.js';
 
@@ -7,8 +7,6 @@ export const planService = {
     try {
       // Upload image to cloudinary
       const result = await cloudinary.uploader.upload(reqFile.path);
-      console.log('req', reqFile.originalname);
-      console.log('req', reqBody.title);
       // Create new plan
       let plan = new Plan({
         user_id: reqBody.user_id,

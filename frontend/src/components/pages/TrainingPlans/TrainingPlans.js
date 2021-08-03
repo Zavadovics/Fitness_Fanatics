@@ -15,7 +15,6 @@ const TrainingPlans = ({ loggedInUser }) => {
     deleteFail: `Edzésterv törlése sikertelen.`,
   });
   const [data, setData] = useState(null);
-  const [error, setError] = useState(null);
 
   const [formValue, setFormValue] = useState({
     title: '',
@@ -101,7 +100,7 @@ const TrainingPlans = ({ loggedInUser }) => {
   useEffect(() => {
     if (loggedInUser) {
       const getPlan = async () => {
-        fetch(`${REACT_APP_SERVER_URL}/plan`, {
+        fetch(`${REACT_APP_SERVER_URL}/api/plan`, {
           method: 'GET',
           headers: {
             Accept: 'application/json',
@@ -118,15 +117,14 @@ const TrainingPlans = ({ loggedInUser }) => {
           })
           .then(jsonRes => {
             setPlans(jsonRes);
-            setError(null);
           })
           .catch(err => {
-            setError(err.message);
+            console.log(err.message);
           });
       };
       getPlan();
     }
-  }, []);
+  }, [plans]);
 
   const handleChange = e => {
     setData(e.target.files[0]);
@@ -147,7 +145,7 @@ const TrainingPlans = ({ loggedInUser }) => {
     formData.append('user_email', loggedInUser.email);
     formData.append('title', formValue.title);
     if (isValid) {
-      await fetch(`${REACT_APP_SERVER_URL}/plan`, {
+      await fetch(`${REACT_APP_SERVER_URL}/api/plan`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${loggedInUser.token}`,
@@ -182,8 +180,11 @@ const TrainingPlans = ({ loggedInUser }) => {
           <p className={`alert alert-${alert.alertType}`}>{alert.message}</p>
         )}
       </div>
-      {/* <div className='training-plan-input'> */}
-      <form>
+      <form
+        noValidate
+        onSubmit={handleSubmit}
+        className={`needs-validation ${formWasValidated && 'was-validated'}`}
+      >
         <input
           className='form-control pdf-inputfile'
           name='image'
@@ -206,12 +207,10 @@ const TrainingPlans = ({ loggedInUser }) => {
           reference={references.title}
           error={formErrors.title}
         />
-        <button className='photo-btn' onClick={handleSubmit}>
+        <button className='photo-btn' /* onClick={handleSubmit} */>
           Küldés
         </button>
       </form>
-      {/* </div> */}
-      {/* view */}
       <>
         {plans.map(plan => (
           <div className='object-outer-cont' key={plan._id}>

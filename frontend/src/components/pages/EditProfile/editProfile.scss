@@ -6,11 +6,19 @@
     align-items: center;
     justify-content: center;
     width: 100%;
-    padding: 5em 0;
+    padding-bottom: 4em;
+}
+
+.profile-edit-cont h2 {
+    margin: 1em auto;
 }
 
 .citySelect {
     padding-left: 0.5em;
+}
+
+.card-body .card-title:nth-child(2) span {
+    font-style: oblique;
 }
 
 .alert-cont {
@@ -75,6 +83,6 @@
 
 @media screen and (max-width: 480px) {
     .profile-edit-cont h2 {
-        font-size: 20px;
+        font-size: 25px;
     }
 }

@@ -1,4 +1,4 @@
-import logger from 'logger';
+// import logger from '../logger.js';
 import City from '../models/City.js';
 import { cityValidation } from '../validations/cityValidation.js';
 
@@ -33,7 +33,7 @@ export const cityService = {
         message: 'City saved',
       };
     } catch (err) {
-      logger.error(err);
+      next(err);
       return {
         status: 500,
         message: 'Something went wrong',

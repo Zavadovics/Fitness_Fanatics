@@ -1,7 +1,8 @@
-import logger from '../logger.js';
+// import logger from '../logger.js';
 import bcrypt from 'bcryptjs';
 import User from '../models/User.js';
 import { userValidation } from '../validations/userValidation.js';
+import sendEmail from '../utils/sendEmail.js';
 
 export const userService = {
   /* ⬇️ save new user - OK */
@@ -44,7 +45,7 @@ export const userService = {
         message: 'User has successfully registered.',
       };
     } catch (err) {
-      logger.error(err);
+      next(err);
       return {
         status: 500,
         message: 'Something went wrong',
@@ -78,7 +79,7 @@ export const userService = {
         message: 'User data has been updated',
       };
     } catch (err) {
-      logger.error(err);
+      next(err);
       return {
         status: 500,
         message: 'Something went wrong',
@@ -87,31 +88,57 @@ export const userService = {
   },
   /* ⬆️ update existing user - OK */
 
-  /* ⬇️ update user password- OK */
-  async updateUserPassword(reqData) {
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(reqData.password, salt);
-
-    reqData.password = hashedPassword;
-    // console.log('reqData', reqData);
+  /* ⬇️ reset user password- OK */
+  async sendPasswordResetMail(reqData) {
     try {
-      await User.update(
-        { email: reqData.email },
-        { $set: { password: reqData.password } },
-        { upsert: true }
-      );
+      const user = await User.findOne({ email: reqData.email });
+      if (!user)
+        return {
+          status: 400,
+          message: `User with given email doesn't exist`,
+        };
 
+      const link = `${process.env.FRONTEND_URL}/password-reset/${user._id}`;
+
+      await sendEmail(
+        user.email,
+        'Fitness Fanatics - jelszócsere',
+        `Az alábbi linkre kattintva lecserélheted a jelszavad: ${link}`
+      );
       return {
         status: 200,
-        message: 'User password has been updated',
+        message: `Password reset link sent to your email account`,
       };
     } catch (err) {
-      logger.error(err);
+      // next(err);
       return {
         status: 500,
         message: 'Something went wrong',
       };
     }
   },
-  /* ⬆️ update user password - OK */
+
+  async resetPassword(id, reqData) {
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(reqData.password, salt);
+
+    reqData.password = hashedPassword;
+
+    try {
+      await User.findByIdAndUpdate(id, reqData, {
+        useFindAndModify: false,
+      });
+      return {
+        status: 200,
+        message: 'User password has been updated',
+      };
+    } catch (err) {
+      next(err);
+      return {
+        status: 500,
+        message: 'Something went wrong',
+      };
+    }
+  },
+  /* ⬆️ reset user password - OK */
 };

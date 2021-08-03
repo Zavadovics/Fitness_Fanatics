@@ -16,7 +16,7 @@ const Activities = ({ profile, loggedInUser }) => {
 
   /* Get all activities */
   useEffect(() => {
-    fetch(`${REACT_APP_SERVER_URL}/activities/${loggedInUser.id}`, {
+    fetch(`${REACT_APP_SERVER_URL}/api/activities/${loggedInUser.id}`, {
       method: 'GET',
       headers: {
         Accept: 'application/json',
@@ -43,12 +43,12 @@ const Activities = ({ profile, loggedInUser }) => {
   return (
     <>
       <div className='activities-cont'>
+        <h2>Tevékenységek</h2>
         <div className='alert-cont'>
           {alert && (
             <p className={`alert alert-${alert.alertType}`}>{alert.message}</p>
           )}
         </div>
-        <h2>Tevékenységek</h2>
         {activities.length === 0 ? (
           <p className='no-activities'>
             Nincs egy megjeleníthető tevékenység sem.

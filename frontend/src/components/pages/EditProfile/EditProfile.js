@@ -2,35 +2,28 @@ import { useEffect, useState, useRef } from 'react';
 import InputField from '../../common/InputField/InputField';
 import validator from 'validator';
 import './editProfile.scss';
-
+/* FIX FETCHING CITIES */
 const EditProfile = ({ profile, setProfile, loggedInUser }) => {
   const { REACT_APP_SERVER_URL } = process.env;
   const [cities, setCities] = useState([]);
-  const [error, setError] = useState(null);
   const genderList = ['férfi', 'nő', 'nem szeretném megadni'];
   const [formData, setFormData] = useState(profile);
-  // const [formData, setFormData] = useState({
-  //   userName: profile.userName,
-  //   firstName: profile.firstName,
-  //   lastName: profile.lastName,
-  //   email: profile.email,
-  //   gender: profile.gender,
-  //   cityOfResidence: profile.cityOfResidence,
-  //   weight: profile.weight === 0 ? profile.weight === '',
-  //   birthDate: profile.birthDate,
-  //   motivation: profile.motivation,
-  // });
+
   const [alert, setAlert] = useState(null);
   const [formWasValidated, setFormWasValidated] = useState(false);
 
   // console.log('props - profile', profile);
   // console.log('start - formData', formData);
 
-  /* get cities */
   useEffect(() => {
-    fetch(`${REACT_APP_SERVER_URL}/cities`)
+    fetch(`${REACT_APP_SERVER_URL}/api/cities`, {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+      },
+    })
       .then(res => {
-        if (res.status < 200 || res.status >= 300) {
+        if (res.status !== 200) {
           throw Error(
             `could not fetch data from database, error ${res.status}`
           );
@@ -43,10 +36,10 @@ const EditProfile = ({ profile, setProfile, loggedInUser }) => {
           cityValues.push(jsonRes[i].value);
         }
         setCities(cityValues);
-        setError(null);
+        console.log(cities);
       })
       .catch(err => {
-        setError(err.message);
+        console.log(err.message);
       });
   }, []);
 
@@ -195,7 +188,7 @@ const EditProfile = ({ profile, setProfile, loggedInUser }) => {
     setFormWasValidated(false);
     const isValid = isFormValid();
     if (isValid) {
-      await fetch(`${REACT_APP_SERVER_URL}/user/${loggedInUser.id}`, {
+      await fetch(`${REACT_APP_SERVER_URL}/api/user/${loggedInUser.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

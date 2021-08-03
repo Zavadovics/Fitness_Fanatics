@@ -53,7 +53,7 @@ const idLength = 24;
  * @swagger
  * tags:
  *   name: Activities
- *   description: The activity managing API
+ *   description: API that manages activities
  */
 
 /**
@@ -61,7 +61,7 @@ const idLength = 24;
  * /activities/{id}:
  *   get:
  *     summary: gets all activities of the logged in user
- *     tags: [Activity]
+ *     tags: [Activities]
  *     parameters:
  *       - in: path
  *         name: id

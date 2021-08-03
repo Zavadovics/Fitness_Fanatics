@@ -6,7 +6,11 @@
     align-items: center;
     justify-content: center;
     width: 100%;
-    padding: 5em 0;
+    padding-bottom: 4em;
+}
+
+.training-plan-cont h2 {
+    margin: 1em auto;
 }
 
 .training-plan-cont form {
@@ -114,6 +118,6 @@
         padding: 1em;
     }
     .training-plan-cont h2 {
-        font-size: 20px;
+        font-size: 25px;
     }
 }

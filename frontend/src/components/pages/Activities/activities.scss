@@ -5,6 +5,7 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
+    padding-bottom: 4em;
 }
 
 .no-activities {
@@ -35,6 +36,6 @@
 
 @media screen and (max-width: 480px) {
     .activities-cont h2 {
-        font-size: 20px;
+        font-size: 25px;
     }
 }

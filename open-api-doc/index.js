@@ -5,7 +5,9 @@ import low from 'lowdb';
 import swaggerUI from 'swagger-ui-express';
 import swaggerJsDoc from 'swagger-jsdoc';
 
-import router from './routes/activities.js';
+import activitiesRouter from './routes/activities.js';
+import citiesRouter from './routes/cities.js';
+import plansRouter from './routes/plans.js';
 
 const PORT = /* process.env.PORT || */ 4000;
 
@@ -14,28 +16,33 @@ import FileSync from 'lowdb/adapters/FileSync.js';
 const adapter = new FileSync('db.json');
 const db = low(adapter);
 
-db.defaults({ activities: [] }).write();
+db.defaults({ activities: [], cities: [], plans: [] }).write();
 
 const swaggerOptions = {
   swaggerDefinition: {
+    openapi: '3.0.0',
     info: {
-      version: "1.0.0",
-      title: "Fitness Fanatics API",
-      description: "Fitness Fanatics API Information",
-      contact: {
-        name: "Tibor Zavadovics"
+      version: '1.0.0',
+      title: 'Fitness Fanatics API',
+      description: 'Fitness Fanatics API Information',
+      author: {
+        name: 'Tibor Zavadovics',
       },
-      servers: ["http://localhost:5000"]
-    }
+      servers: [
+        {
+          url: 'http://localhost:4000',
+        },
+      ],
+    },
   },
-    apis: ['./routes/*.js']
+  apis: ['./routes/*.js'],
 };
 
 const swaggerDocs = swaggerJsDoc(swaggerOptions);
 
 const app = express();
 
-api.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocs));
 
 app.db = db;
 
@@ -43,6 +50,8 @@ app.use(cors());
 app.use(express.json());
 app.use(morgan('dev'));
 
-app.use('/activities', router);
+app.use('/activities', activitiesRouter);
+app.use('/cities', citiesRouter);
+app.use('/plan', plansRouter);
 
 app.listen(PORT, () => console.log(`The server is running on port ${PORT}`));

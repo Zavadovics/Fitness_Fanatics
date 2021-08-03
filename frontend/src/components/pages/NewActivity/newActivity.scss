@@ -5,33 +5,18 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    margin-bottom: 2em;
+    padding-bottom: 4em;
 }
 
 .new-activity-cont h2 {
-    margin: 2em auto;
-}
-
-@media screen and (max-width: 1024px) {
-    .new-activity-cont h2 {
-        font-size: 30px;
-    }
-}
-
-@media screen and (max-width: 768px) {
-    .new-activity-cont h2 {
-        font-size: 25px;
-    }
-}
-
-@media screen and (max-width: 480px) {
-    .new-activity-cont h2 {
-        font-size: 20px;
-    }
+    margin: 1em auto;
+    text-align: center;
+    font-size: 25px;
 }
 
 @media screen and (max-width: 380px) {
     .new-activity-cont h2 {
-        font-size: 15px;
+        text-align: center;
+        font-size: 25px;
     }
 }

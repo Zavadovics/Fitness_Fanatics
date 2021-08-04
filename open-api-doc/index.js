@@ -5,18 +5,27 @@ import low from 'lowdb';
 import swaggerUI from 'swagger-ui-express';
 import swaggerJsDoc from 'swagger-jsdoc';
 
+import usersRouter from './routes/users.js';
+import loginRouter from './routes/login.js';
 import activitiesRouter from './routes/activities.js';
 import citiesRouter from './routes/cities.js';
+import photosRouter from './routes/photos.js';
 import plansRouter from './routes/plans.js';
 
-const PORT = /* process.env.PORT || */ 4000;
+const PORT = 4000;
 
 import FileSync from 'lowdb/adapters/FileSync.js';
 
 const adapter = new FileSync('db.json');
 const db = low(adapter);
 
-db.defaults({ activities: [], cities: [], plans: [] }).write();
+db.defaults({
+  users: [],
+  activities: [],
+  cities: [],
+  photos: [],
+  plans: [],
+}).write();
 
 const swaggerOptions = {
   swaggerDefinition: {
@@ -28,12 +37,12 @@ const swaggerOptions = {
       author: {
         name: 'Tibor Zavadovics',
       },
-      servers: [
-        {
-          url: 'http://localhost:4000',
-        },
-      ],
     },
+    servers: [
+      {
+        url: 'http://localhost:4000',
+      },
+    ],
   },
   apis: ['./routes/*.js'],
 };
@@ -50,8 +59,11 @@ app.use(cors());
 app.use(express.json());
 app.use(morgan('dev'));
 
+app.use('/users', usersRouter);
+app.use('/login', loginRouter);
 app.use('/activities', activitiesRouter);
 app.use('/cities', citiesRouter);
+app.use('/photos', photosRouter);
 app.use('/plan', plansRouter);
 
 app.listen(PORT, () => console.log(`The server is running on port ${PORT}`));

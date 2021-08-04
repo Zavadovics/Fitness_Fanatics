@@ -9,7 +9,7 @@ export const loginService = {
     const { error } = loginValidation(loginData);
     if (error) {
       return {
-        status: 400,
+        status: 404,
         message: error.details[0].message,
       };
     }
@@ -18,7 +18,7 @@ export const loginService = {
     if (!user) {
       return {
         status: 400,
-        message: 'Email is not registered',
+        message: 'User is not registered',
       };
     }
 
@@ -28,8 +28,8 @@ export const loginService = {
 
     if (!validPass) {
       return {
-        status: 400,
-        message: 'Username or password is incorrect',
+        status: 403,
+        message: 'Email or password is incorrect',
       };
     }
 

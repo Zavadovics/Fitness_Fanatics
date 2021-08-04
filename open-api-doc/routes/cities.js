@@ -53,7 +53,7 @@ const router = express.Router();
  *         description: Something went wrong
  */
 
-router.get('/cities', (req, res) => {
+router.get('/', (req, res) => {
   const cities = req.app.db.get('cities');
 
   res.send(cities);

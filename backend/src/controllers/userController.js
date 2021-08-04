@@ -45,18 +45,21 @@ export const userController = {
   async sendPasswordResetMail(req, res, next) {
     try {
       const data = await userService.sendPasswordResetMail(req.body);
+
+      console.log('controller - data', data);
+
       res.status(data.status).json(data);
     } catch (err) {
+      console.error(err);
       next(err);
     }
   },
 
   async resetPassword(req, res, next) {
-    const { id } = req.params;
+    const { id, token } = req.params;
     const reqData = req.body;
-
     try {
-      const data = await userService.resetPassword(id, reqData);
+      const data = await userService.resetPassword(id, token, reqData);
       res.status(data.status).json(data);
     } catch (err) {
       next(err);

@@ -10,7 +10,7 @@ export const activityService = {
       if (error) {
         console.error(error);
         return {
-          status: 400,
+          status: 404,
           message: error.details[0].message,
         };
       }

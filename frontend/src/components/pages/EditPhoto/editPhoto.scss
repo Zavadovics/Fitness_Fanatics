@@ -22,7 +22,6 @@
     justify-content: center;
     background: variables.$color-test;
     padding: 2em;
-    // margin: 4em 0;
     box-shadow: 0px 3px 8px #000;
     border-radius: 10px;
     transition: all 300ms ease-in-out;
@@ -80,20 +79,6 @@
 
 .edit-photo-cont .inner p span:last-of-type {
     color: variables.$color-blue;
-}
-
-.alert-cont {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    width: 50%;
-}
-
-.alert {
-    margin-top: 5em;
-    box-shadow: 0px 3px 8px #000;
-    border-radius: 10px;
 }
 
 .inputfile {

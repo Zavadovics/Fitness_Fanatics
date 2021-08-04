@@ -3,7 +3,7 @@ import nodemailer from 'nodemailer';
 
 dotenv.config();
 
-const sendEmail = async (email, subject, text) => {
+const sendEmail = async (link, user) => {
   try {
     const transporter = nodemailer.createTransport({
       host: 'smtp.gmail.com',
@@ -17,9 +17,9 @@ const sendEmail = async (email, subject, text) => {
 
     await transporter.sendMail({
       from: process.env.USER_EMAIL,
-      to: email,
-      subject: subject,
-      text: text,
+      to: user.email,
+      subject: 'Fitness Fanatics - jelszócsere',
+      text: `Az alábbi linkre kattintva lecserélheted a jelszavad: ${link} - a link 15 perc múlva lejár !`,
     });
 
     console.log('email sent successfully');

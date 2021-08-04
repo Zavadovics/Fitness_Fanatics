@@ -21,41 +21,41 @@
 
 ## Oldalak
 
-| Oldalak                | Szerepük                                                                       |
-| ---------------------- | ------------------------------------------------------------------------------ |
-| /                      | Főoldal (ide érkezik a felhasználó a regisztráció és/vagy bejelentkezés előtt) |
-| /register              | Új felhasználó regisztrációja                                                  |
-| /login                 | Felhasználó bejelentkezése                                                     |
-| /password              | Elfelejtett jelszó - jelszócsere e-mail kérése                                 |
-| /password-reset/id     | Elfelejtett jelszó - Új jelszó megadása                                        |
-| /activities            | Bejelentkezés utáni főoldal (összes tevékenység időrendbeli listázása)         |
-| /activities/new        | Új tevékenység hozzáadása                                                      |
-| /activities/edit/id    | Tevékenység módosítása                                                         |
-| /profile               | Saját profil megjelenítése                                                     |
-| /profile/edit/id       | Saját profil szerkesztése                                                      |
-| /profile/photo/edit/id | Saját profil fotó hozzáadása, cseréje, törlése                                 |
-| /training-plans        | Edzés tervek adatbázisból való lekérése, új terv hozzáadása                    |
+| Oldalak                  | Szerepük                                                                       |
+| ------------------------ | ------------------------------------------------------------------------------ |
+| /                        | Főoldal (ide érkezik a felhasználó a regisztráció és/vagy bejelentkezés előtt) |
+| /register                | Új felhasználó regisztrációja                                                  |
+| /login                   | Felhasználó bejelentkezése                                                     |
+| /password                | Elfelejtett jelszó - jelszócsere e-mail kérése                                 |
+| /password-reset/id/token | Elfelejtett jelszó - Új jelszó megadása                                        |
+| /activities              | Bejelentkezés utáni főoldal (összes tevékenység időrendbeli listázása)         |
+| /activities/new          | Új tevékenység hozzáadása                                                      |
+| /activities/edit/id      | Tevékenység módosítása                                                         |
+| /profile                 | Saját profil megjelenítése                                                     |
+| /profile/edit/id         | Saját profil szerkesztése                                                      |
+| /profile/photo/edit/id   | Saját profil fotó hozzáadása, cseréje, törlése                                 |
+| /training-plans          | Edzés tervek adatbázisból való lekérése, új terv hozzáadása                    |
 
 ## API végpontok
 
-| API végpontok               | Szerepük                                                              |
-| --------------------------- | --------------------------------------------------------------------- |
-| POST/api/login              | Felhasználó bejelentkezése                                            |
-| POST/api/user               | Új felhasználó regisztrációja                                         |
-| GET/api/user/{id}           | Saját profil adatok lekérése id alapján                               |
-| PUT/api/user/{id}           | Saját profil módosítása id alapján                                    |
-| POST/api/password           | Jelszócsere e-mail kérése                                             |
-| PUT/api/password-reset/{id} | Jelszó frissítése az adatbázisban                                     |
-| GET/api/cities              | Összes város lekérése a profil módosításon található legördülő menübe |
-| GET/api/activities/{id}     | Saját tevékenységek lekérése és megjelenítése                         |
-| PUT/api/activities/{id}     | Tevékenység módosítása id alapján                                     |
-| POST/api/activities         | Új edzés hozzáadása az adatbázishoz                                   |
-| DELETE/api/activities/{id}  | Tevékenység törlése id alapján                                        |
-| GET/api/photo/{id}          | Saját fotó lekérése és megjelenítése                                  |
-| PUT/api/photo/{id}          | Saját fotó feltöltése és módosítása id alapján                        |
-| DELETE/api/photo/{id}       | Saját fotó törlése                                                    |
-| GET/api/plan                | Az összes adatbázisban szereplő edzésterv lekérése                    |
-| POST/api/plan               | Új edzésterv hozzáadása az adatbázishoz                               |
+| API végpontok                       | Szerepük                                                              |
+| ----------------------------------- | --------------------------------------------------------------------- |
+| POST/api/login                      | Felhasználó bejelentkezése                                            |
+| POST/api/user                       | Új felhasználó regisztrációja                                         |
+| GET/api/user/{id}                   | Saját profil adatok lekérése id alapján                               |
+| PUT/api/user/{id}                   | Saját profil módosítása id alapján                                    |
+| POST/api/password                   | Jelszócsere e-mail kérése                                             |
+| PUT/api/password-reset/{id}/{token} | Jelszó frissítése az adatbázisban                                     |
+| GET/api/cities                      | Összes város lekérése a profil módosításon található legördülő menübe |
+| GET/api/activities/{id}             | Saját tevékenységek lekérése és megjelenítése                         |
+| PUT/api/activities/{id}             | Tevékenység módosítása id alapján                                     |
+| POST/api/activities                 | Új edzés hozzáadása az adatbázishoz                                   |
+| DELETE/api/activities/{id}          | Tevékenység törlése id alapján                                        |
+| GET/api/photo/{id}                  | Saját fotó lekérése és megjelenítése                                  |
+| PUT/api/photo/{id}                  | Saját fotó feltöltése és módosítása id alapján                        |
+| DELETE/api/photo/{id}               | Saját fotó törlése                                                    |
+| GET/api/plan                        | Az összes adatbázisban szereplő edzésterv lekérése                    |
+| POST/api/plan                       | Új edzésterv hozzáadása az adatbázishoz                               |
 
 ## Adatbázis gyűjtemények
 

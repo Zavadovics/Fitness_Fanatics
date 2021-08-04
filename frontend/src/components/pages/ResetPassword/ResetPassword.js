@@ -11,7 +11,7 @@ const ResetPassword = ({ loggedInUser }) => {
   const { REACT_APP_SERVER_URL, REACT_APP_GOOGLE_RECAPTCHA_KEY } = process.env;
   const [verified, setVerified] = useState(false);
   const history = useHistory();
-  const { id } = useParams();
+  const { id, token } = useParams();
 
   const [formData, setFormData] = useState({
     newPassword: '',
@@ -38,9 +38,10 @@ const ResetPassword = ({ loggedInUser }) => {
   });
 
   const messageTypes = Object.freeze({
-    success: `A jelszó cseréje sikeresen megtörtént.`,
+    success: `A jelszó cseréje sikeresen megtörtént. Most már bejelentkezhetsz.`,
     fail: `A jelszó cseréje nem sikerült.`,
     failCaptcha: `Kérlek bizonyítsd be hogy nem vagy robot 🤖`,
+    expiredToken: `Sajnos a jelszó megváltoztatására adott idő (15 perc) lejárt.`,
   });
 
   const isFieldEmpty = value => {
@@ -135,7 +136,7 @@ const ResetPassword = ({ loggedInUser }) => {
     setFormWasValidated(false);
     const isValid = isFormValid();
     if (isValid && verified) {
-      await fetch(`${REACT_APP_SERVER_URL}/api/password-reset/${id}`, {
+      await fetch(`${REACT_APP_SERVER_URL}/api/password-reset/${id}/${token}`, {
         method: 'put',
         headers: {
           'Content-Type': 'application/json',
@@ -153,9 +154,14 @@ const ResetPassword = ({ loggedInUser }) => {
             });
             setVerified(false);
             setAlert({ alertType: 'success', message: messageTypes.success });
-            // setTimeout(() => {
-            history.push('/login');
-            // }, 3000);
+            setTimeout(() => {
+              history.push('/login');
+            }, 3000);
+          } else if (res.status === 400) {
+            setAlert({
+              alertType: 'danger',
+              message: messageTypes.expiredToken,
+            });
           } else {
             setAlert({ alertType: 'danger', message: messageTypes.fail });
           }

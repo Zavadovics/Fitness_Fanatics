@@ -78,7 +78,7 @@ const router = express.Router();
  *     - bearerAuth: []
  */
 
-router.get('/plan', (req, res) => {
+router.get('/', (req, res) => {
   const plans = req.app.db.get('plans');
 
   res.send(plans);
@@ -88,7 +88,7 @@ router.get('/plan', (req, res) => {
  * @swagger
  * /plan:
  *   post:
- *     summary: Upload a new training plan
+ *     summary: Uploads a new training plan
  *     tags: [Training plans]
  *     requestBody:
  *       required: true
@@ -130,7 +130,7 @@ router.get('/plan', (req, res) => {
  *     - bearerAuth: []
  */
 
-router.post('/plan', (req, res) => {
+router.post('/', (req, res) => {
   try {
     const plan = {
       _id: nanoid(idLength),

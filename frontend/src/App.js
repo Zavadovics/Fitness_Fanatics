@@ -163,7 +163,7 @@ const App = () => {
               <Route path={`/password`}>
                 <ForgotPassword />
               </Route>
-              <Route path={`/password-reset/:id`}>
+              <Route path={`/password-reset/:id/:token`}>
                 <ResetPassword />
               </Route>
             </>

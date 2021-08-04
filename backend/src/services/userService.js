@@ -1,6 +1,6 @@
-// import logger from '../logger.js';
 import bcrypt from 'bcryptjs';
 import User from '../models/User.js';
+import jwt from 'jsonwebtoken';
 import { userValidation } from '../validations/userValidation.js';
 import sendEmail from '../utils/sendEmail.js';
 
@@ -45,7 +45,7 @@ export const userService = {
         message: 'User has successfully registered.',
       };
     } catch (err) {
-      next(err);
+      console.log(err);
       return {
         status: 500,
         message: 'Something went wrong',
@@ -79,7 +79,7 @@ export const userService = {
         message: 'User data has been updated',
       };
     } catch (err) {
-      next(err);
+      console.log(err);
       return {
         status: 500,
         message: 'Something went wrong',
@@ -92,25 +92,31 @@ export const userService = {
   async sendPasswordResetMail(reqData) {
     try {
       const user = await User.findOne({ email: reqData.email });
+
       if (!user)
         return {
           status: 400,
           message: `User with given email doesn't exist`,
         };
 
-      const link = `${process.env.FRONTEND_URL}/password-reset/${user._id}`;
-
-      await sendEmail(
-        user.email,
-        'Fitness Fanatics - jelszócsere',
-        `Az alábbi linkre kattintva lecserélheted a jelszavad: ${link}`
+      const authToken = jwt.sign(
+        {
+          email: user.email,
+        },
+        process.env.TOKEN_SECRET,
+        {
+          expiresIn: '2m',
+        }
       );
+
+      const link = `${process.env.FRONTEND_URL}/password-reset/${user._id}/${authToken}`;
+      await sendEmail(link, user);
       return {
         status: 200,
         message: `Password reset link sent to your email account`,
       };
     } catch (err) {
-      // next(err);
+      console.log(err);
       return {
         status: 500,
         message: 'Something went wrong',
@@ -118,13 +124,21 @@ export const userService = {
     }
   },
 
-  async resetPassword(id, reqData) {
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(reqData.password, salt);
-
-    reqData.password = hashedPassword;
-
+  async resetPassword(id, token, reqData) {
     try {
+      const { exp } = jwt.decode(token);
+      if (Date.now() >= exp * 1000) {
+        return {
+          status: 400,
+          message: `TOKEN has expired!`,
+        };
+      }
+
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(reqData.password, salt);
+
+      reqData.password = hashedPassword;
+
       await User.findByIdAndUpdate(id, reqData, {
         useFindAndModify: false,
       });
@@ -133,7 +147,7 @@ export const userService = {
         message: 'User password has been updated',
       };
     } catch (err) {
-      next(err);
+      console.log(err);
       return {
         status: 500,
         message: 'Something went wrong',

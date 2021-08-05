@@ -93,9 +93,7 @@
   - [NodeMailer]
 
 2. .env.dev létrehozása a kulcsok tárolására
-3. ```sh 
-docker-compose build 
-```
+3. ```sh docker-compose build ```
 6. docker-compose --env-file ./.env.dev up
 7. Fitness Fanatics frontend: http://localhost:3000/
 8. Fitness Fanatics backend: http://localhost:5000/

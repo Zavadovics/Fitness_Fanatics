@@ -84,3 +84,18 @@
 **API dokumentáció**
 
 - OpenAPI/Swagger
+
+## Alkalmaz installálása
+
+1. Alkalmazás által használt kulcsok:
+  - [Cloudinary]
+  - [Mongo DB]
+  - [NodeMailer]
+
+2. .env.dev létrehozása a kulcsok tárolására
+3. docker-compose build
+4. docker-compose --env-file ./.env.dev up
+5. Fitness Fanatics frontend: http://localhost:3000/
+6. Fitness Fanatics backend: http://localhost:5000/
+7. Swagger Open API documentáció http://localhost:4000/api-docs/#/
+

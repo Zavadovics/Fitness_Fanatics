@@ -27,7 +27,7 @@
 | /register              | Új felhasználó regisztrációja                                                  |
 | /login                 | Felhasználó bejelentkezése                                                     |
 | /password              | Elfelejtett jelszó - jelszócsere e-mail kérése                                 |
-| /password-reset/id     | Elfelejtett jelszó - Új jelszó megadása                                        |
+| /password-reset/id/token     | Elfelejtett jelszó - Új jelszó megadása                                        |
 | /activities            | Bejelentkezés utáni főoldal (összes tevékenység időrendbeli listázása)         |
 | /activities/new        | Új tevékenység hozzáadása                                                      |
 | /activities/edit/id    | Tevékenység módosítása                                                         |
@@ -45,7 +45,7 @@
 | GET/api/user/{id}           | Saját profil adatok lekérése id alapján                               |
 | PUT/api/user/{id}           | Saját profil módosítása id alapján                                    |
 | POST/api/password           | Jelszócsere e-mail kérése                                             |
-| PUT/api/password-reset/{id} | Jelszó frissítése az adatbázisban                                     |
+| PUT/api/password-reset/{id}/{token} | Jelszó frissítése az adatbázisban                                     |
 | GET/api/cities              | Összes város lekérése a profil módosításon található legördülő menübe |
 | GET/api/activities/{id}     | Saját tevékenységek lekérése és megjelenítése                         |
 | PUT/api/activities/{id}     | Tevékenység módosítása id alapján                                     |

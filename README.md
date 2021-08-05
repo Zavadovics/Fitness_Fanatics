@@ -89,8 +89,8 @@
 
 1. Alkalmazás által használt kulcsok:
   - [Cloudinary](https://cloudinary.com)
-  - [Mongo DB]
-  - [NodeMailer]
+  - [Mongo DB](https://www.mongodb.com)
+  - [NodeMailer](https://nodemailer.com)
 
 2. .env.dev létrehozása a kulcsok tárolására
 3. ``` docker-compose build ```

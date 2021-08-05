@@ -2,12 +2,10 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { useHistory } from 'react-router-dom';
 import './navbar.scss';
+import user from '../../../images/user.png';
 import 'bootstrap/dist/js/bootstrap.bundle';
 
-const Navbar = props => {
-  const { loggedInUser, setLoggedInUser } = props;
-  // console.log('loggedInUser - navbar.js', loggedInUser);
-
+const Navbar = ({ loggedInUser, setLoggedInUser, userPhoto }) => {
   const history = useHistory();
 
   const handleLogout = () => {
@@ -21,9 +19,18 @@ const Navbar = props => {
       <div className='container-fluid'>
         {loggedInUser ? (
           <div className='logged-in-cont'>
-            <p>
-              Üdv <span>{loggedInUser.firstName}</span> !
-            </p>
+            <div className='left'>
+              <p>
+                Üdv <span>{loggedInUser.firstName}</span> !
+              </p>
+              <div className='nav-user-photo-cont'>
+                {userPhoto !== '' ? (
+                  <img src={userPhoto} alt='' />
+                ) : (
+                  <img src={user} alt='' />
+                )}
+              </div>
+            </div>
             <button type='button' className='navbar-btn' onClick={handleLogout}>
               KIJELENTKEZÉS
             </button>

@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import InputField from '../InputField/InputField';
 import SelectField from '../SelectField/SelectField';
+import ItemSelect from '../../common/ItemSelect/ItemSelect';
 import './activityForm.scss';
 
 /* TO-DO !!!
@@ -203,7 +204,6 @@ const ActivityForm = ({ type, activity, loggedInUser }) => {
           // console.log(loggedInUser.token);
 
           if (res.status === 200) {
-            console.log(res);
             setAlert({
               alertType: 'success',
               message: messageTypes.createSuccess,
@@ -285,7 +285,6 @@ const ActivityForm = ({ type, activity, loggedInUser }) => {
               id='activityDate'
               type='date'
               labelText='Dátum'
-              placeholder={'ÉÉ/HH/NN'}
               onChange={handleInputChange}
               onBlur={handleInputBlur}
               value={formData.activityDate}
@@ -315,20 +314,31 @@ const ActivityForm = ({ type, activity, loggedInUser }) => {
               error={formErrors.duration}
             />
             {type === 'new' ? (
-              <SelectField
+              // <SelectField
+              //   name='activityType'
+              //   id='activityType'
+              //   labelText='Típus'
+              //   valueList={activityTypeList}
+              //   onChange={handleInputChange}
+              //   onBlur={handleInputBlur}
+              //   value={formData.activityType}
+              //   reference={references.activityType}
+              //   error={formErrors.activityType}
+              // />
+              <ItemSelect
+                labelText={'Tevékenység típusa'}
                 name='activityType'
-                id='activityType'
-                labelText='Típus'
+                id={'activityType'}
+                formValue={formData.activityType}
                 valueList={activityTypeList}
                 onChange={handleInputChange}
                 onBlur={handleInputBlur}
-                value={formData.activityType}
-                reference={references.activityType}
-                error={formErrors.activityType}
+                reference={references['activityType']}
+                formError={formErrors.activityType}
               />
             ) : (
               <>
-                <label className='form-label m-2' htmlFor='activityType'>
+                {/* <label className='form-label m-2' htmlFor='activityType'>
                   Típus
                 </label>
                 <select
@@ -346,7 +356,18 @@ const ActivityForm = ({ type, activity, loggedInUser }) => {
                       {type}
                     </option>
                   ))}
-                </select>
+                </select> */}
+                <ItemSelect
+                  labelText={'Nem'}
+                  name='activityType'
+                  id={'activityType'}
+                  formValue={formData.activityType}
+                  valueList={activityTypeList}
+                  onChange={handleInputChange}
+                  onBlur={handleInputBlur}
+                  reference={references['activityType']}
+                  formError={formErrors.activityType}
+                />
               </>
             )}
             <InputField

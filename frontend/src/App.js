@@ -105,6 +105,7 @@ const App = () => {
               <Navbar
                 setLoggedInUser={setLoggedInUser}
                 loggedInUser={loggedInUser}
+                userPhoto={userPhoto}
               />
               <div className='app-cont'>
                 <Sidebar loggedInUser={loggedInUser} />

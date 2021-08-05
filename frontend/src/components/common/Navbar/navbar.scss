@@ -29,6 +29,25 @@
     position: relative;
 }
 
+.logged-in-cont .left {
+    display: flex;
+    align-items: center;
+}
+
+.nav-user-photo-cont {
+    position: relative;
+    width: 50px;
+    height: 50px;
+    overflow: hidden;
+    border-radius: 50%;
+    margin-left: 1em;
+}
+
+.nav-user-photo-cont img {
+    width: 100%;
+    height: auto;
+}
+
 .navbar-btn {
     background: variables.$color-lightorange;
     padding: 0.8em 1.6em;

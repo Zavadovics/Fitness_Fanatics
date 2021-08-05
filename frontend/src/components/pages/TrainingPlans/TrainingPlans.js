@@ -185,6 +185,10 @@ const TrainingPlans = ({ loggedInUser }) => {
         onSubmit={handleSubmit}
         className={`needs-validation ${formWasValidated && 'was-validated'}`}
       >
+        <p>
+          Van egy edzésterved ami hasznos lehet másoknak? Itt feltöltheted az
+          adatbázisba.
+        </p>
         <input
           className='form-control pdf-inputfile'
           name='image'
@@ -215,6 +219,7 @@ const TrainingPlans = ({ loggedInUser }) => {
         {plans.map(plan => (
           <div className='object-outer-cont' key={plan._id}>
             <div className='object-cont'>
+              <p className='object-title'>{plan.title}</p>
               <object
                 className='object-preview'
                 data={plan.avatar}

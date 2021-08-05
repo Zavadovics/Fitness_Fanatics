@@ -14,7 +14,6 @@ const EditPhoto = ({ loggedInUser, userPhoto, setUserPhoto }) => {
   const [data, setData] = useState(null);
 
   const handleChange = e => {
-    // console.log(e.target.files[0]);
     setData(e.target.files[0]);
   };
 
@@ -23,8 +22,6 @@ const EditPhoto = ({ loggedInUser, userPhoto, setUserPhoto }) => {
     formData.append('image', data);
     formData.append('user_id', loggedInUser.id);
     formData.append('user_email', loggedInUser.email);
-    // console.log('formData before send', formData);
-    // console.log(loggedInUser.id);
     await fetch(`${REACT_APP_SERVER_URL}/api/photo/${loggedInUser.id}`, {
       method: 'PUT',
       headers: {
@@ -34,7 +31,6 @@ const EditPhoto = ({ loggedInUser, userPhoto, setUserPhoto }) => {
     })
       .then(response => response.json())
       .then(res => {
-        // console.log('res', res);
         if (res.status === 200) {
           setAlert({
             alertType: 'success',
@@ -57,7 +53,6 @@ const EditPhoto = ({ loggedInUser, userPhoto, setUserPhoto }) => {
     })
       .then(response => response.json())
       .then(res => {
-        // console.log(res);
         if (res.status === 200) {
           setAlert({
             alertType: 'success',
@@ -95,6 +90,11 @@ const EditPhoto = ({ loggedInUser, userPhoto, setUserPhoto }) => {
           <span>Email cím: </span>
           <span>{loggedInUser.email}</span>
         </p>
+        <p>
+          Új fotót töltenél fel vagy lecserélnéd a jelenlegi profilképed? Itt
+          mindkettőt megteheted.
+        </p>
+
         <div className='mb-3'>
           <input
             className='form-control inputfile'

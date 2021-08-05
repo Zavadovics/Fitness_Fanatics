@@ -105,7 +105,7 @@ export const userService = {
         },
         process.env.TOKEN_SECRET,
         {
-          expiresIn: '2m',
+          expiresIn: '15m',
         }
       );
 

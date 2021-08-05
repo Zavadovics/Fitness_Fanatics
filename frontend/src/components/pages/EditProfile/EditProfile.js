@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef } from 'react';
 import InputField from '../../common/InputField/InputField';
+import ItemSelect from '../../common/ItemSelect/ItemSelect';
 import validator from 'validator';
 import './editProfile.scss';
 /* FIX FETCHING CITIES */
@@ -280,7 +281,7 @@ const EditProfile = ({ profile, setProfile, loggedInUser }) => {
               reference={references.email}
               formError={formErrors.email}
             />
-            <label className='form-label m-2' htmlFor='activityType'>
+            {/* <label className='form-label m-2' htmlFor='activityType'>
               Nem
             </label>
             <select
@@ -298,8 +299,18 @@ const EditProfile = ({ profile, setProfile, loggedInUser }) => {
                   {gender}
                 </option>
               ))}
-            </select>
-            <label className='form-label m-2' htmlFor='activityType'>
+            </select> */}
+            <ItemSelect
+              labelText={'Nem'}
+              name='gender'
+              id={'gender'}
+              formValue={formData.gender}
+              valueList={genderList}
+              onChange={handleInputChange}
+              reference={references['gender']}
+              formError={formErrors.gender}
+            />
+            {/* <label className='form-label m-2' htmlFor='activityType'>
               Tartózkodási hely
             </label>
             <select
@@ -317,7 +328,17 @@ const EditProfile = ({ profile, setProfile, loggedInUser }) => {
                   {city}
                 </option>
               ))}
-            </select>
+            </select> */}
+            <ItemSelect
+              labelText={'Tartózkodási hely'}
+              name='cityOfResidence'
+              id={'cityOfResidence'}
+              formValue={formData.cityOfResidence}
+              valueList={cities}
+              onChange={handleInputChange}
+              reference={references['cityOfResidence']}
+              formError={formErrors.cityOfResidence}
+            />
             <InputField
               name='weight'
               type='number'

@@ -85,7 +85,7 @@
 
 - OpenAPI/Swagger
 
-## Alkalmaz installálása
+## Alkalmazás installálása
 
 1. Alkalmazás által használt kulcsok:
   - [Cloudinary](https://cloudinary.com)

@@ -88,7 +88,7 @@
 ## Alkalmaz installálása
 
 1. Alkalmazás által használt kulcsok:
-  - [Cloudinary]
+  - [Cloudinary](https://cloudinary.com)
   - [Mongo DB]
   - [NodeMailer]
 

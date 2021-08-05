@@ -93,8 +93,7 @@
   - [NodeMailer]
 
 2. .env.dev létrehozása a kulcsok tárolására
-3. 
-```sh 
+3. ```sh 
 docker-compose build 
 ```
 6. docker-compose --env-file ./.env.dev up

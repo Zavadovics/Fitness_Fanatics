@@ -157,7 +157,7 @@ const Login = ({ loggedInUser, setLoggedInUser }) => {
             setAlert({ alertType: 'danger', message: messageTypes.fail });
           }
         });
-    } else if (!verified) {
+    } else if (!verified && isValid) {
       setAlert({
         alertType: 'danger',
         message: messageTypes.failCaptcha,

@@ -37,7 +37,7 @@ const EditProfile = ({ profile, setProfile, loggedInUser }) => {
           cityValues.push(jsonRes[i].value);
         }
         setCities(cityValues);
-        console.log(cities);
+        // console.log(cities);
       })
       .catch(err => {
         console.log(err.message);
@@ -211,9 +211,8 @@ const EditProfile = ({ profile, setProfile, loggedInUser }) => {
         .then(response => response.json())
         .then(res => {
           if (res.status === 200) {
-            setTimeout(() => {
-              setAlert({ alertType: 'success', message: messageTypes.success });
-            }, 3000);
+            window.scrollTo(0, 0);
+            setAlert({ alertType: 'success', message: messageTypes.success });
             setProfile(formData);
             // console.log('új adatok sikeresen mentve');
           } else {

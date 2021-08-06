@@ -204,6 +204,7 @@ const ActivityForm = ({ type, activity, loggedInUser }) => {
           // console.log(loggedInUser.token);
 
           if (res.status === 200) {
+            window.scrollTo(0, 0);
             setAlert({
               alertType: 'success',
               message: messageTypes.createSuccess,
@@ -246,6 +247,7 @@ const ActivityForm = ({ type, activity, loggedInUser }) => {
           .then(response => response.json())
           .then(res => {
             if (res.status === 200) {
+              window.scrollTo(0, 0);
               setTimeout(() => {
                 setAlert({
                   alertType: 'success',

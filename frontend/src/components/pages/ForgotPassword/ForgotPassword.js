@@ -132,6 +132,7 @@ const ForgotPassword = () => {
         .then(response => response.json())
         .then(res => {
           if (res.status === 200) {
+            window.scrollTo(0, 0);
             setFormData({
               email: '',
             });
@@ -141,7 +142,7 @@ const ForgotPassword = () => {
             setAlert({ alertType: 'danger', message: messageTypes.fail });
           }
         });
-    } else if (!verified) {
+    } else if (!verified  && isValid) {
       setAlert({
         alertType: 'danger',
         message: messageTypes.failCaptcha,

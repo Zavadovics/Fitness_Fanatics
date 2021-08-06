@@ -60,6 +60,7 @@ const ResetPassword = ({ loggedInUser }) => {
     newPassword: {
       required: isFieldEmpty,
       passwordLength: isPasswordValid,
+      passwordMatch: isConfirmPasswordMatch,
     },
     confirmPassword: {
       required: isFieldEmpty,
@@ -148,6 +149,7 @@ const ResetPassword = ({ loggedInUser }) => {
         .then(response => response.json())
         .then(res => {
           if (res.status === 200) {
+            window.scrollTo(0, 0);
             setFormData({
               newPassword: '',
               confirmPassword: '',
@@ -166,7 +168,7 @@ const ResetPassword = ({ loggedInUser }) => {
             setAlert({ alertType: 'danger', message: messageTypes.fail });
           }
         });
-    } else if (!verified) {
+    } else if (!verified && isValid) {
       setAlert({
         alertType: 'danger',
         message: messageTypes.failCaptcha,

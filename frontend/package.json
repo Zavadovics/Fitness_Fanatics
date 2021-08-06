@@ -7,6 +7,7 @@
         "@testing-library/react": "^11.1.0",
         "@testing-library/user-event": "^12.1.10",
         "antd": "^4.16.9",
+        "bootstrap": "^5.1.0",
         "cdbreact": "^1.1.0",
         "cldr-data": "^36.0.0",
         "enzyme": "^3.11.0",
@@ -48,8 +49,5 @@
             "last 1 firefox version",
             "last 1 safari version"
         ]
-    },
-    "devDependencies": {
-        "jest": "^26.6.0"
     }
 }

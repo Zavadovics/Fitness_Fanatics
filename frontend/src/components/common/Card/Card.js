@@ -18,7 +18,7 @@ const Card = ({
 }) => {
   const { REACT_APP_SERVER_URL } = process.env;
   const [alert, setAlert] = useState(null);
-  // const [error, setError] = useState(null);
+
 
   const messageTypes = Object.freeze({
     deleteFail: `Tevékenység törlése sikertelen.`,

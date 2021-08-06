@@ -6,6 +6,8 @@ import './activities.scss';
 - filter by activity type and duration
 */
 const Activities = ({ profile, loggedInUser }) => {
+  // window.location.reload();
+
   const { REACT_APP_SERVER_URL } = process.env;
   const [activities, setActivities] = useState([]);
   const [alert, setAlert] = useState(null);

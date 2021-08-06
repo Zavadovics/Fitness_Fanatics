@@ -32,6 +32,7 @@ const EditPhoto = ({ loggedInUser, userPhoto, setUserPhoto }) => {
       .then(response => response.json())
       .then(res => {
         if (res.status === 200) {
+          window.scrollTo(0, 0);
           setAlert({
             alertType: 'success',
             message: messageTypes.uploadSuccess,

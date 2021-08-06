@@ -13,28 +13,25 @@ const router = express.Router();
 router.use(cors());
 router.use(express.json());
 
-router.post('/user', userController.post); /* swagger */
-router.post('/login', loginController.post); /* swagger */
+router.post('/user', userController.post);
+router.post('/login', loginController.post);
 router.post('/password', userController.sendPasswordResetMail);
 router.put('/password-reset/:id/:token', userController.resetPassword);
-router.get('/user/:id', verify, userController.get); /* swagger */
-router.put('/user/:id', verify, userController.put); /* swagger */
+router.get('/user/:id', verify, userController.get);
+router.put('/user/:id', verify, userController.put);
 
-router.get('/cities', cityController.get); /* swagger */
-/* to-do ---> post */
+router.get('/cities', cityController.get);
 
-router.get('/activities/:id', verify, activityController.get); /* swagger */
-router.put('/activities/:id', verify, activityController.put); /* swagger */
-router.post('/activities', verify, activityController.post); /* swagger */
+router.get('/activities/:id', verify, activityController.get);
+router.put('/activities/:id', verify, activityController.put);
+router.post('/activities', verify, activityController.post);
 router.delete('/activities/:id', verify, activityController.delete);
-/* swagger */
 
-router.get('/photo/:id', verify, photoController.get); /* swagger */
+router.get('/photo/:id', verify, photoController.get);
 router.put('/photo/:id', verify, upload.single('image'), photoController.put);
 router.delete('/photo/:id', verify, photoController.delete);
 
-router.get('/plan', verify, planController.get); /* swagger */
+router.get('/plan', verify, planController.get);
 router.post('/plan', verify, upload.single('image'), planController.post);
-/* swagger */
 
 export default router;

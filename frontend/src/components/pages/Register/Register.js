@@ -158,6 +158,7 @@ const Register = () => {
         .then(response => response.json())
         .then(res => {
           if (res.status >= 200 && res.status < 300) {
+            window.scrollTo(0, 0);
             setAlert({ alertType: 'success', message: messageTypes.success });
             setFormData({
               firstName: '',
@@ -168,12 +169,12 @@ const Register = () => {
             setVerified(false);
             setTimeout(() => {
               history.push('/login');
-            }, 2000);
+            }, 4000);
           } else {
             setAlert({ alertType: 'danger', message: messageTypes.fail });
           }
         });
-    } else if (!verified) {
+    } else if (!verified && isValid) {
       setAlert({
         alertType: 'danger',
         message: messageTypes.failCaptcha,

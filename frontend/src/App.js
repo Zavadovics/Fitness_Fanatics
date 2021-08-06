@@ -16,10 +16,7 @@ import Profile from './components/pages/Profile/Profile';
 import EditProfile from './components/pages/EditProfile/EditProfile';
 import EditPhoto from './components/pages/EditPhoto/EditPhoto';
 import TrainingPlans from './components/pages/TrainingPlans/TrainingPlans';
-/* TO-DOs
-- enable frontend to be able to add new city to db
-- complete PDF uploading/viewing
- */
+
 const newUser = localStorage.getItem('loggedInUser')
   ? JSON.parse(localStorage.getItem('loggedInUser'))
   : null;
@@ -28,11 +25,7 @@ const App = () => {
   const { REACT_APP_SERVER_URL } = process.env;
   const [loggedInUser, setLoggedInUser] = useState(newUser);
   const [profile, setProfile] = useState('');
-  // const [error, setError] = useState(null);
   const [userPhoto, setUserPhoto] = useState('');
-
-  // console.log('userPhoto', typeof userPhoto);
-  // console.log(loggedInUser);
 
   useEffect(() => {
     if (loggedInUser) {
@@ -54,11 +47,13 @@ const App = () => {
             return res.json();
           })
           .then(jsonRes => {
-            // console.log('jsonRes', jsonRes);
+            // console.log('jsonRes', jsonRes.length);
+            if(jsonRes.length !== 0){
             setUserPhoto(jsonRes[0].avatar);
+            }
           })
           .catch(err => {
-            console.log(err.message);
+            console.log(err);
           });
       };
       getPhoto();
@@ -111,13 +106,13 @@ const App = () => {
                 <Sidebar loggedInUser={loggedInUser} />
                 <div className='content-cont'>
                   <Route exact path='/activities'>
-                    <Activities profile={profile} loggedInUser={loggedInUser} />
+                    <Activities profile={profile} loggedInUser={loggedInUser}/>
                   </Route>
                   <Route exact path='/activities/new'>
                     <NewActivity loggedInUser={loggedInUser} />
                   </Route>
                   <Route exact path='/activities/edit/:id'>
-                    <EditActivity loggedInUser={loggedInUser} />
+                    <EditActivity loggedInUser={loggedInUser}/>
                   </Route>
                   <Route exact path='/profile'>
                     <Profile

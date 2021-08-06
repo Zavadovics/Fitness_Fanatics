@@ -1,0 +1,132 @@
+{
+  "activities": [
+    {
+      "user_id": "60f55b2e406f3d3ec1e2aaaa",
+      "activityDate": "2033-06-30T00:00:00.000+00:00",
+      "activityTime": "13:00",
+      "duration": "65",
+      "activityType": "úszás",
+      "distance": "2297",
+      "comment": "oda-vissza a nagy medencében",
+      "createdAt": "2021-07-19T11:01:08.246+00:00",
+      "updatedAt": "2021-07-19T11:01:08.246+00:00",
+      "__v": "0"
+    },
+    {
+      "user_id": "60f55b2e406f3d3ec1e2bbbb",
+      "activityDate": "1998-02-30T00:00:00.000+00:00",
+      "activityTime": "14:04",
+      "duration": "520",
+      "activityType": "kerékpározás",
+      "distance": "52000",
+      "comment": "körbetekertem a Balatont",
+      "createdAt": "2021-07-19T11:04:08.192+00:00",
+      "updatedAt": "2021-07-19T11:04:08.192+00:00",
+      "__v": "0"
+    },
+    {
+      "user_id": "60f55cc9406f3d3ec1e2cccc",
+      "activityDate": "2021-06-29T00:00:00.000+00:00",
+      "activityTime": "22:07",
+      "duration": "110",
+      "activityType": "futás",
+      "distance": "8300",
+      "comment": "fel a hegyre meg vissza",
+      "createdAt": "2021-07-19T11:08:01.770+00:00",
+      "updatedAt": "2021-07-19T11:08:01.770+00:00",
+      "__v": "0"
+    }
+  ],
+  "cities": [
+    {
+      "name": "London",
+      "value": "London"
+    },
+    {
+      "name": "Barcelona",
+      "value": "Barcelona"
+    },
+    {
+      "name": "Paris",
+      "value": "Paris"
+    }
+  ],
+  "plans": [
+    {
+      "user_id": "60fc016e026bee97315ba1e4",
+      "title": "42 KM marathon edzés",
+      "originalName": "Running-plan-template_42k.pdf",
+      "avatar": "https://res.cloudinary.com/dywtied0r/image/upload/v1627889086/tii7t48rtw1qeytnpah3.pdf",
+      "cloudinary_id": "tii7t48rtw1qeytnpa44"
+    },
+    {
+      "user_id": "60fc016e026bee97315ba1e5",
+      "title": "21 KM félmarathon terv",
+      "originalName": "Running-plan-template_21k.pdf",
+      "avatar": "https://res.cloudinary.com/dywtied0r/image/upload/v1627889086/tii7t48rtw1qeytnpah4.pdf",
+      "cloudinary_id": "tii7t48rtw1qeytnpa11"
+    },
+    {
+      "user_id": "60fc016e026bee97315ba1e6",
+      "title": "10 KM futóterv",
+      "originalName": "Running-plan-template_10k.pdf",
+      "avatar": "https://res.cloudinary.com/dywtied0r/image/upload/v1627889086/tii7t48rtw1qeytnpah5.pdf",
+      "cloudinary_id": "tii7t48rtw1qeytnpa22"
+    }
+  ],
+  "users": [
+    {
+      "userName": "Beluska",
+      "lastName": "Kiss",
+      "firstName": "Bela",
+      "email": "bela@gmail.com",
+      "password": "$2a$10$bADgHIW2Lv5w2pR/XlNpH.ubr4mb4OxqKJooFj139HChcoEJp7ppp",
+      "gender": "ferfi",
+      "cityOfResidence": "Lenti",
+      "weight": "85",
+      "birthDate": "1966.02.14",
+      "motivation": "Hajra Magyarok!"
+    },
+    {
+      "userName": "Manyika",
+      "lastName": "Nagy",
+      "firstName": "Maria",
+      "email": "maris@gmail.com",
+      "password": "$2a$10$bADgHIW2Lv5w2pR/XlNpH.ubr4mb4OxqKJooFj139HChcoEJp7ooo",
+      "gender": "no",
+      "cityOfResidence": "Kukutyin",
+      "weight": "62",
+      "birthDate": "1984.07.17",
+      "motivation": "Sose add fel!"
+    },
+    {
+      "userName": "Armika",
+      "lastName": "Lakatos",
+      "firstName": "Armando",
+      "email": "lakatos@gmail.com",
+      "password": "$2a$10$bADgHIW2Lv5w2pR/XlNpH.ubr4mb4OxqKJooFj139HChcoEJp7aaa",
+      "gender": "nem szeretnem megadni",
+      "cityOfResidence": "Hajduhadhaz",
+      "weight": "76",
+      "birthDate": "1989.09.22",
+      "motivation": "Fuss mig el nem kapnak!"
+    }
+  ],
+  "photos": [
+    {
+      "user_id": "60fc016e026bee97315baxxx",
+      "avatar": "https://res.cloudinary.com/dywtied0r/image/upload/v1627889086/tii7t48rtw1qeytnp333.jpg",
+      "cloudinary_id": "tii7t48rtw1qeytnp123"
+    },
+    {
+      "user_id": "60fc016e026bee97315bayyy",
+      "avatar": "https://res.cloudinary.com/dywtied0r/image/upload/v1627889086/tii7t48rtw1qeytnp444.jpg",
+      "cloudinary_id": "tii7t48rtw1qeytnp456"
+    },
+    {
+      "user_id": "60fc016e026bee97315bawww",
+      "avatar": "https://res.cloudinary.com/dywtied0r/image/upload/v1627889086/tii7t48rtw1qeytnp666.jpg",
+      "cloudinary_id": "tii7t48rtw1qeytnp789"
+    }
+  ]
+}

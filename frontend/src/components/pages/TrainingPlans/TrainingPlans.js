@@ -1,22 +1,26 @@
 import { useState, useEffect, useRef } from 'react';
 import InputField from '../../common/InputField/InputField';
+import bg from '../../../images/background.jpg';
+import { isFieldEmpty } from '../../../utils/validators';
+import {
+  isFormValid,
+  handleInputChange,
+  handleInputBlur,
+} from '../../../utils/form-validation';
 import './trainingPlans.scss';
 
 const TrainingPlans = ({ loggedInUser }) => {
   const { REACT_APP_SERVER_URL } = process.env;
   const [alert, setAlert] = useState(null);
-
   const [plans, setPlans] = useState([]);
-
+  const [newPlans, setNewPlans] = useState([]);
   const messageTypes = Object.freeze({
-    uploadSuccess: `Sikeres edzésterv feltöltés.`,
-    uploadFail: `Edzésterv feltöltés sikertelen.`,
-    deleteSuccess: `Edzésterv sikeresen törölve.`,
-    deleteFail: `Edzésterv törlése sikertelen.`,
+    missingFile: `Nincs hozzáadva feltöltendő fájl`,
+    addedFile: `Feltöltendő fájl hozzáadva`,
   });
-  const [data, setData] = useState(null);
 
-  const [formValue, setFormValue] = useState({
+  const [data, setData] = useState(null);
+  const [formData, setFormData] = useState({
     title: '',
   });
 
@@ -34,67 +38,10 @@ const TrainingPlans = ({ loggedInUser }) => {
     title: '',
   });
 
-  const isFieldEmpty = value => {
-    return value !== '';
-  };
-
   const validators = {
     title: {
       required: isFieldEmpty,
     },
-  };
-
-  const validateField = fieldName => {
-    const value = formValue[fieldName];
-    let isValid = true;
-    setFormErrors(prev => ({
-      ...prev,
-      [fieldName]: '',
-    }));
-    references[fieldName].current.setCustomValidity('');
-
-    if (validators[fieldName] !== undefined) {
-      for (const [validationType, validatorFn] of Object.entries(
-        validators[fieldName]
-      )) {
-        if (isValid !== false) {
-          isValid = validatorFn(value);
-          if (!isValid) {
-            const errorText = formErrorTypes[validationType];
-            setFormErrors(prev => ({
-              ...prev,
-              [fieldName]: errorText,
-            }));
-            references[fieldName].current.setCustomValidity(errorText);
-          }
-        }
-      }
-    }
-    return isValid;
-  };
-
-  const isFormValid = () => {
-    let isValid = true;
-    for (const fieldName of Object.keys(formValue)) {
-      const isFieldValid = validateField(fieldName);
-      if (!isFieldValid) {
-        isValid = false;
-      }
-    }
-    return isValid;
-  };
-
-  const handleInputChange = e => {
-    const { name, value } = e.target;
-    setFormValue({
-      ...formValue,
-      [name]: value,
-    });
-  };
-
-  const handleInputBlur = e => {
-    const { name } = e.target;
-    validateField(name);
   };
 
   useEffect(() => {
@@ -119,15 +66,19 @@ const TrainingPlans = ({ loggedInUser }) => {
             setPlans(jsonRes);
           })
           .catch(err => {
-            console.log(err.message);
+            console.error(err.message);
           });
       };
       getPlan();
     }
-  }, [plans]);
+  }, [newPlans]);
 
-  const handleChange = e => {
+  const handleFileChange = e => {
     setData(e.target.files[0]);
+    setAlert({
+      alertType: 'warning',
+      message: messageTypes.addedFile,
+    });
   };
 
   const handleSubmit = async e => {
@@ -138,35 +89,54 @@ const TrainingPlans = ({ loggedInUser }) => {
     });
 
     setFormWasValidated(false);
-    const isValid = isFormValid();
-    let formData = new FormData();
-    formData.append('image', data);
-    formData.append('user_id', loggedInUser.id);
-    formData.append('user_email', loggedInUser.email);
-    formData.append('title', formValue.title);
-    if (isValid) {
+    const isValid = isFormValid(
+      formData,
+      setFormErrors,
+      validators,
+      references,
+      formErrorTypes
+    );
+    let fileData = new FormData();
+    fileData.append('image', data);
+    fileData.append('user_id', loggedInUser.id);
+    fileData.append('user_email', loggedInUser.email);
+    fileData.append('title', formData.title);
+    if (data === null) {
+      return setAlert({
+        alertType: 'danger',
+        message: messageTypes.missingFile,
+      });
+    }
+    if (data && isValid) {
       await fetch(`${REACT_APP_SERVER_URL}/api/plan`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${loggedInUser.token}`,
         },
-        body: formData,
+        body: fileData,
       })
-        .then(response => response.json())
-        .then(res => {
-          if (res.status === 200) {
-            window.scrollTo(0, 0);
-            setAlert({
-              alertType: 'success',
-              message: messageTypes.uploadSuccess,
-            });
-            setFormValue({
-              title: '',
-            });
-            setData(null);
-          } else {
-            setAlert({ alertType: 'danger', message: messageTypes.uploadFail });
+        .then(async res => {
+          if (res.status < 200 || res.status >= 300) {
+            const response = await res.json();
+            throw new Error(response?.message);
           }
+          return res.json();
+        })
+        .then(res => {
+          window.scrollTo(0, 0);
+          setAlert({
+            alertType: 'success',
+            message: res.message,
+          });
+          setFormData({
+            title: '',
+          });
+          setData(null);
+          setNewPlans([...plans, res.plan]);
+        })
+        .catch(err => {
+          window.scrollTo(0, 0);
+          setAlert({ alertType: 'danger', message: err.message });
         });
     } else {
       setFormWasValidated(true);
@@ -174,8 +144,11 @@ const TrainingPlans = ({ loggedInUser }) => {
   };
 
   return (
-    <div className='training-plan-cont'>
-      <h2>Edzéstervek</h2>
+    <div
+      className='training-plan-cont'
+      style={{ backgroundImage: `url(${bg})` }}
+    >
+      <h2 className='inner-h2'>Edzéstervek</h2>
       <div className='alert-cont'>
         {alert && (
           <p className={`alert alert-${alert.alertType}`}>{alert.message}</p>
@@ -196,7 +169,7 @@ const TrainingPlans = ({ loggedInUser }) => {
           type='file'
           id='file'
           accept='/image/*'
-          onChange={handleChange}
+          onChange={handleFileChange}
         />
         <label className='pdf-input-label' htmlFor='file'>
           Válassz egy fájlt (Kattints ide)
@@ -205,16 +178,25 @@ const TrainingPlans = ({ loggedInUser }) => {
           centerClass='center'
           name='title'
           type='text'
-          labelText='Edzésterv elnevezése'
-          value={formValue.title}
-          onChange={handleInputChange}
-          onBlur={handleInputBlur}
+          labelText='Edzésterv elnevezése *'
+          value={formData.title}
+          onChange={e => {
+            handleInputChange(e, formData, setFormData);
+          }}
+          onBlur={e => {
+            handleInputBlur(
+              e,
+              formData,
+              setFormErrors,
+              validators,
+              references,
+              formErrorTypes
+            );
+          }}
           reference={references.title}
           error={formErrors.title}
         />
-        <button className='photo-btn' /* onClick={handleSubmit} */>
-          Küldés
-        </button>
+        <button className='photo-btn'>Küldés</button>
       </form>
       <>
         {plans.map(plan => (
@@ -226,12 +208,12 @@ const TrainingPlans = ({ loggedInUser }) => {
                 data={plan.avatar}
                 type='application/pdf'
               >
-                {/* <p>
+                <p>
                   {plan.originalName} -{' '}
                   <a target='_blank' rel='noreferrer' href={plan.avatar}>
                     megnyitás
                   </a>
-                </p> */}
+                </p>
               </object>
               <p className='object-text'>
                 {plan.originalName} -{' '}

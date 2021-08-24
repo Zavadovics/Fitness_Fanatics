@@ -22,42 +22,36 @@ const photoData = {
   cloudinary_id: 'j4xzkn4eiehttzqgev8i',
 };
 
-// const userId = '61023b3022613e002a2fa374';
-
 const authToken = jwt.sign(
   { tokenId: photoData.user_id },
   process.env.TOKEN_SECRET
 );
 
-describe('Test for fetching/uploading/changing/deleting user photo', () => {
-  it('GET /photo/:id should respond with 200', async () => {
-    await request(app)
-      .get(`/api/photo/${photoData.user_id}`)
-      .set('Authorization', `Bearer ${authToken}`)
-      .expect(200)
-      .then(response => {
-        expect(response).toBeTruthy();
-      });
+describe('GET /photo/:id', () => {
+  describe(`Test for fetching the user's photo`, () => {
+    test('should respond with 200', async () => {
+      await request(app)
+        .get(`/api/photo/${photoData.user_id}`)
+        .set('Authorization', `Bearer ${authToken}`)
+        .then(response => {
+          expect(response.statusCode).toBe(200);
+        });
+    });
   });
+});
 
-  //   it('PUT /photo/:id should respond with 200', async () => {
-  //     await request(app)
-  //       .put(`/api/photo/${photoData.user_id}`)
-  //       .send(photoData)
-  //       .set('Authorization', `Bearer ${authToken}`)
-  //       .expect(200)
-  //       .then(response => {
-  //         expect(response).toBeTruthy();
-  //       });
-  //   });
+describe('DELETE /photo/:id', () => {
+  describe(`Test for deleting the user's photo`, () => {
+    it('should respond with 200', async () => {
+      await Photo.create(photoData);
 
-  //   it('DELETE /photo/:id should respond with 200', async () => {
-  //     await request(app)
-  //       .delete(`/api/photo/${photoData.user_id}`)
-  //       .set('Authorization', `Bearer ${authToken}`)
-  //       .expect(200)
-  //       .then(response => {
-  //         expect(response.body).toBeTruthy();
-  //       });
-  //   });
+      await request(app)
+        .delete(`/api/photo/${photoData.user_id}`)
+        .set('Authorization', `Bearer ${authToken}`)
+        .then(response => {
+          expect(response.statusCode).toBe(200);
+          expect(response.body.message).toBe('Fotó sikeresen törölve');
+        });
+    });
+  });
 });

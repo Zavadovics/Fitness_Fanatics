@@ -13,13 +13,13 @@ export const photoController = {
   },
 
   async put(req, res, next) {
+    const { id } = req.params;
+    const reqFile = req.file;
+    const reqBody = req.body;
+
+    const data = await photoService.saveOrUpdatePhoto(id, reqFile, reqBody);
+
     try {
-      const { id } = req.params;
-      const reqFile = req.file;
-      const reqBody = req.body;
-
-      const data = await photoService.saveOrUpdatePhoto(id, reqFile, reqBody);
-
       res.status(data.status).json(data);
     } catch (err) {
       next(err);
@@ -27,13 +27,11 @@ export const photoController = {
   },
 
   async delete(req, res, next) {
+    const { id } = req.params;
+
     try {
-      const { id } = req.params;
-
       await Photo.find({ user_id: req.params.id });
-
       const data = await photoService.deletePhoto(id);
-
       res.status(data.status).json(data);
     } catch (err) {
       next(err);

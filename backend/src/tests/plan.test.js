@@ -28,7 +28,7 @@ const authToken = jwt.sign(
   process.env.TOKEN_SECRET
 );
 
-describe('Test for fetching and uploading training plans', () => {
+describe('Test for fetching training plans', () => {
   it('GET /plan should respond with 200', async () => {
     await request(app)
       .get(`/api/plan`)
@@ -38,15 +38,4 @@ describe('Test for fetching and uploading training plans', () => {
         expect(response.body).toBeTruthy();
       });
   });
-
-  //   it('POST /plan should respond with 200', async () => {
-  //     await request(app)
-  //       .post(`/api/plan`)
-  //       .send(planData)
-  //       .set('Authorization', `Bearer ${authToken}`)
-  //       .expect(200)
-  //       .then(response => {
-  //         expect(response).toBeTruthy();
-  //       });
-  //   });
 });

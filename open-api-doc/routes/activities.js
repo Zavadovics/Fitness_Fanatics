@@ -7,22 +7,37 @@ const idLength = 24;
 /**
  * @swagger
  * components:
+ *   securitySchemes:
+ *     bearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
+ *   responses:
+ *     UnauthorizedError:
+ *       description: Access token is missing or invalid
  *   schemas:
  *     Activity:
  *       type: object
  *       required:
+ *         - user_id
+ *         - email
  *         - activityDate
  *         - activityTime
  *         - duration
  *         - activityType
  *         - distance
- *         - comment
  *       properties:
- *         user_id:
+ *         _id:
  *           type: string
  *           description: The auto-generated id of the completed activity
+ *         user_id:
+ *           type: string
+ *           description: The id of the user associated with the activity
+ *         email:
+ *           type: string
+ *           description: The email address of the user associated with the activity
  *         activityDate:
- *           type: date
+ *           type: string
  *           description: The start date of the activity
  *         activityTime:
  *           type: string
@@ -39,14 +54,17 @@ const idLength = 24;
  *         comment:
  *           type: string
  *           description: A comment left for the activity
+ *
  *       example:
+ *         _id: 60c77f12835fce44a438d19b
  *         user_id: 60f55b2e406f3d3ec1e2a0fa
+ *         email: kispista@gmail.com
  *         activityDate: 2021-06-30T00:00:00.000+00:00
  *         activityTime: 13:00
  *         duration: 65
  *         activityType: úszás
  *         distance: 8300
- *         comment: éjszakai macska kergetés
+ *         comment: éjszakai furdozes
  */
 
 /**
@@ -78,14 +96,21 @@ const idLength = 24;
  *               type: array
  *               items:
  *                 $ref: '#/components/schemas/Activity'
- *       400:
+ *       404:
  *         description: Something went wrong
  *     security:
  *     - bearerAuth: []
  */
 
 router.get('/:id', (req, res) => {
-  const activities = req.app.db.get('activities');
+  const activities = req.app.db
+    .get('activities')
+    .find({ user_id: req.params.id })
+    .value();
+
+  if (!activities) {
+    res.sendStatus(404);
+  }
 
   res.send(activities);
 });
@@ -122,16 +147,21 @@ router.get('/:id', (req, res) => {
  *                   description: 200
  *                 message:
  *                   type: string
- *                   description: Activity updated!
+ *                   description: Sikeres módosítás. A tevékenység frissítésre került az adatbázisban
+ *                 updatedActivity:
+ *                   type: object
+ *                   description: The details of the newly-updated activity
  *               required:
  *                 - status
  *                 - message
+ *                 - updatedActivity
  *             example:
  *               status: 200
- *               message: Activity updated!
-
+ *               message: Sikeres módosítás. A tevékenység frissítésre került az adatbázisban
+ *               updatedActivity: details of the updated activity
+ *
  *       500:
- *         description: Something went wrong
+ *         description: Updating activity failed
  *         content:
  *           application/json:
  *             schema:
@@ -142,13 +172,13 @@ router.get('/:id', (req, res) => {
  *                   description: 500
  *                 message:
  *                   type: string
- *                   description: Something went wrong
+ *                   description: Sikertelen módosítás. Adatbázis probléma
  *               required:
  *                 - status
  *                 - message
  *             example:
  *               status: 500
- *               message: Something went wrong
+ *               message: Sikertelen módosítás. Adatbázis probléma
  *     security:
  *     - bearerAuth: []
  */
@@ -157,11 +187,11 @@ router.put('/:id', (req, res) => {
   try {
     req.app.db
       .get('activities')
-      .find({ _id: req.params.id })
+      .find({ user_id: req.params.id })
       .assign(req.body)
       .write();
 
-    res.send(req.app.db.get('activities').find({ _id: req.params.id }));
+    res.send(req.app.db.get('activities').find({ user_id: req.params.id }));
   } catch (error) {
     return res.status(500).send(error);
   }
@@ -180,15 +210,8 @@ router.put('/:id', (req, res) => {
  *             schema:
  *               $ref: '#/components/schemas/Activity'
  *     responses:
- *       200:
+ *       201:
  *         description: New activity has been saved
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Activity'
- *
- *       404:
- *         description: The activity details are invalid
  *         content:
  *           application/json:
  *             schema:
@@ -196,7 +219,32 @@ router.put('/:id', (req, res) => {
  *               properties:
  *                 status:
  *                   type: number
- *                   description: 404
+ *                   description: 201
+ *                 message:
+ *                   type: string
+ *                   description: Sikeres mentés. Az új tevékenységet hozzádtuk az adatbázishoz
+ *                 newActivity:
+ *                   type: object
+ *                   description: The details of the newly-created activity
+ *               required:
+ *                 - status
+ *                 - message
+ *                 - newActivity
+ *             example:
+ *               status: 201
+ *               message: Sikeres mentés. Az új tevékenységet hozzádtuk az adatbázishoz
+ *               newActivity: details of the activity
+ *
+ *       400:
+ *         description: Validation of the activity's details failed
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: number
+ *                   description: 400
  *                 message:
  *                   type: string
  *                   description: error.details[0].message
@@ -204,7 +252,7 @@ router.put('/:id', (req, res) => {
  *                 - status
  *                 - message
  *             example:
- *               status: 404
+ *               status: 400
  *               message: error.details[0].message
  *
  *       500:
@@ -219,13 +267,13 @@ router.put('/:id', (req, res) => {
  *                   description: 500
  *                 message:
  *                   type: string
- *                   description: Something went wrong
+ *                   description: Sikertelen mentés. Adatbázis probléma
  *               required:
  *                 - status
  *                 - message
  *             example:
  *               status: 500
- *               message: Something went wrong
+ *               message: Sikertelen mentés. Adatbázis probléma
  *     security:
  *     - bearerAuth: []
  */
@@ -272,13 +320,13 @@ router.post('/', (req, res) => {
  *                   description: 200
  *                 message:
  *                   type: string
- *                   description: The activity has been deleted
+ *                   description: Tevékenység sikeresen törölve
  *               required:
  *                 - status
  *                 - message
  *             example:
  *               status: 200
- *               message: The activity has been deleted
+ *               message: Tevékenység sikeresen törölve
  *
  *       500:
  *         description: Something went wrong
@@ -292,13 +340,13 @@ router.post('/', (req, res) => {
  *                   description: 500
  *                 message:
  *                   type: string
- *                   description: Something went wrong
+ *                   description: Tevékenység törlése sikertelen
  *               required:
  *                 - status
  *                 - message
  *             example:
  *               status: 500
- *               message: Something went wrong
+ *               message: Tevékenység törlése sikertelen
  *     security:
  *     - bearerAuth: []
  */

@@ -1,10 +1,20 @@
 import { useState, useRef } from 'react';
 import { useHistory, Link } from 'react-router-dom';
 import ReCAPTCHA from 'react-google-recaptcha';
-import validator from 'validator';
 import Navbar from '../../common/Navbar/Navbar';
 import Footer from '../../common/Footer/Footer';
 import InputField from '../../common/InputField/InputField';
+import {
+  isFieldEmpty,
+  isEmailInvalid,
+  isPasswordValid,
+} from '../../../utils/validators';
+import {
+  isFormValid,
+  onTickChange,
+  handleInputChange,
+  handleInputBlur,
+} from '../../../utils/form-validation';
 import './register.scss';
 
 const Register = () => {
@@ -44,22 +54,8 @@ const Register = () => {
   });
 
   const messageTypes = Object.freeze({
-    success: `Sikeres regisztráció. Máris átirányítunk a bejelentkezés oldalra.`,
-    fail: `Sikertelen regisztráció. Az általad megadott adat/adatok már szerepelnek az adatbázisban.`,
     failCaptcha: `Kérlek bizonyítsd be hogy nem vagy robot 🤖`,
   });
-
-  const isFieldEmpty = value => {
-    return value !== '';
-  };
-
-  const isEmailInvalid = value => {
-    return validator.isEmail(value);
-  };
-
-  const isPasswordValid = value => {
-    return value.length >= 8;
-  };
 
   const validators = {
     firstName: {
@@ -78,63 +74,6 @@ const Register = () => {
     },
   };
 
-  const validateField = fieldName => {
-    const value = formData[fieldName];
-    let isValid = true;
-    setFormErrors(prev => ({
-      ...prev,
-      [fieldName]: '',
-    }));
-    references[fieldName].current.setCustomValidity('');
-
-    if (validators[fieldName] !== undefined) {
-      for (const [validationType, validatorFn] of Object.entries(
-        validators[fieldName]
-      )) {
-        if (isValid !== false) {
-          isValid = validatorFn(value);
-          if (!isValid) {
-            const errorText = formErrorTypes[validationType];
-            setFormErrors(prev => ({
-              ...prev,
-              [fieldName]: errorText,
-            }));
-            references[fieldName].current.setCustomValidity(errorText);
-          }
-        }
-      }
-    }
-    return isValid;
-  };
-
-  const isFormValid = () => {
-    let isValid = true;
-    for (const fieldName of Object.keys(formData)) {
-      const isFieldValid = validateField(fieldName);
-      if (!isFieldValid) {
-        isValid = false;
-      }
-    }
-    return isValid;
-  };
-
-  const onChange = () => {
-    setVerified(true);
-  };
-
-  const handleInputChange = e => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-  };
-
-  const handleInputBlur = e => {
-    const { name } = e.target;
-    validateField(name);
-  };
-
   const handleRegister = async e => {
     e.preventDefault();
     setAlert(null);
@@ -146,7 +85,13 @@ const Register = () => {
     });
 
     setFormWasValidated(false);
-    const isValid = isFormValid();
+    const isValid = isFormValid(
+      formData,
+      setFormErrors,
+      validators,
+      references,
+      formErrorTypes
+    );
     if (isValid && verified) {
       await fetch(`${REACT_APP_SERVER_URL}/api/user`, {
         method: 'post',
@@ -155,26 +100,33 @@ const Register = () => {
         },
         body: JSON.stringify(formData),
       })
-        .then(response => response.json())
-        .then(res => {
-          if (res.status >= 200 && res.status < 300) {
-            window.scrollTo(0, 0);
-            setAlert({ alertType: 'success', message: messageTypes.success });
-            setFormData({
-              firstName: '',
-              lastName: '',
-              email: '',
-              password: '',
-            });
-            setVerified(false);
-            setTimeout(() => {
-              history.push('/login');
-            }, 4000);
-          } else {
-            setAlert({ alertType: 'danger', message: messageTypes.fail });
+        .then(async res => {
+          if (res.status >= 400 && res.status <= 500) {
+            const response = await res.json();
+            throw new Error(response?.message);
           }
+          return res.json();
+        })
+        .then(res => {
+          window.scrollTo(0, 0);
+          setAlert({ alertType: 'success', message: res.message });
+          setFormData({
+            firstName: '',
+            lastName: '',
+            email: '',
+            password: '',
+          });
+          setVerified(false);
+          setTimeout(() => {
+            history.push('/login');
+          }, 3000);
+        })
+        .catch(err => {
+          window.scrollTo(0, 0);
+          setAlert({ alertType: 'danger', message: err.message });
         });
     } else if (!verified && isValid) {
+      window.scrollTo(0, 0);
       setAlert({
         alertType: 'danger',
         message: messageTypes.failCaptcha,
@@ -188,8 +140,7 @@ const Register = () => {
     <>
       <Navbar />
       <div className='register-cont'>
-        <h2>Regisztráció</h2>
-        <hr />
+        <h1 className='outer-h1'>Regisztráció</h1>
         <div className='alert-cont'>
           {alert && (
             <p className={`alert alert-${alert.alertType}`}>{alert.message}</p>
@@ -204,49 +155,98 @@ const Register = () => {
             <InputField
               name='lastName'
               type='text'
-              labelText='Vezetéknév'
+              labelText='Vezetéknév *'
               value={formData.lastName}
-              onChange={handleInputChange}
-              onBlur={handleInputBlur}
+              onChange={e => {
+                handleInputChange(e, formData, setFormData);
+              }}
+              onBlur={e => {
+                handleInputBlur(
+                  e,
+                  formData,
+                  setFormErrors,
+                  validators,
+                  references,
+                  formErrorTypes
+                );
+              }}
               reference={references.lastName}
               error={formErrors.lastName}
+              required
             />
             <InputField
               name='firstName'
               type='text'
-              labelText='Keresztnév'
+              labelText='Keresztnév *'
               value={formData.firstName}
-              onChange={handleInputChange}
-              onBlur={handleInputBlur}
+              onChange={e => {
+                handleInputChange(e, formData, setFormData);
+              }}
+              onBlur={e => {
+                handleInputBlur(
+                  e,
+                  formData,
+                  setFormErrors,
+                  validators,
+                  references,
+                  formErrorTypes
+                );
+              }}
               reference={references.firstName}
               error={formErrors.firstName}
+              required
             />
             <InputField
               name='email'
               type='email'
-              labelText='Email cím'
+              labelText='Email cím *'
               value={formData.email}
-              onChange={handleInputChange}
-              onBlur={handleInputBlur}
+              onChange={e => {
+                handleInputChange(e, formData, setFormData);
+              }}
+              onBlur={e => {
+                handleInputBlur(
+                  e,
+                  formData,
+                  setFormErrors,
+                  validators,
+                  references,
+                  formErrorTypes
+                );
+              }}
               reference={references.email}
               error={formErrors.email}
+              required
             />
             <InputField
               name='password'
               type='password'
-              labelText='Jelszó - (legalább 8 karakter)'
+              labelText='Jelszó - (legalább 8 karakter) *'
               value={formData.password}
-              onChange={handleInputChange}
-              onBlur={handleInputBlur}
+              onChange={e => {
+                handleInputChange(e, formData, setFormData);
+              }}
+              onBlur={e => {
+                handleInputBlur(
+                  e,
+                  formData,
+                  setFormErrors,
+                  validators,
+                  references,
+                  formErrorTypes
+                );
+              }}
               reference={references.password}
               error={formErrors.password}
+              required
             />
-            <div className='captcha'>
-              <ReCAPTCHA
-                sitekey={REACT_APP_GOOGLE_RECAPTCHA_KEY}
-                onChange={onChange}
-              />
-            </div>
+            <ReCAPTCHA
+              className='captcha'
+              sitekey={REACT_APP_GOOGLE_RECAPTCHA_KEY}
+              onChange={() => {
+                onTickChange(setVerified);
+              }}
+            />
           </div>
           <p>
             <Link to='/login' className='text-link'>

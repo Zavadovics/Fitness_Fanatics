@@ -47,13 +47,12 @@ const App = () => {
             return res.json();
           })
           .then(jsonRes => {
-            // console.log('jsonRes', jsonRes.length);
-            if(jsonRes.length !== 0){
-            setUserPhoto(jsonRes[0].avatar);
+            if (jsonRes.length !== 0) {
+              setUserPhoto(jsonRes[0].avatar);
             }
           })
           .catch(err => {
-            console.log(err);
+            console.error(err);
           });
       };
       getPhoto();
@@ -71,7 +70,6 @@ const App = () => {
           },
         })
           .then(res => {
-            // console.log('res', res);
             if (res.status !== 200) {
               throw Error(
                 `could not fetch the data from database, error ${res.status}`
@@ -81,10 +79,9 @@ const App = () => {
           })
           .then(jsonRes => {
             setProfile(jsonRes);
-            // console.log('profile', profile);
           })
           .catch(err => {
-            console.log(err.message);
+            console.log(err);
           });
       };
       getProfile();
@@ -106,13 +103,13 @@ const App = () => {
                 <Sidebar loggedInUser={loggedInUser} />
                 <div className='content-cont'>
                   <Route exact path='/activities'>
-                    <Activities profile={profile} loggedInUser={loggedInUser}/>
+                    <Activities profile={profile} loggedInUser={loggedInUser} />
                   </Route>
                   <Route exact path='/activities/new'>
                     <NewActivity loggedInUser={loggedInUser} />
                   </Route>
                   <Route exact path='/activities/edit/:id'>
-                    <EditActivity loggedInUser={loggedInUser}/>
+                    <EditActivity loggedInUser={loggedInUser} />
                   </Route>
                   <Route exact path='/profile'>
                     <Profile
@@ -157,7 +154,7 @@ const App = () => {
                 />
               </Route>
               <Route path={`/password`}>
-                <ForgotPassword />
+                <ForgotPassword setLoggedInUser={setLoggedInUser} />
               </Route>
               <Route path={`/password-reset/:id/:token`}>
                 <ResetPassword />

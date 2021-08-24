@@ -1,20 +1,21 @@
 import React, { useState, useRef } from 'react';
 import InputField from '../InputField/InputField';
-import SelectField from '../SelectField/SelectField';
-import ItemSelect from '../../common/ItemSelect/ItemSelect';
+import ItemSelect from '../ItemSelect/ItemSelect';
+import {
+  isFieldEmpty,
+  isValueNegative,
+  isDateInFuture,
+} from '../../../utils/validators';
+import {
+  isFormValid,
+  handleInputChange,
+  handleInputBlur,
+} from '../../../utils/form-validation';
 import './activityForm.scss';
-
-/* TO-DO !!!
-- select field does not validate on blur 
-- validation not perfect, perhaps date validation should be added
-*/
 
 const ActivityForm = ({ type, activity, loggedInUser }) => {
   const { REACT_APP_SERVER_URL } = process.env;
-  // const id = type === 'edit' ? activity._id : null;
-
   const activityTypeList = ['futás', 'kerékpározás', 'úszás'];
-
   const [formData, setFormData] = useState(
     type === 'edit'
       ? activity
@@ -42,7 +43,8 @@ const ActivityForm = ({ type, activity, loggedInUser }) => {
 
   const formErrorTypes = Object.freeze({
     required: `A mező kitöltése kötelező`,
-    positive: `A megadott érték nem lehet negativ.`,
+    positive: `A megadott érték nagyobb kell hogy legyen mint 0.`,
+    futureDate: `Kérlek egy múltbeli dátumot addj meg!`,
   });
 
   const [formErrors, setFormErrors] = useState({
@@ -54,119 +56,25 @@ const ActivityForm = ({ type, activity, loggedInUser }) => {
     comment: '',
   });
 
-  const messageTypes = Object.freeze({
-    modifySuccess: `Sikeres módosítás. A tevékenység frissítésre került az adatbázisban`,
-    createSuccess: `Sikeres mentés. Az új tevékenységet hozzádtuk az adatbázishoz`,
-    modifyFail: `Sikertelen módosítás. Adatbázis probléma.`,
-    createFail: `Sikertelen mentés. Adatbázis probléma.`,
-  });
-
-  const isFieldEmpty = value => {
-    return value !== '';
-  };
-
-  // const isValueNegative = value => {
-  //   return value >= 0;
-  // };
-
-  //   const isDateExpired = value => {
-  //     const expiryDate = new Date(value);
-  //     const actualDate = new Date();
-  //     return expiryDate >= actualDate;
-  //   };
-
-  //   const isDate = value => {
-  //     const dateString = new Date(value).toString();
-  //     return dateString !== 'Invalid Date';
-  //   };
-
   const validators = {
     activityDate: {
       required: isFieldEmpty,
+      futureDate: isDateInFuture,
     },
     activityTime: {
       required: isFieldEmpty,
     },
     duration: {
       required: isFieldEmpty,
-      // positive: isValueNegative,
+      positive: isValueNegative,
     },
     activityType: {
       required: isFieldEmpty,
     },
     distance: {
       required: isFieldEmpty,
-      // positive: isValueNegative,
+      positive: isValueNegative,
     },
-    comment: {
-      required: isFieldEmpty,
-    },
-  };
-
-  const validateField = fieldName => {
-    if (fieldName === '_id') return true;
-
-    const value = formData[fieldName];
-    let isValid = true;
-    setFormErrors(prev => ({
-      ...prev,
-      [fieldName]: '',
-    }));
-    // if (type === 'new') {
-    //   references[fieldName].current.setCustomValidity('');
-    // }
-    if (validators[fieldName] !== undefined) {
-      for (const [validationType, validatorFn] of Object.entries(
-        validators[fieldName]
-      )) {
-        if (isValid) {
-          isValid = validatorFn(value);
-          if (!isValid) {
-            const errorText = formErrorTypes[validationType];
-            setFormErrors(prev => ({
-              ...prev,
-              [fieldName]: errorText,
-            }));
-            references[fieldName].current.setCustomValidity(errorText);
-          }
-        }
-      }
-    }
-    return isValid;
-  };
-
-  // const isFormValid = () => {
-  //   let isValid = true;
-  //   for (const fieldName of Object.keys(formData)) {
-  //     const isFieldValid = validateField(fieldName);
-  //     if (!isFieldValid) {
-  //       isValid = false;
-  //     }
-  //   }
-  //   return isValid;
-  // };
-  const isFormValid = () => {
-    let isValid = true;
-    Object.keys(formData).forEach(fieldName => {
-      const isFieldValid = validateField(fieldName);
-      if (!isFieldValid) {
-        isValid = false;
-      }
-    });
-    return isValid;
-  };
-
-  const handleInputChange = e => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-  };
-
-  const handleInputBlur = e => {
-    const { name } = e.target;
-    validateField(name);
   };
 
   const handleSubmit = async e => {
@@ -181,7 +89,13 @@ const ActivityForm = ({ type, activity, loggedInUser }) => {
       comment: '',
     });
     setFormWasValidated(false);
-    const isValid = isFormValid();
+    const isValid = isFormValid(
+      formData,
+      setFormErrors,
+      validators,
+      references,
+      formErrorTypes
+    );
     if (isValid) {
       if (type === 'new') {
         await fetch(`${REACT_APP_SERVER_URL}/api/activities`, {
@@ -200,14 +114,19 @@ const ActivityForm = ({ type, activity, loggedInUser }) => {
             distance: formData.distance,
             comment: formData.comment,
           }),
-        }).then(res => {
-          // console.log(loggedInUser.token);
-
-          if (res.status === 200) {
+        })
+          .then(async res => {
+            if (res.status < 200 || res.status >= 300) {
+              const response = await res.json();
+              throw new Error(response?.message);
+            }
+            return res.json();
+          })
+          .then(res => {
             window.scrollTo(0, 0);
             setAlert({
               alertType: 'success',
-              message: messageTypes.createSuccess,
+              message: res.message,
             });
             setFormData({
               activityDate: '',
@@ -218,13 +137,11 @@ const ActivityForm = ({ type, activity, loggedInUser }) => {
               comment: '',
             });
             e.target.reset();
-          } else {
-            setAlert({
-              alertType: 'danger',
-              message: messageTypes.createFail,
-            });
-          }
-        });
+          })
+          .catch(err => {
+            window.scrollTo(0, 0);
+            setAlert({ alertType: 'danger', message: err.message });
+          });
       }
       if (type === 'edit') {
         await fetch(`${REACT_APP_SERVER_URL}/api/activities/${activity._id}`, {
@@ -244,22 +161,25 @@ const ActivityForm = ({ type, activity, loggedInUser }) => {
             comment: formData.comment,
           }),
         })
-          .then(response => response.json())
-          .then(res => {
-            if (res.status === 200) {
-              window.scrollTo(0, 0);
-              setTimeout(() => {
-                setAlert({
-                  alertType: 'success',
-                  message: messageTypes.modifySuccess,
-                });
-              }, 3000);
-            } else {
-              setAlert({
-                alertType: 'danger',
-                message: messageTypes.modifyFail,
-              });
+          .then(async res => {
+            if (res.status < 200 || res.status >= 300) {
+              const response = await res.json();
+              throw new Error(response?.message);
             }
+            return res.json();
+          })
+          .then(res => {
+            window.scrollTo(0, 0);
+            setTimeout(() => {
+              setAlert({
+                alertType: 'success',
+                message: res.message,
+              });
+            }, 3000);
+          })
+          .catch(err => {
+            window.scrollTo(0, 0);
+            setAlert({ alertType: 'danger', message: err.message });
           });
       }
       setFormWasValidated(false);
@@ -286,9 +206,20 @@ const ActivityForm = ({ type, activity, loggedInUser }) => {
               name='activityDate'
               id='activityDate'
               type='date'
-              labelText='Dátum'
-              onChange={handleInputChange}
-              onBlur={handleInputBlur}
+              labelText='Dátum *'
+              onChange={e => {
+                handleInputChange(e, formData, setFormData);
+              }}
+              onBlur={e => {
+                handleInputBlur(
+                  e,
+                  formData,
+                  setFormErrors,
+                  validators,
+                  references,
+                  formErrorTypes
+                );
+              }}
               value={formData.activityDate}
               reference={references.activityDate}
               error={formErrors.activityDate}
@@ -297,9 +228,20 @@ const ActivityForm = ({ type, activity, loggedInUser }) => {
               name='activityTime'
               id='activityTime'
               type='time'
-              labelText='Idő'
-              onChange={handleInputChange}
-              onBlur={handleInputBlur}
+              labelText='Idő *'
+              onChange={e => {
+                handleInputChange(e, formData, setFormData);
+              }}
+              onBlur={e => {
+                handleInputBlur(
+                  e,
+                  formData,
+                  setFormErrors,
+                  validators,
+                  references,
+                  formErrorTypes
+                );
+              }}
               value={formData.activityTime}
               reference={references.activityTime}
               error={formErrors.activityTime}
@@ -308,77 +250,64 @@ const ActivityForm = ({ type, activity, loggedInUser }) => {
               name='duration'
               id='duration'
               type='number'
-              labelText='Időtartam (perc)'
-              onChange={handleInputChange}
-              onBlur={handleInputBlur}
+              labelText='Időtartam (perc) *'
+              onChange={e => {
+                handleInputChange(e, formData, setFormData);
+              }}
+              onBlur={e => {
+                handleInputBlur(
+                  e,
+                  formData,
+                  setFormErrors,
+                  validators,
+                  references,
+                  formErrorTypes
+                );
+              }}
               value={formData.duration}
               reference={references.duration}
               error={formErrors.duration}
             />
-            {type === 'new' ? (
-              // <SelectField
-              //   name='activityType'
-              //   id='activityType'
-              //   labelText='Típus'
-              //   valueList={activityTypeList}
-              //   onChange={handleInputChange}
-              //   onBlur={handleInputBlur}
-              //   value={formData.activityType}
-              //   reference={references.activityType}
-              //   error={formErrors.activityType}
-              // />
-              <ItemSelect
-                labelText={'Tevékenység típusa'}
-                name='activityType'
-                id={'activityType'}
-                formValue={formData.activityType}
-                valueList={activityTypeList}
-                onChange={handleInputChange}
-                onBlur={handleInputBlur}
-                reference={references['activityType']}
-                formError={formErrors.activityType}
-              />
-            ) : (
-              <>
-                {/* <label className='form-label m-2' htmlFor='activityType'>
-                  Típus
-                </label>
-                <select
-                  className='form-select m-2'
-                  id='activityType'
-                  name='activityType'
-                  value={formData.activityType}
-                  onChange={handleInputChange}
-                  onBlur={handleInputBlur}
-                  reference={references.activityType}
-                  error={formErrors.activityType}
-                >
-                  {activityTypeList.map(type => (
-                    <option value={type} key={type}>
-                      {type}
-                    </option>
-                  ))}
-                </select> */}
-                <ItemSelect
-                  labelText={'Nem'}
-                  name='activityType'
-                  id={'activityType'}
-                  formValue={formData.activityType}
-                  valueList={activityTypeList}
-                  onChange={handleInputChange}
-                  onBlur={handleInputBlur}
-                  reference={references['activityType']}
-                  formError={formErrors.activityType}
-                />
-              </>
-            )}
+            <ItemSelect
+              labelText='Tevékenység típusa *'
+              name='activityType'
+              id='activityType'
+              formValue={formData.activityType}
+              valueList={activityTypeList}
+              onChange={e => {
+                handleInputChange(e, formData, setFormData);
+              }}
+              onBlur={e => {
+                handleInputBlur(
+                  e,
+                  formData,
+                  setFormErrors,
+                  validators,
+                  references,
+                  formErrorTypes
+                );
+              }}
+              reference={references['activityType']}
+              formError={formErrors.activityType}
+            />
             <InputField
               name='distance'
               id='distance'
               type='number'
-              labelText='Távolság (méter)'
-              onChange={handleInputChange}
-              onBlur={handleInputBlur}
+              labelText='Távolság (méter) *'
+              onChange={e => {
+                handleInputChange(e, formData, setFormData);
+              }}
+              onBlur={e => {
+                handleInputBlur(
+                  e,
+                  formData,
+                  setFormErrors,
+                  validators,
+                  references,
+                  formErrorTypes
+                );
+              }}
               value={formData.distance}
               reference={references.distance}
               error={formErrors.distance}
@@ -388,8 +317,19 @@ const ActivityForm = ({ type, activity, loggedInUser }) => {
               id='comment'
               type='comment'
               labelText='Megjegyzés'
-              onChange={handleInputChange}
-              onBlur={handleInputBlur}
+              onChange={e => {
+                handleInputChange(e, formData, setFormData);
+              }}
+              onBlur={e => {
+                handleInputBlur(
+                  e,
+                  formData,
+                  setFormErrors,
+                  validators,
+                  references,
+                  formErrorTypes
+                );
+              }}
               value={formData.comment}
               reference={references.comment}
               error={formErrors.comment}

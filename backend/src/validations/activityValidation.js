@@ -9,7 +9,7 @@ export const activityValidation = data => {
     duration: Joi.number().min(1).required(),
     activityType: Joi.string().min(1).required(),
     distance: Joi.number().min(1).required(),
-    comment: Joi.string().min(1).required(),
+    comment: Joi.string(),
   });
   return schema.validate(data);
 };

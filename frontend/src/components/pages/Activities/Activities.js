@@ -1,13 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import Card from '../../common/Card/Card';
+import back from '../../../images/background.jpg';
 import './activities.scss';
 
-/* TO-DO
-- filter by activity type and duration
-*/
 const Activities = ({ profile, loggedInUser }) => {
-  // window.location.reload();
-
   const { REACT_APP_SERVER_URL } = process.env;
   const [activities, setActivities] = useState([]);
   const [alert, setAlert] = useState(null);
@@ -16,7 +12,6 @@ const Activities = ({ profile, loggedInUser }) => {
     dbProblem: `Adatbázis probléma.`,
   });
 
-  /* Get all activities */
   useEffect(() => {
     fetch(`${REACT_APP_SERVER_URL}/api/activities/${loggedInUser.id}`, {
       method: 'GET',
@@ -44,9 +39,12 @@ const Activities = ({ profile, loggedInUser }) => {
 
   return (
     <>
-      <div className='activities-cont'>
-        <h2>Tevékenységek</h2>
-        <div className='alert-cont'>
+      <div
+        className='activities-cont'
+        style={{ backgroundImage: `url(${back})` }}
+      >
+        <h2 className='inner-h2'>Tevékenységek</h2>
+        <div className='alert-cont-activities'>
           {alert && (
             <p className={`alert alert-${alert.alertType}`}>{alert.message}</p>
           )}
@@ -65,6 +63,7 @@ const Activities = ({ profile, loggedInUser }) => {
                   activities={activities}
                   setActivities={setActivities}
                   loggedInUser={loggedInUser}
+                  setAlert={setAlert}
                 />
               </div>
             ))}

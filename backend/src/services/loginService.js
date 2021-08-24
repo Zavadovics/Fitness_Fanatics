@@ -1,4 +1,4 @@
-// import logger from '../logger.js';
+import logger from '../logger.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { loginValidation } from '../validations/loginValidation.js';
@@ -9,7 +9,7 @@ export const loginService = {
     const { error } = loginValidation(loginData);
     if (error) {
       return {
-        status: 404,
+        status: 400,
         message: error.details[0].message,
       };
     }
@@ -17,8 +17,8 @@ export const loginService = {
     const user = await User.findOne({ email: loginData.email });
     if (!user) {
       return {
-        status: 400,
-        message: 'User is not registered',
+        status: 404,
+        message: 'Az általad megadott email cím még nincs regisztrálva',
       };
     }
 
@@ -29,7 +29,7 @@ export const loginService = {
     if (!validPass) {
       return {
         status: 403,
-        message: 'Email or password is incorrect',
+        message: 'Az általad megadott email cím vagy jelszó helytelen',
       };
     }
 
@@ -46,7 +46,6 @@ export const loginService = {
 
       return {
         status: 200,
-        message: 'Logged in!',
         token: authToken,
         lastName: user.lastName,
         firstName: user.firstName,
@@ -54,10 +53,10 @@ export const loginService = {
         id: user._id,
       };
     } catch (err) {
-      next(err);
+      logger.error(err);
       return {
         status: 500,
-        message: 'Something went wrong',
+        message: 'Adatbázis probléma',
       };
     }
   },

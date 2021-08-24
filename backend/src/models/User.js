@@ -5,7 +5,6 @@ const UserSchema = new Schema(
   {
     userName: {
       type: String,
-      default: '',
     },
     firstName: {
       type: String,
@@ -33,23 +32,18 @@ const UserSchema = new Schema(
     },
     gender: {
       type: String,
-      default: '',
     },
     cityOfResidence: {
       type: String,
-      default: '',
     },
     weight: {
       type: Number,
-      default: '',
     },
     birthDate: {
       type: String,
-      default: '',
     },
     motivation: {
       type: String,
-      default: '',
     },
   },
   { timestamps: true }

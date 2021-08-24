@@ -1,3 +1,4 @@
+import logger from '../logger.js';
 import bcrypt from 'bcryptjs';
 import User from '../models/User.js';
 import jwt from 'jsonwebtoken';
@@ -5,10 +6,10 @@ import { userValidation } from '../validations/userValidation.js';
 import sendEmail from '../utils/sendEmail.js';
 
 export const userService = {
-  /* ⬇️ save new user - OK */
   async saveUser(userData) {
     const { error } = userValidation(userData);
     if (error) {
+      logger.error(error);
       return {
         status: 400,
         message: error.details[0].message,
@@ -18,8 +19,8 @@ export const userService = {
     const emailExist = await User.findOne({ email: userData.email });
     if (emailExist)
       return {
-        status: 400,
-        message: 'User has already been registered!',
+        status: 409,
+        message: 'Az általad megadott email cím már regisztrálva van',
       };
 
     const salt = await bcrypt.genSalt(10);
@@ -41,20 +42,19 @@ export const userService = {
     try {
       await user.save();
       return {
-        status: 200,
-        message: 'User has successfully registered.',
+        status: 201,
+        message: `Sikeres regisztráció. Máris átirányítunk a bejelentkezés oldalra`,
+        user: user,
       };
     } catch (err) {
-      console.log(err);
+      logger.error(err);
       return {
         status: 500,
-        message: 'Something went wrong',
+        message: 'Adatbázis probléma',
       };
     }
   },
-  /* ⬆️ save new user - OK */
 
-  /* ⬇️ update existing user - OK */
   async updateUser(id, reqData) {
     const { _id, __v, updatedAt, createdAt, ...others } = reqData;
     const { error } = userValidation(others);
@@ -71,24 +71,23 @@ export const userService = {
 
     reqData.password = hashedPassword;
     try {
-      await User.findByIdAndUpdate(id, reqData, {
+      const updatedUser = await User.findByIdAndUpdate(id, reqData, {
         useFindAndModify: false,
       });
       return {
         status: 200,
-        message: 'User data has been updated',
+        message: `Sikeres mentés. Az adatokat hozzádtuk az adatbázishoz`,
+        updatedUser: updatedUser,
       };
     } catch (err) {
-      console.log(err);
+      logger.error(err);
       return {
         status: 500,
-        message: 'Something went wrong',
+        message: 'Adatbázis probléma',
       };
     }
   },
-  /* ⬆️ update existing user - OK */
 
-  /* ⬇️ reset user password- OK */
   async sendPasswordResetMail(reqData) {
     try {
       const user = await User.findOne({ email: reqData.email });
@@ -96,7 +95,7 @@ export const userService = {
       if (!user)
         return {
           status: 400,
-          message: `User with given email doesn't exist`,
+          message: 'A megadott e-mail címmel még nem regisztráltak',
         };
 
       const authToken = jwt.sign(
@@ -113,24 +112,28 @@ export const userService = {
       await sendEmail(link, user);
       return {
         status: 200,
-        message: `Password reset link sent to your email account`,
+        message:
+          'A jelszó cseréjéhez kérlek nyitsd meg az e-mailt amit küldtünk',
       };
     } catch (err) {
-      console.log(err);
+      logger.error(err);
       return {
         status: 500,
-        message: 'Something went wrong',
+        message: 'Adatbázis probléma',
       };
     }
   },
 
   async resetPassword(id, token, reqData) {
     try {
-      const { exp } = jwt.decode(token);
-      if (Date.now() >= exp * 1000) {
+      try {
+        jwt.verify(token, process.env.TOKEN_SECRET);
+      } catch (err) {
+        logger.error(err);
         return {
-          status: 400,
-          message: `TOKEN has expired!`,
+          status: 401,
+          message:
+            'Sajnos a jelszó megváltoztatására adott idő (15 perc) lejárt',
         };
       }
 
@@ -144,15 +147,15 @@ export const userService = {
       });
       return {
         status: 200,
-        message: 'User password has been updated',
+        message:
+          'A jelszó cseréje sikeresen megtörtént. Most már bejelentkezhetsz',
       };
     } catch (err) {
-      console.log(err);
+      logger.error(err);
       return {
         status: 500,
-        message: 'Something went wrong',
+        message: 'A jelszó cseréje nem sikerült',
       };
     }
   },
-  /* ⬆️ reset user password - OK */
 };

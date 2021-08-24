@@ -1,20 +1,29 @@
-// import logger from '../logger.js';
+import logger from '../logger.js';
 import Photo from '../models/Photo.js';
 import cloudinary from '../cloudinary.js';
+import { photoValidation } from '../validations/photoValidation.js';
 
 export const photoService = {
   async saveOrUpdatePhoto(id, reqFile, reqBody) {
     try {
+      const { error } = photoValidation(reqBody);
+      if (error) {
+        logger.error(error);
+        return {
+          status: 400,
+          message: error.details[0].message,
+        };
+      }
+
       let photo = await Photo.find({ user_id: id });
       if (photo.length !== 0) {
-        // Delete image from Cloudinary
         await cloudinary.v2.uploader.destroy(photo[0].cloudinary_id);
-        // Upload image to cloudinary
+
         let result;
         if (reqFile) {
           result = await cloudinary.uploader.upload(reqFile.path);
         }
-        // Update image in MongoDB
+
         photo = await Photo.updateOne(
           { user_id: id },
           [
@@ -31,16 +40,14 @@ export const photoService = {
         );
         return {
           status: 200,
-          message: 'upload successful',
+          message: 'Fotó sikeresen módosítva',
           image: result.secure_url,
         };
       } else {
-        // Upload image to cloudinary
         let result;
         if (reqFile) {
           result = await cloudinary.uploader.upload(reqFile.path);
         }
-        // Save image in MongoDB
         photo = await Photo.updateOne(
           { user_id: id },
           [
@@ -57,30 +64,34 @@ export const photoService = {
         );
         return {
           status: 200,
-          message: 'upload successful',
+          message: 'Fotó sikeresen feltöltve',
           image: result.secure_url,
         };
       }
     } catch (err) {
-      next(err);
+      logger.error(err);
+      return {
+        status: 500,
+        message: 'Fotó feltöltés sikertelen',
+      };
     }
   },
 
-  /* ⬇️ delete photo - TEST */
   async deletePhoto(id) {
     try {
-      // Find photo by id
       const photo = await Photo.find({ user_id: id });
-      // Delete image from cloudinary
-      await cloudinary.v2.uploader.destroy(photo[0].cloudinary_id); // Delete photo from db
+      await cloudinary.v2.uploader.destroy(photo[0].cloudinary_id);
       await Photo.deleteOne({ user_id: id });
       return {
         status: 200,
-        message: 'deletion successful',
+        message: 'Fotó sikeresen törölve',
       };
     } catch (err) {
-      next(err);
+      logger.error(err);
+      return {
+        status: 500,
+        message: 'Fotó törlése sikertelen',
+      };
     }
   },
-  /* ⬆️ delete photo - TEST */
 };

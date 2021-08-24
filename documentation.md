@@ -9,15 +9,15 @@
 ## Főbb funkciók:
 
 - Regisztráció: Vezetéknév, keresztnév, e-mail és jelszó megadásával.
-- Bejelentkezés: E-mail és jelszó megadásával.
-- Jelszó csere: E-mail megadása, jelszócsere e-mail kérése céljából, majd az e-mailben lévő linkre kattintva a jelszó cseréje.
+- Bejelentkezés: E-mail cím és jelszó megadásával.
+- Jelszó csere: E-mail cím megadása, jelszócsere e-mail kérése céljából, majd az e-mailben lévő linkre kattintva a jelszó cseréje. A linkben küdött token csak 15 percig érvényes.
 - Bejelentkezés utáni főoldal: Az összes tevékenység időrendbeli listázása. A listán szereplő tevékenységeket módosítani vagy törölni lehet.
 - Új tevékenység hozzáadása: Itt lehet új tevékenységet hozzáadni az adatbázishoz.
 - Saját profil: Megjeleníti az adatbázisban szereplő adatainkat. A "módosítás" gombra kattintva átirányít a profil szerkesztése oldalra ahol további adatokkal bővíthetjük profilunkat.
 - Saját profil szerkesztése: Az űrlapba betölti azokat az adatokat amiket korábban már megadtunk. Új adatokat adhatunk hozzá az adatbázishoz.
 - Saját fotó: Itt új fotót adhatunk hozzá a "photos" kollekcióhoz, lecserélhetjük a régi fotónkat, vagy törölhetjük is.
 - Edzéstervek: Az adatbázisban található edzéstervek lekérése és új terv hozzáadása.
-- A "városok" nevű adatbázis kollekcióhoz a profil szerkesztése oldalon található tartózkodási hely nevű select/dropdown-on keresztül lehet hozzaáadni. Ez egyben az adatbázisban szereplő városok listájának megjelenítéséért is felelős.
+- A "városok" nevű adatbázis kollekció a profil szerkesztése oldalon található tartózkodási hely nevű select/dropdown által érhető el. Ez a kollekció Magyarország összes városát tartalmazza amik a legördülő menüben jelennek meg.
 
 ## Oldalak
 
@@ -84,3 +84,18 @@
 **API dokumentáció**
 
 - OpenAPI/Swagger
+
+## Alkalmazás installálása
+
+1. Alkalmazás által használt kulcsok:
+
+- [Cloudinary](https://cloudinary.com)
+- [Mongo DB](https://www.mongodb.com)
+- [NodeMailer](https://nodemailer.com)
+
+2. Az `.env.example` alapján `.env` fájlban megadni a környezeti változókat.
+3. `docker-compose build`
+4. `docker-compose --env-file ./.env.dev up`
+5. Fitness Fanatics frontend: http://localhost:3000/
+6. Fitness Fanatics backend: http://localhost:5000/
+7. Swagger Open API documentáció http://localhost:4000/api-docs/#/

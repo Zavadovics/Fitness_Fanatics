@@ -6,7 +6,7 @@ export const userValidation = data => {
     firstName: Joi.string().min(1).required(),
     lastName: Joi.string().min(1).required(),
     email: Joi.string().min(1).required().email(),
-    password: Joi.string().min(6).required(),
+    password: Joi.string().min(8).required(),
     gender: Joi.string(),
     cityOfResidence: Joi.string(),
     weight: Joi.number(),

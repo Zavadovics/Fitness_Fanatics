@@ -1,4 +1,5 @@
 import dotenv from 'dotenv';
+import logger from '../logger.js';
 import nodemailer from 'nodemailer';
 
 dotenv.config();
@@ -22,9 +23,8 @@ const sendEmail = async (link, user) => {
       text: `Az alábbi linkre kattintva lecserélheted a jelszavad: ${link} - a link 15 perc múlva lejár !`,
     });
 
-    console.log('email sent successfully');
   } catch (error) {
-    console.log(error, 'email not sent');
+      logger.error(err);
   }
 };
 

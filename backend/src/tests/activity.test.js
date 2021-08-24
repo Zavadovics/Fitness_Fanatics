@@ -42,14 +42,16 @@ const updatedActivity = {
 };
 
 describe('testing activities', () => {
-  it('POST /activities should respond with 200', async () => {
+  it('POST /activities should respond with 201', async () => {
     await request(app)
       .post('/api/activities')
       .send(activity)
       .set('Authorization', `Bearer ${authToken}`)
-      .expect(200)
       .then(response => {
-        expect(response).toBeTruthy();
+        expect(response.statusCode).toBe(201);
+        expect(response.body.message).toBe(
+          'Sikeres mentés. Az új tevékenységet hozzádtuk az adatbázishoz'
+        );
         activity['id'] = response.body.newActivity._id;
         activity['user_id'] = response.body.newActivity.user_id;
       });
@@ -60,9 +62,11 @@ describe('testing activities', () => {
       .put(`/api/activities/${activity.id}`)
       .send(updatedActivity)
       .set('Authorization', `Bearer ${authToken}`)
-      .expect(200)
       .then(response => {
-        expect(response.body).toBeTruthy();
+        expect(response.statusCode).toBe(200);
+        expect(response.body.message).toBe(
+          'Sikeres módosítás. A tevékenység frissítésre került az adatbázisban'
+        );
       });
   });
 
@@ -70,8 +74,8 @@ describe('testing activities', () => {
     await request(app)
       .get(`/api/activities/${activity.user_id}`)
       .set('Authorization', `Bearer ${authToken}`)
-      .expect(200)
       .then(response => {
+        expect(response.statusCode).toBe(200);
         expect(response.body).toBeTruthy();
       });
   });
@@ -80,9 +84,9 @@ describe('testing activities', () => {
     await request(app)
       .delete(`/api/activities/${activity.id}`)
       .set('Authorization', `Bearer ${authToken}`)
-      .expect(200)
       .then(response => {
-        expect(response.body).toBeTruthy();
+        expect(response.statusCode).toBe(200);
+        expect(response.body.message).toBe('Tevékenység sikeresen törölve');
       });
   });
 });

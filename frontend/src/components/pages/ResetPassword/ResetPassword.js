@@ -5,9 +5,16 @@ import ReCAPTCHA from 'react-google-recaptcha';
 import Navbar from '../../common/Navbar/Navbar';
 import Footer from '../../common/Footer/Footer';
 import InputField from '../../common/InputField/InputField';
+import { isFieldEmpty, isPasswordValid } from '../../../utils/validators';
+import {
+  isFormValid,
+  onTickChange,
+  handleInputChange,
+  handleInputBlur,
+} from '../../../utils/form-validation';
 import './resetPassword.scss';
 
-const ResetPassword = ({ loggedInUser }) => {
+const ResetPassword = () => {
   const { REACT_APP_SERVER_URL, REACT_APP_GOOGLE_RECAPTCHA_KEY } = process.env;
   const [verified, setVerified] = useState(false);
   const history = useHistory();
@@ -38,23 +45,10 @@ const ResetPassword = ({ loggedInUser }) => {
   });
 
   const messageTypes = Object.freeze({
-    success: `A jelszó cseréje sikeresen megtörtént. Most már bejelentkezhetsz.`,
-    fail: `A jelszó cseréje nem sikerült.`,
     failCaptcha: `Kérlek bizonyítsd be hogy nem vagy robot 🤖`,
-    expiredToken: `Sajnos a jelszó megváltoztatására adott idő (15 perc) lejárt.`,
   });
 
-  const isFieldEmpty = value => {
-    return value !== '';
-  };
-
-  const isPasswordValid = value => {
-    return value.length >= 8;
-  };
-
-  const isConfirmPasswordMatch = value => {
-    return value === formData.newPassword;
-  };
+  const isConfirmPasswordMatch = value => value === formData.newPassword;
 
   const validators = {
     newPassword: {
@@ -69,63 +63,6 @@ const ResetPassword = ({ loggedInUser }) => {
     },
   };
 
-  const validateField = fieldName => {
-    const value = formData[fieldName];
-    let isValid = true;
-    setFormErrors(prev => ({
-      ...prev,
-      [fieldName]: '',
-    }));
-    references[fieldName].current.setCustomValidity('');
-
-    if (validators[fieldName] !== undefined) {
-      for (const [validationType, validatorFn] of Object.entries(
-        validators[fieldName]
-      )) {
-        if (isValid !== false) {
-          isValid = validatorFn(value);
-          if (!isValid) {
-            const errorText = formErrorTypes[validationType];
-            setFormErrors(prev => ({
-              ...prev,
-              [fieldName]: errorText,
-            }));
-            references[fieldName].current.setCustomValidity(errorText);
-          }
-        }
-      }
-    }
-    return isValid;
-  };
-
-  const isFormValid = () => {
-    let isValid = true;
-    for (const fieldName of Object.keys(formData)) {
-      const isFieldValid = validateField(fieldName);
-      if (!isFieldValid) {
-        isValid = false;
-      }
-    }
-    return isValid;
-  };
-
-  const onChange = () => {
-    setVerified(true);
-  };
-
-  const handleInputChange = e => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-  };
-
-  const handleInputBlur = e => {
-    const { name } = e.target;
-    validateField(name);
-  };
-
   const handleReset = async e => {
     e.preventDefault();
     setAlert(null);
@@ -135,7 +72,13 @@ const ResetPassword = ({ loggedInUser }) => {
     });
 
     setFormWasValidated(false);
-    const isValid = isFormValid();
+    const isValid = isFormValid(
+      formData,
+      setFormErrors,
+      validators,
+      references,
+      formErrorTypes
+    );
     if (isValid && verified) {
       await fetch(`${REACT_APP_SERVER_URL}/api/password-reset/${id}/${token}`, {
         method: 'put',
@@ -146,29 +89,31 @@ const ResetPassword = ({ loggedInUser }) => {
           password: formData.newPassword,
         }),
       })
-        .then(response => response.json())
-        .then(res => {
-          if (res.status === 200) {
-            window.scrollTo(0, 0);
-            setFormData({
-              newPassword: '',
-              confirmPassword: '',
-            });
-            setVerified(false);
-            setAlert({ alertType: 'success', message: messageTypes.success });
-            setTimeout(() => {
-              history.push('/login');
-            }, 3000);
-          } else if (res.status === 400) {
-            setAlert({
-              alertType: 'danger',
-              message: messageTypes.expiredToken,
-            });
-          } else {
-            setAlert({ alertType: 'danger', message: messageTypes.fail });
+        .then(async res => {
+          if (res.status === 401) {
+            const response = await res.json();
+            throw new Error(response?.message);
           }
+          return res.json();
+        })
+        .then(res => {
+          window.scrollTo(0, 0);
+          setFormData({
+            newPassword: '',
+            confirmPassword: '',
+          });
+          setVerified(false);
+          setAlert({ alertType: 'success', message: res.message });
+          setTimeout(() => {
+            history.push('/login');
+          }, 3000);
+        })
+        .catch(err => {
+          window.scrollTo(0, 0);
+          setAlert({ alertType: 'danger', message: err.message });
         });
     } else if (!verified && isValid) {
+      window.scrollTo(0, 0);
       setAlert({
         alertType: 'danger',
         message: messageTypes.failCaptcha,
@@ -182,7 +127,7 @@ const ResetPassword = ({ loggedInUser }) => {
     <>
       <Navbar />
       <div className='reset-password-cont'>
-        <h2>Jelszó cseréje</h2>
+        <h1 className='outer-h1'>Jelszó cseréje</h1>
         <div className='alert-cont'>
           {alert && (
             <p className={`alert alert-${alert.alertType}`}>{alert.message}</p>
@@ -197,30 +142,54 @@ const ResetPassword = ({ loggedInUser }) => {
             <InputField
               name='newPassword'
               type='password'
-              labelText='Új jelszó - (legalább 8 karakter)'
+              labelText='Új jelszó - (legalább 8 karakter) *'
               value={formData.newPassword}
-              onChange={handleInputChange}
-              onBlur={handleInputBlur}
+              onChange={e => {
+                handleInputChange(e, formData, setFormData);
+              }}
+              onBlur={e => {
+                handleInputBlur(
+                  e,
+                  formData,
+                  setFormErrors,
+                  validators,
+                  references,
+                  formErrorTypes
+                );
+              }}
               reference={references.newPassword}
               error={formErrors.newPassword}
+              required
             />
             <InputField
               name='confirmPassword'
               type='password'
-              labelText='Jelszó még egyszer'
+              labelText='Jelszó még egyszer *'
               value={formData.confirmPassword}
-              onChange={handleInputChange}
-              onBlur={handleInputBlur}
+              onChange={e => {
+                handleInputChange(e, formData, setFormData);
+              }}
+              onBlur={e => {
+                handleInputBlur(
+                  e,
+                  formData,
+                  setFormErrors,
+                  validators,
+                  references,
+                  formErrorTypes
+                );
+              }}
               reference={references.confirmPassword}
               error={formErrors.confirmPassword}
+              required
             />
-            <div className='captcha'>
-              <ReCAPTCHA
-                className='captcha'
-                sitekey={REACT_APP_GOOGLE_RECAPTCHA_KEY}
-                onChange={onChange}
-              />
-            </div>
+            <ReCAPTCHA
+              className='captcha'
+              sitekey={REACT_APP_GOOGLE_RECAPTCHA_KEY}
+              onChange={() => {
+                onTickChange(setVerified);
+              }}
+            />
           </div>
           <button type='submit' className='password-btn'>
             KÜLDÉS

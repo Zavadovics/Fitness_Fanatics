@@ -59,11 +59,12 @@ app.use(cors());
 app.use(express.json());
 app.use(morgan('dev'));
 
-app.use('/users', usersRouter);
+app.use('/user', usersRouter);
+app.use('/password', usersRouter);
 app.use('/login', loginRouter);
 app.use('/activities', activitiesRouter);
 app.use('/cities', citiesRouter);
-app.use('/photos', photosRouter);
+app.use('/photo', photosRouter);
 app.use('/plan', plansRouter);
 
 app.listen(PORT, () => console.log(`The server is running on port ${PORT}`));

@@ -42,8 +42,6 @@ const ActivitySchema = new Schema(
     },
     comment: {
       type: String,
-      required: true,
-      min: 1,
     },
   },
   { timestamps: true }

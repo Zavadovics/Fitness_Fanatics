@@ -2,19 +2,16 @@ import { useEffect, useState, useRef } from 'react';
 import InputField from '../../common/InputField/InputField';
 import ItemSelect from '../../common/ItemSelect/ItemSelect';
 import validator from 'validator';
+import bg from '../../../images/background.jpg';
 import './editProfile.scss';
-/* FIX FETCHING CITIES */
+
 const EditProfile = ({ profile, setProfile, loggedInUser }) => {
   const { REACT_APP_SERVER_URL } = process.env;
   const [cities, setCities] = useState([]);
   const genderList = ['férfi', 'nő', 'nem szeretném megadni'];
   const [formData, setFormData] = useState(profile);
-
   const [alert, setAlert] = useState(null);
   const [formWasValidated, setFormWasValidated] = useState(false);
-
-  // console.log('props - profile', profile);
-  // console.log('start - formData', formData);
 
   useEffect(() => {
     fetch(`${REACT_APP_SERVER_URL}/api/cities`, {
@@ -37,46 +34,33 @@ const EditProfile = ({ profile, setProfile, loggedInUser }) => {
           cityValues.push(jsonRes[i].value);
         }
         setCities(cityValues);
-        // console.log(cities);
       })
       .catch(err => {
-        console.log(err.message);
+        console.error(err.message);
       });
   }, []);
 
-  const messageTypes = Object.freeze({
-    success: `Sikeres mentés. Az adatokat hozzádtuk az adatbázishoz`,
-    fail: `Sikertelen mentés. Adatbázis probléma.`,
-  });
-
   const references = {
-    userName: useRef(),
     firstName: useRef(),
     lastName: useRef(),
     email: useRef(),
-    gender: useRef(),
-    cityOfResidence: useRef(),
     weight: useRef(),
     birthDate: useRef(),
-    motivation: useRef(),
   };
 
   const formErrorTypes = Object.freeze({
     required: `A mező kitöltése kötelező`,
-    passwordLength: `A jelszó legalább 6 karakter hosszú kell legyen`,
     validEmail: `Nem megfelelő email formátum`,
+    positive: `A megadott érték nagyobb kell hogy legyen mint 0.`,
+    futureDate: `Kérlek egy múltbeli dátumot addj meg!`,
   });
 
   const [formErrors, setFormErrors] = useState({
-    userName: '',
     firstName: '',
     lastName: '',
     email: '',
-    gender: '',
-    cityOfResidence: '',
     weight: '',
     birthDate: '',
-    motivation: '',
   });
 
   const isFieldEmpty = value => {
@@ -87,10 +71,17 @@ const EditProfile = ({ profile, setProfile, loggedInUser }) => {
     return validator.isEmail(value);
   };
 
+  const isValueNegative = value => {
+    return value > 0;
+  };
+
+  const isDateInFuture = value => {
+    const futureDate = new Date(value);
+    const actualDate = new Date();
+    return futureDate <= actualDate;
+  };
+
   const validators = {
-    userName: {
-      required: isFieldEmpty,
-    },
     firstName: {
       required: isFieldEmpty,
     },
@@ -101,20 +92,11 @@ const EditProfile = ({ profile, setProfile, loggedInUser }) => {
       required: isFieldEmpty,
       validEmail: isEmailInvalid,
     },
-    gender: {
-      required: isFieldEmpty,
-    },
-    cityOfResidence: {
-      required: isFieldEmpty,
-    },
     weight: {
-      required: isFieldEmpty,
+      positive: isValueNegative,
     },
     birthDate: {
-      required: isFieldEmpty,
-    },
-    motivation: {
-      required: isFieldEmpty,
+      futureDate: isDateInFuture,
     },
   };
 
@@ -125,7 +107,12 @@ const EditProfile = ({ profile, setProfile, loggedInUser }) => {
       ...prev,
       [fieldName]: '',
     }));
-    // references[fieldName].current.setCustomValidity('');
+    if (
+      (formData.birthDate === undefined || formData.birthDate === '') &&
+      (formData.weight === null || formData.weight === undefined)
+    ) {
+      return true;
+    }
 
     if (validators[fieldName] !== undefined) {
       for (const [validationType, validatorFn] of Object.entries(
@@ -165,6 +152,9 @@ const EditProfile = ({ profile, setProfile, loggedInUser }) => {
 
   const handleInputChange = e => {
     const { name, value } = e.target;
+
+    e.target.setCustomValidity('');
+
     setFormData({
       ...formData,
       [name]: value,
@@ -175,15 +165,11 @@ const EditProfile = ({ profile, setProfile, loggedInUser }) => {
     e.preventDefault();
     setAlert(null);
     setFormErrors({
-      userName: '',
       firstName: '',
       lastName: '',
       email: '',
-      gender: '',
-      cityOfResidence: '',
       weight: '',
       birthDate: '',
-      motivation: '',
     });
 
     setFormWasValidated(false);
@@ -208,17 +194,21 @@ const EditProfile = ({ profile, setProfile, loggedInUser }) => {
           motivation: formData.motivation,
         }),
       })
-        .then(response => response.json())
-        .then(res => {
-          if (res.status === 200) {
-            window.scrollTo(0, 0);
-            setAlert({ alertType: 'success', message: messageTypes.success });
-            setProfile(formData);
-            // console.log('új adatok sikeresen mentve');
-          } else {
-            setAlert({ alertType: 'danger', message: messageTypes.fail });
-            // console.log('új adatok mentése sikertelen');
+        .then(async res => {
+          if (res.status === 400) {
+            const response = await res.json();
+            throw new Error(response?.message);
           }
+          return res.json();
+        })
+        .then(res => {
+          window.scrollTo(0, 0);
+          setAlert({ alertType: 'success', message: res.message });
+          setProfile(formData);
+        })
+        .catch(err => {
+          window.scrollTo(0, 0);
+          setAlert({ alertType: 'danger', message: err.message });
         });
     } else {
       setFormWasValidated(true);
@@ -227,8 +217,11 @@ const EditProfile = ({ profile, setProfile, loggedInUser }) => {
 
   return (
     <>
-      <div className='profile-edit-cont'>
-        <h2>Profil módosítása</h2>
+      <div
+        className='profile-edit-cont'
+        style={{ backgroundImage: `url(${bg})` }}
+      >
+        <h2 className='inner-h2'>Profil módosítása</h2>
         <div className='alert-cont'>
           {alert && (
             <p className={`alert alert-${alert.alertType}`}>{alert.message}</p>
@@ -245,128 +238,82 @@ const EditProfile = ({ profile, setProfile, loggedInUser }) => {
               type='text'
               labelText='Felhasználónév'
               onChange={handleInputChange}
-              value={formData.userName}
+              value={formData.userName || ''}
               onBlur={handleInputBlur}
-              reference={references.userName}
-              formError={formErrors.userName}
             />
             <InputField
               name='lastName'
               type='text'
-              labelText='Vezetéknév'
+              labelText='Vezetéknév *'
               onChange={handleInputChange}
               value={formData.lastName}
               onBlur={handleInputBlur}
               reference={references.lastName}
-              formError={formErrors.lastName}
+              error={formErrors.lastName}
             />
             <InputField
               name='firstName'
               type='text'
-              labelText='Keresztnév'
+              labelText='Keresztnév *'
               onChange={handleInputChange}
               value={formData.firstName}
               onBlur={handleInputBlur}
               reference={references.firstName}
-              formError={formErrors.firstName}
+              error={formErrors.firstName}
             />
             <InputField
               name='email'
               type='email'
-              labelText='Email'
+              labelText='Email *'
               onChange={handleInputChange}
               value={formData.email}
               onBlur={handleInputBlur}
               reference={references.email}
-              formError={formErrors.email}
+              error={formErrors.email}
             />
-            {/* <label className='form-label m-2' htmlFor='activityType'>
-              Nem
-            </label>
-            <select
-              className='form-select m-2'
-              id='gender'
-              name='gender'
-              value={formData.gender}
-              onChange={handleInputChange}
-              onBlur={handleInputBlur}
-              reference={references.gender}
-              error={formErrors.gender}
-            >
-              {genderList.map(gender => (
-                <option value={gender} key={gender}>
-                  {gender}
-                </option>
-              ))}
-            </select> */}
             <ItemSelect
-              labelText={'Nem'}
+              labelText='Nem'
               name='gender'
-              id={'gender'}
-              formValue={formData.gender}
+              id='gender'
+              formValue={formData.gender || ''}
               valueList={genderList}
               onChange={handleInputChange}
-              reference={references['gender']}
-              formError={formErrors.gender}
             />
-            {/* <label className='form-label m-2' htmlFor='activityType'>
-              Tartózkodási hely
-            </label>
-            <select
-              className='form-select m-2'
-              id='cityOfResidence'
-              name='cityOfResidence'
-              value={formData.cityOfResidence}
-              onChange={handleInputChange}
-              onBlur={handleInputBlur}
-              reference={references.cityOfResidence}
-              error={formErrors.cityOfResidence}
-            >
-              {cities.map(city => (
-                <option value={city} key={city}>
-                  {city}
-                </option>
-              ))}
-            </select> */}
             <ItemSelect
-              labelText={'Tartózkodási hely'}
+              labelText='Tartózkodási hely'
               name='cityOfResidence'
-              id={'cityOfResidence'}
-              formValue={formData.cityOfResidence}
+              id='cityOfResidence'
+              formValue={formData.cityOfResidence || ''}
               valueList={cities}
               onChange={handleInputChange}
-              reference={references['cityOfResidence']}
-              formError={formErrors.cityOfResidence}
             />
             <InputField
               name='weight'
               type='number'
               labelText='Testsúly'
               onChange={handleInputChange}
-              value={formData.weight}
+              value={formData.weight || ''}
               onBlur={handleInputBlur}
               reference={references.weight}
-              formError={formErrors.weight}
+              error={formErrors.weight}
             />
             <InputField
               name='birthDate'
               type='date'
               labelText='Születési dátum'
               onChange={handleInputChange}
-              value={formData.birthDate}
+              value={formData.birthDate || ''}
               onBlur={handleInputBlur}
               reference={references.birthDate}
-              formError={formErrors.birthDate}
+              error={formErrors.birthDate}
             />
             <InputField
               name='motivation'
               type='motivation'
               labelText='Motivációs szöveg'
               onChange={handleInputChange}
-              value={formData.motivation}
+              value={formData.motivation || ''}
               onBlur={handleInputBlur}
-              reference={references.motivation}
-              formError={formErrors.motivation}
             />
           </div>
           <button type='submit' className='profile-edit-btn'>

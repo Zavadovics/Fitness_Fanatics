@@ -7,6 +7,14 @@ const idLength = 24;
 /**
  * @swagger
  * components:
+ *   securitySchemes:
+ *     bearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
+ *   responses:
+ *     UnauthorizedError:
+ *       description: Access token is missing or invalid
  *   schemas:
  *     User:
  *       type: object
@@ -19,21 +27,18 @@ const idLength = 24;
  *         _id:
  *           type: string
  *           description: The auto-generated id of the user
- *         username:
+ *         userName:
  *           type: string
  *           description: Username of the user
- *         firstName:
- *           type: string
- *           description: First name of the user
  *         lastName:
  *           type: string
  *           description: Last name of the user
+ *         firstName:
+ *           type: string
+ *           description: First name of the user
  *         email:
  *           type: string
  *           description: Email address of the user
- *         password:
- *           type: string
- *           description: Password of the user
  *         password:
  *           type: string
  *           description: Password of the user
@@ -55,9 +60,9 @@ const idLength = 24;
  *
  *       example:
  *         _id: 60c77f12835fce44a438d19b
- *         username: Tesztelod
- *         firstName: Elod
+ *         userName: Tesztelod
  *         lastName: Teszt
+ *         firstName: Elod
  *         email: tesztelod@gmail.com
  *         password: titkosjelszo
  *         gender: ferfi
@@ -76,7 +81,7 @@ const idLength = 24;
 
 /**
  * @swagger
- * /register:
+ * /user:
  *   post:
  *     summary: Registers a new user
  *     tags: [Users]
@@ -87,7 +92,7 @@ const idLength = 24;
  *           schema:
  *             $ref: '#/components/schemas/User'
  *     responses:
- *       200:
+ *       201:
  *         description: User has successfully registered
  *         content:
  *           application/json:
@@ -96,16 +101,61 @@ const idLength = 24;
  *               properties:
  *                 status:
  *                   type: number
- *                   description: 200
+ *                   description: 201
  *                 message:
  *                   type: string
- *                   description: User has successfully registered
+ *                   description: Sikeres regisztráció. Máris átirányítunk a bejelentkezés oldalra
+ *                 user:
+ *                   type: object
+ *                   description: The details of the newly-created user
+ *               required:
+ *                 - status
+ *                 - message
+ *                 - user
+ *             example:
+ *               status: 201
+ *               message: Sikeres regisztráció. Máris átirányítunk a bejelentkezés oldalra
+ *               user: details of the user
+ *
+ *       400:
+ *         description: Validation of the user's details failed
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: number
+ *                   description: 400
+ *                 message:
+ *                   type: string
+ *                   description: error.details[0].message
  *               required:
  *                 - status
  *                 - message
  *             example:
- *               status: 200
- *               message: User has successfully registered
+ *               status: 400
+ *               message: error.details[0].message
+ *
+ *       409:
+ *         description: This email address has already been registered
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: number
+ *                   description: 409
+ *                 message:
+ *                   type: string
+ *                   description: Az általad megadott email cím már regisztrálva van
+ *               required:
+ *                 - status
+ *                 - message
+ *             example:
+ *               status: 409
+ *               message: Az általad megadott email cím már regisztrálva van
  *
  *       500:
  *         description: Something went wrong
@@ -119,16 +169,16 @@ const idLength = 24;
  *                   description: 500
  *                 message:
  *                   type: string
- *                   description: Something went wrong
+ *                   description: Adatbázis probléma
  *               required:
  *                 - status
  *                 - message
  *             example:
  *               status: 500
- *               message: Something went wrong
+ *               message: Adatbázis probléma
  */
 
-router.post('/user', (req, res) => {
+router.post('/', (req, res) => {
   try {
     const user = {
       _id: nanoid(idLength),
@@ -163,6 +213,7 @@ router.post('/user', (req, res) => {
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/User'
+ *
  *       404:
  *         description: The user was not found
  *     security:
@@ -212,15 +263,20 @@ router.get('/:id', (req, res) => {
  *                 message:
  *                   type: string
  *                   description: User data has been updated
+ *                 updatedUser:
+ *                   type: object
+ *                   description: The updated details of the user
  *               required:
  *                 - status
  *                 - message
+ *                 - updatedUser
  *             example:
  *               status: 200
  *               message: User data has been updated
+ *               updatedUser: details of the user
  *
- *       404:
- *         description: The user details are invalid
+ *       400:
+ *         description: Validation of the user's details failed
  *         content:
  *           application/json:
  *             schema:
@@ -228,7 +284,7 @@ router.get('/:id', (req, res) => {
  *               properties:
  *                 status:
  *                   type: number
- *                   description: 404
+ *                   description: 400
  *                 message:
  *                   type: string
  *                   description: error.details[0].message
@@ -236,7 +292,7 @@ router.get('/:id', (req, res) => {
  *                 - status
  *                 - message
  *             example:
- *               status: 404
+ *               status: 400
  *               message: error.details[0].message
  *
  *       500:
@@ -251,13 +307,13 @@ router.get('/:id', (req, res) => {
  *                   description: 500
  *                 message:
  *                   type: string
- *                   description: Something went wrong
+ *                   description: Adatbázis probléma
  *               required:
  *                 - status
  *                 - message
  *             example:
  *               status: 500
- *               message: Something went wrong
+ *               message: Adatbázis probléma
  *     security:
  *     - bearerAuth: []
  */
@@ -275,5 +331,153 @@ router.put('/:id', (req, res) => {
     return res.status(500).send(error);
   }
 });
+
+/**
+ * @swagger
+ * /password:
+ *   post:
+ *     summary: Generates a token and sends a password-change email to the user
+ *     tags: [Users]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/User'
+ *     responses:
+ *       200:
+ *         description: Password-change email has been sent
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: number
+ *                   description: 200
+ *                 message:
+ *                   type: string
+ *                   description: A jelszó cseréjéhez kérlek nyitsd meg az e-mailt amit küldtünk
+ *               required:
+ *                 - status
+ *                 - message
+ *             example:
+ *               status: 200
+ *               message: A jelszó cseréjéhez kérlek nyitsd meg az e-mailt amit küldtünk
+ *
+ *       400:
+ *         description: This email address has not yet been registered
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: number
+ *                   description: 400
+ *                 message:
+ *                   type: string
+ *                   description: A megadott e-mail címmel még nem regisztráltak
+ *               required:
+ *                 - status
+ *                 - message
+ *             example:
+ *               status: 400
+ *               message: A megadott e-mail címmel még nem regisztráltak
+ *
+ *       500:
+ *         description: Something went wrong
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: number
+ *                   description: 500
+ *                 message:
+ *                   type: string
+ *                   description: Adatbázis probléma
+ *               required:
+ *                 - status
+ *                 - message
+ *             example:
+ *               status: 500
+ *               message: Adatbázis probléma
+ */
+
+/**
+ * @swagger
+ * /password-reset/{id}/{token}:
+ *   post:
+ *     summary: Checks the validity of token and lets the user change the password
+ *     tags: [Users]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/User'
+ *     responses:
+ *       200:
+ *         description: Password-change email has been sent
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: number
+ *                   description: 200
+ *                 message:
+ *                   type: string
+ *                   description: A jelszó cseréje sikeresen megtörtént. Most már bejelentkezhetsz
+ *               required:
+ *                 - status
+ *                 - message
+ *             example:
+ *               status: 200
+ *               message: A jelszó cseréje sikeresen megtörtént. Most már bejelentkezhetsz
+ *
+ *       401:
+ *         description: Token not valid
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: number
+ *                   description: 401
+ *                 message:
+ *                   type: string
+ *                   description: Sajnos a jelszó megváltoztatására adott idő (15 perc) lejárt
+ *               required:
+ *                 - status
+ *                 - message
+ *             example:
+ *               status: 401
+ *               message: Sajnos a jelszó megváltoztatására adott idő (15 perc) lejárt
+ *
+ *       500:
+ *         description: Something went wrong
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: number
+ *                   description: 500
+ *                 message:
+ *                   type: string
+ *                   description: A jelszó cseréje nem sikerült
+ *               required:
+ *                 - status
+ *                 - message
+ *             example:
+ *               status: 500
+ *               message: A jelszó cseréje nem sikerült
+ */
 
 export default router;

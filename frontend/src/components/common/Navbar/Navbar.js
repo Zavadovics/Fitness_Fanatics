@@ -3,7 +3,6 @@ import { NavLink } from 'react-router-dom';
 import { useHistory } from 'react-router-dom';
 import './navbar.scss';
 import user from '../../../images/user.png';
-// import 'bootstrap/dist/js/bootstrap.bundle';
 
 const Navbar = ({ loggedInUser, setLoggedInUser, userPhoto }) => {
   const history = useHistory();
@@ -37,7 +36,7 @@ const Navbar = ({ loggedInUser, setLoggedInUser, userPhoto }) => {
           </div>
         ) : (
           <>
-          <button
+            <button
               className='navbar-toggler'
               type='button'
               data-bs-toggle='collapse'

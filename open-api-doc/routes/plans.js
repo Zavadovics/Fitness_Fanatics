@@ -17,10 +17,8 @@ const router = express.Router();
  *       type: object
  *       required:
  *         - user_id
+ *         - user_email
  *         - title
- *         - originalName
- *         - avatar
- *         - cloudinary_id
  *       properties:
  *         _id:
  *           type: string
@@ -28,6 +26,9 @@ const router = express.Router();
  *         user_id:
  *           type: string
  *           description: ID of the user who uploaded the training plan
+ *         user_email:
+ *           type: string
+ *           description: Email address of the user who uploaded the training plan
  *         title:
  *           type: string
  *           description: Title of the training plan given by the user
@@ -44,6 +45,7 @@ const router = express.Router();
  *       example:
  *         _id: 60c77f12835fce44a438d19b
  *         user_id: 60fc016e026bee97315ba1e4
+ *         user_email: haho@gmail.com
  *         title: 42 KM marathon plan
  *         originalName: Running-plan-template_42k.pdf
  *         avatar: https://res.cloudinary.com/dywtied0r/image/upload/v1627889086/tii7t48rtw1qeytnpah3.pdf
@@ -72,6 +74,7 @@ const router = express.Router();
  *               type: array
  *               items:
  *                 $ref: '#/components/schemas/Plan'
+ *
  *       400:
  *         description: Something went wrong
  *     security:
@@ -88,24 +91,67 @@ router.get('/', (req, res) => {
  * @swagger
  * /plan:
  *   post:
- *     summary: Uploads a new training plan
+ *     summary: Uploads a training plan
  *     tags: [Training plans]
+ *     consumes:
+ *       - multipart/form-data
+ *     parameters:
+ *       - in: formData
+ *         name: upfile
+ *         type: file
+ *         required: true
+ *         description: The training plan to upload
  *     requestBody:
  *       required: true
  *       content:
- *         application/pdf:
- *             schema:
- *               $ref: '#/components/schemas/Plan'
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Plan'
  *     responses:
  *       200:
- *         description: The training plan was successfully uploaded
+ *         description: New training plan has been uploaded
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Plan'
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: number
+ *                   description: 200
+ *                 message:
+ *                   type: string
+ *                   description: Sikeres edzésterv feltöltés
+ *                 plan:
+ *                   type: object
+ *                   description: The url of the newly-uploaded training plan
+ *               required:
+ *                 - status
+ *                 - message
+ *                 - plan
+ *             example:
+ *               status: 200
+ *               message: Sikeres edzésterv feltöltés
+ *               plan: url of the training plan
  *
- *       401:
- *         $ref: '#/components/responses/UnauthorizedError'
+ *       400:
+ *         description: Validation of the training plan's details failed
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: number
+ *                   description: 400
+ *                 message:
+ *                   type: string
+ *                   description: error.details[0].message
+ *               required:
+ *                 - status
+ *                 - message
+ *             example:
+ *               status: 400
+ *               message: error.details[0].message
  *
  *       500:
  *         description: Something went wrong
@@ -119,13 +165,13 @@ router.get('/', (req, res) => {
  *                   description: 500
  *                 message:
  *                   type: string
- *                   description: Something went wrong
+ *                   description: Edzésterv feltöltés sikertelen
  *               required:
  *                 - status
  *                 - message
  *             example:
  *               status: 500
- *               message: Something went wrong
+ *               message: Edzésterv feltöltés sikertelen
  *     security:
  *     - bearerAuth: []
  */
@@ -137,7 +183,7 @@ router.post('/', (req, res) => {
       ...req.body,
     };
 
-    req.app.db.get('plan').push(plan).write();
+    req.app.db.get('plans').push(plan).write();
 
     res.send(plan);
   } catch (error) {

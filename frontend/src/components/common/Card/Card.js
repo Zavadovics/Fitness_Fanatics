@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
+import DeleteModal from '../DeleteModal/DeleteModal';
 import { NavLink } from 'react-router-dom';
 import {
   meterToKilometers,
   minsToHoursAndMins,
   calorieCounter,
-} from '../../../helpers/helper';
+} from '../../../utils/helper';
 import './card.scss';
 import Moment from 'react-moment';
 import 'moment/locale/hu';
@@ -15,52 +16,54 @@ const Card = ({
   activity,
   activities,
   setActivities,
+  setAlert,
 }) => {
   const { REACT_APP_SERVER_URL } = process.env;
-  const [alert, setAlert] = useState(null);
+  const [activityToBeDeleted, setActivityToBeDeleted] = useState(null);
+  const deleteModalRef = useRef();
 
-
-  const messageTypes = Object.freeze({
-    deleteFail: `Tevékenység törlése sikertelen.`,
-  });
-
-  /* Delete event */
-  const deleteActivityHandler = () => {
-    fetch(`${REACT_APP_SERVER_URL}/api/activities/${activity._id}`, {
+  const handleDeleteConfirm = () => {
+    fetch(`${REACT_APP_SERVER_URL}/api/activities/${activityToBeDeleted}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${loggedInUser.token}`,
       },
     })
-      .then(res => {
-        if (res.status !== 200) {
-          throw Error(
-            `could not delete data from database, error status ${res.status}`
-          );
+      .then(async res => {
+        if (res.status < 200 || res.status >= 300) {
+          const response = await res.json();
+          throw new Error(response?.message);
         }
         return res.json();
       })
-      .then(jsonRes => {
-        setAlert(null);
+      .then(res => {
+        window.scrollTo(0, 0);
+        setAlert({
+          alertType: 'success',
+          message: res.message,
+        });
+        setTimeout(() => {
+          setAlert(null);
+        }, 3000);
         setActivities(
           activities.filter(
-            updatedActivities => updatedActivities._id !== activity._id
+            updatedActivities => updatedActivities._id !== activityToBeDeleted
           )
         );
       })
       .catch(err => {
-        setAlert({ alertType: 'danger', message: messageTypes.deleteFail });
+        console.error('err', err);
+        window.scrollTo(0, 0);
       });
+  };
+
+  const handleDeleteOnClick = e => {
+    setActivityToBeDeleted(e.target.dataset.id);
   };
 
   return (
     <>
-      <div className='alert-cont'>
-        {alert && (
-          <p className={`alert alert-${alert.alertType}`}>{alert.message}</p>
-        )}
-      </div>
       <div className='card'>
         <div className='card-body'>
           <h5 className='card-title'>
@@ -91,15 +94,22 @@ const Card = ({
             </button>
           </NavLink>
           <button
+            className='card-del-btn'
             type='button'
             data-id={activity._id}
-            className='card-del-btn'
-            onClick={() => deleteActivityHandler(activity._id)}
+            onClick={handleDeleteOnClick}
+            data-bs-target='#myModal'
+            data-bs-toggle='modal'
           >
             TÖRLÉS
           </button>
         </div>
       </div>
+      <DeleteModal
+        handleDeleteConfirm={handleDeleteConfirm}
+        deleteModalRef={deleteModalRef}
+        type='Card'
+      />
     </>
   );
 };

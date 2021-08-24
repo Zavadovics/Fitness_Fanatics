@@ -4,10 +4,7 @@ export const loginController = {
   async post(req, res, next) {
     try {
       const data = await loginService.loginUser(req.body);
-      return res
-        .header('auth-token', data.token)
-        .status(data.status)
-        .json(data);
+      res.header('auth-token', data.token).status(data.status).json(data);
     } catch (err) {
       next(err);
     }

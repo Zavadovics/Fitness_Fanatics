@@ -1,10 +1,20 @@
 import { useState, useRef } from 'react';
 import { useHistory, Link } from 'react-router-dom';
 import ReCAPTCHA from 'react-google-recaptcha';
-import validator from 'validator';
 import Navbar from '../../common/Navbar/Navbar';
 import Footer from '../../common/Footer/Footer';
 import InputField from '../../common/InputField/InputField';
+import {
+  isFieldEmpty,
+  isEmailInvalid,
+  isPasswordValid,
+} from '../../../utils/validators';
+import {
+  isFormValid,
+  onTickChange,
+  handleInputChange,
+  handleInputBlur,
+} from '../../../utils/form-validation';
 import './login.scss';
 
 const Login = ({ loggedInUser, setLoggedInUser }) => {
@@ -37,21 +47,8 @@ const Login = ({ loggedInUser, setLoggedInUser }) => {
   });
 
   const messageTypes = Object.freeze({
-    fail: `Az általad megadott email cím vagy jelszó helytelen.`,
     failCaptcha: `Kérlek bizonyítsd be hogy nem vagy robot 🤖`,
   });
-
-  const isFieldEmpty = value => {
-    return value !== '';
-  };
-
-  const isEmailInvalid = value => {
-    return validator.isEmail(value);
-  };
-
-  const isPasswordValid = value => {
-    return value.length >= 8;
-  };
 
   const validators = {
     email: {
@@ -64,63 +61,6 @@ const Login = ({ loggedInUser, setLoggedInUser }) => {
     },
   };
 
-  const validateField = fieldName => {
-    const value = formData[fieldName];
-    let isValid = true;
-    setFormErrors(prev => ({
-      ...prev,
-      [fieldName]: '',
-    }));
-    references[fieldName].current.setCustomValidity('');
-
-    if (validators[fieldName] !== undefined) {
-      for (const [validationType, validatorFn] of Object.entries(
-        validators[fieldName]
-      )) {
-        if (isValid !== false) {
-          isValid = validatorFn(value);
-          if (!isValid) {
-            const errorText = formErrorTypes[validationType];
-            setFormErrors(prev => ({
-              ...prev,
-              [fieldName]: errorText,
-            }));
-            references[fieldName].current.setCustomValidity(errorText);
-          }
-        }
-      }
-    }
-    return isValid;
-  };
-
-  const isFormValid = () => {
-    let isValid = true;
-    for (const fieldName of Object.keys(formData)) {
-      const isFieldValid = validateField(fieldName);
-      if (!isFieldValid) {
-        isValid = false;
-      }
-    }
-    return isValid;
-  };
-
-  const onChange = () => {
-    setVerified(true);
-  };
-
-  const handleInputChange = e => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-  };
-
-  const handleInputBlur = e => {
-    const { name } = e.target;
-    validateField(name);
-  };
-
   const handleLogin = async e => {
     e.preventDefault();
     setAlert(null);
@@ -130,7 +70,13 @@ const Login = ({ loggedInUser, setLoggedInUser }) => {
     });
 
     setFormWasValidated(false);
-    const isValid = isFormValid();
+    const isValid = isFormValid(
+      formData,
+      setFormErrors,
+      validators,
+      references,
+      formErrorTypes
+    );
     if (isValid && verified) {
       await fetch(`${REACT_APP_SERVER_URL}/api/login`, {
         method: 'post',
@@ -140,24 +86,31 @@ const Login = ({ loggedInUser, setLoggedInUser }) => {
         },
         body: JSON.stringify(formData),
       })
-        .then(response => response.json())
-        .then(res => {
-          if (res.status === 200) {
-            const user = res;
-            localStorage.setItem('loggedInUser', JSON.stringify(user));
-            setFormData({
-              email: '',
-              password: '',
-            });
-            setVerified(false);
-            setAlert(null);
-            history.push('/activities');
-            window.location.reload();
-          } else {
-            setAlert({ alertType: 'danger', message: messageTypes.fail });
+        .then(async res => {
+          if (res.status >= 400 && res.status <= 500) {
+            const response = await res.json();
+            throw new Error(response?.message);
           }
+          return res.json();
+        })
+        .then(res => {
+          const user = res;
+          localStorage.setItem('loggedInUser', JSON.stringify(user));
+          setFormData({
+            email: '',
+            password: '',
+          });
+          setVerified(false);
+          setAlert(null);
+          history.push('/activities');
+          window.location.reload();
+        })
+        .catch(err => {
+          window.scrollTo(0, 0);
+          setAlert({ alertType: 'danger', message: err.message });
         });
     } else if (!verified && isValid) {
+      window.scrollTo(0, 0);
       setAlert({
         alertType: 'danger',
         message: messageTypes.failCaptcha,
@@ -171,8 +124,7 @@ const Login = ({ loggedInUser, setLoggedInUser }) => {
     <>
       <Navbar setLoggedInUser={setLoggedInUser} loggedInUser={loggedInUser} />
       <div className='login-cont'>
-        <h2>Bejelentkezés</h2>
-        <hr />
+        <h1 className='outer-h1'>Bejelentkezés</h1>
         <div className='alert-cont'>
           {alert && (
             <p className={`alert alert-${alert.alertType}`}>{alert.message}</p>
@@ -189,29 +141,53 @@ const Login = ({ loggedInUser, setLoggedInUser }) => {
               name='email'
               type='email'
               value={formData.email}
-              labelText='Email cím'
-              onChange={handleInputChange}
-              onBlur={handleInputBlur}
+              labelText='Email cím *'
+              onChange={e => {
+                handleInputChange(e, formData, setFormData);
+              }}
+              onBlur={e => {
+                handleInputBlur(
+                  e,
+                  formData,
+                  setFormErrors,
+                  validators,
+                  references,
+                  formErrorTypes
+                );
+              }}
               reference={references.email}
               error={formErrors.email}
+              required
             />
             <InputField
               name='password'
               type='password'
               value={formData.password}
-              labelText='Jelszó'
-              onChange={handleInputChange}
-              onBlur={handleInputBlur}
+              labelText='Jelszó *'
+              onChange={e => {
+                handleInputChange(e, formData, setFormData);
+              }}
+              onBlur={e => {
+                handleInputBlur(
+                  e,
+                  formData,
+                  setFormErrors,
+                  validators,
+                  references,
+                  formErrorTypes
+                );
+              }}
               reference={references.password}
               error={formErrors.password}
+              required
             />
-            <div className='captcha'>
-              <ReCAPTCHA
-                className='captcha'
-                sitekey={REACT_APP_GOOGLE_RECAPTCHA_KEY}
-                onChange={onChange}
-              />
-            </div>
+            <ReCAPTCHA
+              className='captcha'
+              sitekey={REACT_APP_GOOGLE_RECAPTCHA_KEY}
+              onChange={() => {
+                onTickChange(setVerified);
+              }}
+            />
           </div>
           <p>
             <Link to='/register' className='text-link'>

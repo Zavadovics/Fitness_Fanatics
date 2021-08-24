@@ -1,42 +1,24 @@
 @use '../../../styles/variables';
 .activities-cont {
     min-height: 70vh;
-    width: 60%;
+    width: 100%;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    padding-bottom: 4em;
+    padding: 4em 0;
 }
 
-.no-activities {
+.alert-cont-activities {
+    align-self: center;
     text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 50%;
+    margin-top: 2em;
 }
 
-.activities-cont h2 {
-    margin: 2em auto;
-    text-align: center;
-}
-
-@media screen and (max-width: 1200px) {
-    .activities-cont {
-        width: 80%;
-    }
-}
-
-@media screen and (max-width: 1024px) {
-    .activities-cont {
-        width: 90%;
-    }
-}
-
-@media screen and (max-width: 768px) {
-    .activities-cont {
-        width: 95%;
-    }
-}
-
-@media screen and (max-width: 480px) {
-    .activities-cont h2 {
-        font-size: 25px;
-    }
+h2 {
+    align-self: center;
 }

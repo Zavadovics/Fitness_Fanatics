@@ -1,16 +1,16 @@
-// import logger from '../logger.js';
+import logger from '../logger.js';
 import Activity from '../models/Activity.js';
 import { activityValidation } from '../validations/activityValidation.js';
 
 export const activityService = {
-  /* ⬇️ save new activity - OK */
   async saveActivity(activityData) {
     try {
-      const { error } = activityValidation(activityData);
+      const { comment, ...others } = activityData;
+      const { error } = activityValidation(others);
       if (error) {
-        console.error(error);
+        logger.error(error);
         return {
-          status: 404,
+          status: 400,
           message: error.details[0].message,
         };
       }
@@ -18,21 +18,20 @@ export const activityService = {
 
       await newActivity.save();
       return {
-        status: 200,
-        message: 'Activity saved',
+        status: 201,
+        message:
+          'Sikeres mentés. Az új tevékenységet hozzádtuk az adatbázishoz',
         newActivity: newActivity,
       };
     } catch (err) {
-      next(err);
+      logger.error(err);
       return {
         status: 500,
-        message: 'Something went wrong',
+        message: 'Sikertelen mentés. Adatbázis probléma',
       };
     }
   },
-  /* ⬆️ save new activity - OK */
 
-  /* ⬇️ update activity - OK */
   async updateActivity(id, reqData) {
     try {
       const updatedActivity = await Activity.findByIdAndUpdate(id, reqData, {
@@ -40,16 +39,32 @@ export const activityService = {
       });
       return {
         status: 200,
-        message: 'Activity updated!',
+        message:
+          'Sikeres módosítás. A tevékenység frissítésre került az adatbázisban',
         updatedActivity: updatedActivity,
       };
     } catch (err) {
-      next(err);
+      logger.error(err);
       return {
         status: 500,
-        message: 'Something went wrong',
+        message: 'Sikertelen módosítás. Adatbázis probléma',
       };
     }
   },
-  /* ⬆️ update activity - OK */
+
+  async deleteActivity(id) {
+    try {
+      await Activity.findByIdAndDelete(id);
+      return {
+        status: 200,
+        message: 'Tevékenység sikeresen törölve',
+      };
+    } catch (err) {
+      logger.error(err);
+      return {
+        status: 500,
+        message: 'Tevékenység törlése sikertelen',
+      };
+    }
+  },
 };

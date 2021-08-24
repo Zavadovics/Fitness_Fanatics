@@ -5,7 +5,7 @@ import './home.scss';
 import Navbar from '../../common/Navbar/Navbar';
 import Footer from '../../common/Footer/Footer';
 
-const Home = ({ loggedInUser }) => {
+const Home = () => {
   return (
     <>
       <div className='overlay'>

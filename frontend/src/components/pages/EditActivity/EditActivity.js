@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 import ActivityForm from '../../common/ActivityForm/ActivityForm';
+import bg from '../../../images/background.jpg';
 import './editActivity.scss';
 
 const EditActivity = ({ loggedInUser }) => {
@@ -37,8 +38,11 @@ const EditActivity = ({ loggedInUser }) => {
   }, []);
 
   return (
-    <main className='edit-activity-cont'>
-      <h2>Tevékenység módosítása</h2>
+    <main
+      className='edit-activity-cont'
+      style={{ backgroundImage: `url(${bg})` }}
+    >
+      <h2 className='inner-h2'>Tevékenység módosítása</h2>
       {error && <div className='error'>{error}</div>}
       {activity && (
         <ActivityForm

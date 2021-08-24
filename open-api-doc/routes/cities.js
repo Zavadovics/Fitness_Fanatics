@@ -24,7 +24,7 @@ const router = express.Router();
  *       example:
  *         _id: 60c77f12835fce44a438d19b
  *         name: New York
- *         value: new York
+ *         value: New York
  */
 
 /**

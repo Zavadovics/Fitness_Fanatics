@@ -8,7 +8,7 @@
 
 ## Főbb funkciók:
 
-- Regisztráció: Vezetéknév, keresztnév, e-mail és jelszó megadásával.
+- Regisztráció: Vezetéknév, keresztnév, e-mail és jelszó megadásával. Regisztráció után fiók aktiváló e-mail küldése token-nel együtt.
 - Bejelentkezés: E-mail cím és jelszó megadásával.
 - Jelszó csere: E-mail cím megadása, jelszócsere e-mail kérése céljából, majd az e-mailben lévő linkre kattintva a jelszó cseréje. A linkben küdött token csak 15 percig érvényes.
 - Bejelentkezés utáni főoldal: Az összes tevékenység időrendbeli listázása. A listán szereplő tevékenységeket módosítani vagy törölni lehet.
@@ -35,6 +35,8 @@
 | /profile/edit/id         | Saját profil szerkesztése                                                      |
 | /profile/photo/edit/id   | Saját profil fotó hozzáadása, cseréje, törlése                                 |
 | /training-plans          | Edzés tervek adatbázisból való lekérése, új terv hozzáadása                    |
+| /user/activation/token   | Új fiók aktiválása                                                             |
+
 
 ## API végpontok
 
@@ -42,6 +44,7 @@
 | ----------------------------------- | --------------------------------------------------------------------- |
 | POST/api/login                      | Felhasználó bejelentkezése                                            |
 | POST/api/user                       | Új felhasználó regisztrációja                                         |
+| POST/api/user/activation            | Új fiók aktiválása                                                    |
 | GET/api/user/{id}                   | Saját profil adatok lekérése id alapján                               |
 | PUT/api/user/{id}                   | Saját profil módosítása id alapján                                    |
 | POST/api/password                   | Jelszócsere e-mail kérése                                             |

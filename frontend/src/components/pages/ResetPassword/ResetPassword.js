@@ -19,6 +19,7 @@ const ResetPassword = () => {
   const [verified, setVerified] = useState(false);
   const history = useHistory();
   const { id, token } = useParams();
+  const [passwordShown, setPasswordShown] = useState(false);
 
   const [formData, setFormData] = useState({
     newPassword: '',
@@ -141,7 +142,9 @@ const ResetPassword = () => {
           <div className='input'>
             <InputField
               name='newPassword'
-              type='password'
+              passwordShown={passwordShown}
+              setPasswordShown={setPasswordShown}
+              type={passwordShown ? 'text' : 'password'}
               labelText='Új jelszó - (legalább 8 karakter) *'
               value={formData.newPassword}
               onChange={e => {
@@ -163,7 +166,9 @@ const ResetPassword = () => {
             />
             <InputField
               name='confirmPassword'
-              type='password'
+              passwordShown={passwordShown}
+              setPasswordShown={setPasswordShown}
+              type={passwordShown ? 'text' : 'password'}
               labelText='Jelszó még egyszer *'
               value={formData.confirmPassword}
               onChange={e => {

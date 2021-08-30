@@ -1,95 +1,110 @@
-import React from 'react';
-import {
-  CDBSidebar,
-  CDBSidebarContent,
-  CDBSidebarHeader,
-  CDBSidebarMenu,
-  CDBSidebarMenuItem,
-} from 'cdbreact';
-import { NavLink } from 'react-router-dom';
+import React, { useState } from 'react';
 import './sidebar.scss';
+import { NavLink } from 'react-router-dom';
+import {
+  FaRunning,
+  FaPlusSquare,
+  FaUser,
+  FaUserEdit,
+  FaCameraRetro,
+  FaDumbbell,
+} from 'react-icons/fa';
 
 const Sidebar = ({ loggedInUser }) => {
-  return (
-    <div className='sidebar-nav-cont'>
-      <CDBSidebar
-        className='nav-sidebar'
-        textColor='#f09753'
-        backgroundColor='#f5f3f3'
-      >
-        <CDBSidebarHeader prefix={<i className='fa fa-bars fa-large'></i>}>
-          Navigáció
-        </CDBSidebarHeader>
+  const [sidebar, setSidebar] = useState(false);
 
-        <CDBSidebarContent className='sidebar-content'>
-          <CDBSidebarMenu>
+  const showSidebar = () => setSidebar(!sidebar);
+
+  return (
+    <>
+      <nav className={sidebar ? 'sidebar-nav-menu active' : 'sidebar-nav-menu'}>
+        <ul>
+          <li className='sidebar-toggle' onClick={showSidebar}>
+            <div className={sidebar ? 'menu-btn open' : 'menu-btn'}>
+              <div className='menu-btn__burger'></div>
+            </div>
+          </li>
+          <li className='sidebar-list-item'>
             <NavLink
-              className='sidebar-nav-link'
+              className='sidebar-item'
               exact
               to='/activities'
               activeClassName='activeClicked'
             >
-              <CDBSidebarMenuItem icon='running'>
+              <FaRunning className='sidebar-icon' />
+              <span className={sidebar ? 'span show' : 'span hide'}>
                 Tevékenységek
-              </CDBSidebarMenuItem>
+              </span>
             </NavLink>
-
+          </li>
+          <li className='sidebar-list-item'>
             <NavLink
-              className='sidebar-nav-link'
+              className='sidebar-item'
               exact
               to='/activities/new'
               activeClassName='activeClicked'
             >
-              <CDBSidebarMenuItem icon='plus-square'>
+              <FaPlusSquare className='sidebar-icon' />
+              <span className={sidebar ? 'span show' : 'span hide'}>
                 Új tevékenység
-              </CDBSidebarMenuItem>
+              </span>
             </NavLink>
-
+          </li>
+          <li className='sidebar-list-item'>
             <NavLink
-              className='sidebar-nav-link'
+              className='sidebar-item'
               exact
               to='/profile'
               activeClassName='activeClicked'
             >
-              <CDBSidebarMenuItem icon='user'>Saját profil</CDBSidebarMenuItem>
+              <FaUser className='sidebar-icon' />
+              <span className={sidebar ? 'span show' : 'span hide'}>
+                Saját profil{' '}
+              </span>
             </NavLink>
-
+          </li>
+          <li className='sidebar-list-item'>
             <NavLink
-              className='sidebar-nav-link'
+              className='sidebar-item'
               exact
               to={`/profile/edit/${loggedInUser.id}`}
               activeClassName='activeClicked'
             >
-              <CDBSidebarMenuItem icon='user-edit'>
-                Profil szerkesztése
-              </CDBSidebarMenuItem>
+              <FaUserEdit className='sidebar-icon edit' />
+              <span className={sidebar ? 'span show edit' : 'span hide'}>
+                Profil szerkesztése{' '}
+              </span>
             </NavLink>
-
+          </li>
+          <li className='sidebar-list-item'>
             <NavLink
-              className='sidebar-nav-link'
+              className='sidebar-item'
               exact
               to={`/profile/photo/edit/${loggedInUser.id}`}
               activeClassName='activeClicked'
             >
-              <CDBSidebarMenuItem icon='camera-retro'>
-                Profil fotó
-              </CDBSidebarMenuItem>
+              <FaCameraRetro className='sidebar-icon' />
+              <span className={sidebar ? 'span show' : 'span hide'}>
+                Profil fotó{' '}
+              </span>
             </NavLink>
-
+          </li>
+          <li className='sidebar-list-item'>
             <NavLink
-              className='sidebar-nav-link'
+              className='sidebar-item'
               exact
               to='/training-plans'
               activeClassName='activeClicked'
             >
-              <CDBSidebarMenuItem icon='dumbbell'>
-                Edzés tervek
-              </CDBSidebarMenuItem>
+              <FaDumbbell className='sidebar-icon' />
+              <span className={sidebar ? 'span show' : 'span hide'}>
+                Edzés tervek{' '}
+              </span>
             </NavLink>
-          </CDBSidebarMenu>
-        </CDBSidebarContent>
-      </CDBSidebar>
-    </div>
+          </li>
+        </ul>
+      </nav>
+    </>
   );
 };
 

@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { useHistory, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import ReCAPTCHA from 'react-google-recaptcha';
 import Navbar from '../../common/Navbar/Navbar';
 import Footer from '../../common/Footer/Footer';
@@ -21,8 +21,7 @@ const Register = () => {
   const { REACT_APP_SERVER_URL, REACT_APP_GOOGLE_RECAPTCHA_KEY } = process.env;
 
   const [verified, setVerified] = useState(false);
-  const history = useHistory();
-
+  const [passwordShown, setPasswordShown] = useState(false);
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -101,7 +100,7 @@ const Register = () => {
         body: JSON.stringify(formData),
       })
         .then(async res => {
-          if (res.status >= 400 && res.status <= 500) {
+          if (res.status >= 300 || res.status < 200) {
             const response = await res.json();
             throw new Error(response?.message);
           }
@@ -117,9 +116,6 @@ const Register = () => {
             password: '',
           });
           setVerified(false);
-          setTimeout(() => {
-            history.push('/login');
-          }, 3000);
         })
         .catch(err => {
           window.scrollTo(0, 0);
@@ -220,7 +216,9 @@ const Register = () => {
             />
             <InputField
               name='password'
-              type='password'
+              passwordShown={passwordShown}
+              setPasswordShown={setPasswordShown}
+              type={passwordShown ? 'text' : 'password'}
               labelText='Jelszó - (legalább 8 karakter) *'
               value={formData.password}
               onChange={e => {
@@ -254,7 +252,7 @@ const Register = () => {
             </Link>
           </p>
           <button type='submit' className='register-btn'>
-            REGISZTRÁCÓ
+            REGISZTRÁCIÓ
           </button>
         </form>
       </div>

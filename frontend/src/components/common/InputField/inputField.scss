@@ -10,3 +10,14 @@ label {
     justify-content: center;
     align-items: center;
 }
+
+.password-eye-cont {
+    position: relative;
+}
+
+.password-icon {
+    cursor: pointer;
+    position: absolute;
+    right: 28px;
+    top: 59px;
+}

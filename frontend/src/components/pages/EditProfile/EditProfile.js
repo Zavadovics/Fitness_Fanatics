@@ -101,6 +101,7 @@ const EditProfile = ({ profile, setProfile, loggedInUser }) => {
   };
 
   const validateField = fieldName => {
+    console.log('formData', formData);
     const value = formData[fieldName];
     let isValid = true;
     setFormErrors(prev => ({
@@ -109,7 +110,7 @@ const EditProfile = ({ profile, setProfile, loggedInUser }) => {
     }));
     if (
       (formData.birthDate === undefined || formData.birthDate === '') &&
-      (formData.weight === null || formData.weight === undefined)
+      (formData.weight === '' || formData.weight === undefined)
     ) {
       return true;
     }

@@ -95,14 +95,18 @@
     .view-profile-cont {
         font-size: 15px;
     }
-    .profile-card {
-        width: 90%;
-    }
     .text-row {
         flex-direction: column;
+        text-align: center;
     }
     .text-row p {
         width: 250px;
+    }
+}
+
+@media screen and (max-width: 620px) {
+    .text-row p {
+        width: 200px;
     }
 }
 

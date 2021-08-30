@@ -104,6 +104,12 @@
     pointer-events: none;
 }
 
+@media screen and (max-width: 1024px) {
+    .edit-photo-cont .inner {
+        width: 90%;
+    }
+}
+
 @media screen and (max-width: 768px) {
     .alert-cont {
         width: 70%;

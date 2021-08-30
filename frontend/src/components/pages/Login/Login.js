@@ -22,6 +22,7 @@ const Login = ({ loggedInUser, setLoggedInUser }) => {
   const [verified, setVerified] = useState(false);
   const history = useHistory();
 
+  const [passwordShown, setPasswordShown] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -49,6 +50,10 @@ const Login = ({ loggedInUser, setLoggedInUser }) => {
   const messageTypes = Object.freeze({
     failCaptcha: `Kérlek bizonyítsd be hogy nem vagy robot 🤖`,
   });
+
+  // const togglePasswordVisibility = () => {
+  //   setPasswordShown(passwordShown ? false : true);
+  // };
 
   const validators = {
     email: {
@@ -161,7 +166,9 @@ const Login = ({ loggedInUser, setLoggedInUser }) => {
             />
             <InputField
               name='password'
-              type='password'
+              passwordShown={passwordShown}
+              setPasswordShown={setPasswordShown}
+              type={passwordShown ? 'text' : 'password'}
               value={formData.password}
               labelText='Jelszó *'
               onChange={e => {

@@ -9,7 +9,7 @@ export const userValidation = data => {
     password: Joi.string().min(8).required(),
     gender: Joi.string(),
     cityOfResidence: Joi.string(),
-    weight: Joi.number(),
+    weight: Joi.string(),
     birthDate: Joi.string(),
     motivation: Joi.string(),
   });

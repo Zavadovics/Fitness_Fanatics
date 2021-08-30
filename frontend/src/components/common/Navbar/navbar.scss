@@ -2,6 +2,7 @@
 .navbar {
     background: variables.$color-blue;
     font-size: 25px;
+    min-height: 80px;
     font-weight: 500;
     color: variables.$color-lightorange;
     letter-spacing: 0.1vw;
@@ -104,6 +105,10 @@ span {
     height: 100%;
     float: left;
     margin: 0 1em;
+}
+
+.navbar-toggler {
+    margin: 0.5em 0;
 }
 
 @media screen and (max-width: 992px) {

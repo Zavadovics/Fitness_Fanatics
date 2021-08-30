@@ -69,6 +69,19 @@
     }
 }
 
+@media screen and (max-width: 1024px) {
+    .card {
+        width: 90%;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .card-button-container {
+        flex-direction: column;
+        align-items: center;
+    }
+}
+
 @media screen and (max-width: 480px) {
     .card {
         text-align: center;
@@ -77,8 +90,8 @@
     .card-mod-btn {
         text-align: center;
     }
-    .card-button-container {
-        flex-direction: column;
-        align-items: center;
-    }
+    // .card-button-container {
+    //     flex-direction: column;
+    //     align-items: center;
+    // }
 }

@@ -37,7 +37,7 @@ const UserSchema = new Schema(
       type: String,
     },
     weight: {
-      type: Number,
+      type: String,
     },
     birthDate: {
       type: String,

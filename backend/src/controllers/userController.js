@@ -15,7 +15,16 @@ export const userController = {
 
   async post(req, res, next) {
     try {
-      const data = await userService.saveUser(req.body);
+      const data = await userService.register(req.body);
+      res.status(data.status).json(data);
+    } catch (err) {
+      next(err);
+    }
+  },
+
+  async activateUser(req, res, next) {
+    try {
+      const data = await userService.activateAccount(req.body);
       res.status(data.status).json(data);
     } catch (err) {
       next(err);

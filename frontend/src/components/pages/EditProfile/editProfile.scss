@@ -52,6 +52,12 @@
     border: 2px solid variables.$color-blue;
 }
 
+@media screen and (max-width: 1024px) {
+    .profile-edit-cont form {
+        width: 90%;
+    }
+}
+
 @media screen and (max-width: 768px) {
     .profile-edit-cont form {
         margin-bottom: 6vh;

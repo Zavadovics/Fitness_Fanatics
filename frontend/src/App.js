@@ -4,6 +4,7 @@ import './App.scss';
 import Home from './components/pages/Home/Home';
 import Register from './components/pages/Register/Register';
 import Login from './components/pages/Login/Login';
+import Activation from './components/pages/Activation/Activation';
 import ForgotPassword from './components/pages/ForgotPassword/ForgotPassword';
 import ResetPassword from './components/pages/ResetPassword/ResetPassword';
 import Navbar from './components/common/Navbar/Navbar';
@@ -94,50 +95,58 @@ const App = () => {
         <Switch>
           {loggedInUser ? (
             <>
-              <Navbar
-                setLoggedInUser={setLoggedInUser}
-                loggedInUser={loggedInUser}
-                userPhoto={userPhoto}
-              />
               <div className='app-cont'>
-                <Sidebar loggedInUser={loggedInUser} />
+                <Navbar
+                  setLoggedInUser={setLoggedInUser}
+                  loggedInUser={loggedInUser}
+                  userPhoto={userPhoto}
+                />
                 <div className='content-cont'>
-                  <Route exact path='/activities'>
-                    <Activities profile={profile} loggedInUser={loggedInUser} />
-                  </Route>
-                  <Route exact path='/activities/new'>
-                    <NewActivity loggedInUser={loggedInUser} />
-                  </Route>
-                  <Route exact path='/activities/edit/:id'>
-                    <EditActivity loggedInUser={loggedInUser} />
-                  </Route>
-                  <Route exact path='/profile'>
-                    <Profile
-                      loggedInUser={loggedInUser}
-                      userPhoto={userPhoto}
-                      profile={profile}
-                    />
-                  </Route>
-                  <Route exact path={`/profile/edit/${loggedInUser.id}`}>
-                    <EditProfile
-                      loggedInUser={loggedInUser}
-                      profile={profile}
-                      setProfile={setProfile}
-                    />
-                  </Route>
-                  <Route exact path={`/profile/photo/edit/${loggedInUser.id}`}>
-                    <EditPhoto
-                      loggedInUser={loggedInUser}
-                      userPhoto={userPhoto}
-                      setUserPhoto={setUserPhoto}
-                    />
-                  </Route>
-                  <Route path='/training-plans'>
-                    <TrainingPlans loggedInUser={loggedInUser} />
-                  </Route>
+                  <Sidebar loggedInUser={loggedInUser} />
+                  <div className='page-cont'>
+                    <Route exact path='/activities'>
+                      <Activities
+                        profile={profile}
+                        loggedInUser={loggedInUser}
+                      />
+                    </Route>
+                    <Route exact path='/activities/new'>
+                      <NewActivity loggedInUser={loggedInUser} />
+                    </Route>
+                    <Route exact path='/activities/edit/:id'>
+                      <EditActivity loggedInUser={loggedInUser} />
+                    </Route>
+                    <Route exact path='/profile'>
+                      <Profile
+                        loggedInUser={loggedInUser}
+                        userPhoto={userPhoto}
+                        profile={profile}
+                      />
+                    </Route>
+                    <Route exact path={`/profile/edit/${loggedInUser.id}`}>
+                      <EditProfile
+                        loggedInUser={loggedInUser}
+                        profile={profile}
+                        setProfile={setProfile}
+                      />
+                    </Route>
+                    <Route
+                      exact
+                      path={`/profile/photo/edit/${loggedInUser.id}`}
+                    >
+                      <EditPhoto
+                        loggedInUser={loggedInUser}
+                        userPhoto={userPhoto}
+                        setUserPhoto={setUserPhoto}
+                      />
+                    </Route>
+                    <Route path='/training-plans'>
+                      <TrainingPlans loggedInUser={loggedInUser} />
+                    </Route>
+                  </div>
                 </div>
+                <Footer />
               </div>
-              <Footer />
             </>
           ) : (
             <>
@@ -158,6 +167,9 @@ const App = () => {
               </Route>
               <Route path={`/password-reset/:id/:token`}>
                 <ResetPassword />
+              </Route>
+              <Route path={`/user/activation/:token`}>
+                <Activation />
               </Route>
             </>
           )}

@@ -19,34 +19,34 @@ const idLength = 24;
  *           description: The auto-generated id of the user
  *         userName:
  *           type: string
- *           description: The userName of the user
- *         lastName:
- *           type: string
- *           description: The lastName of the user
+ *           description: The username of the user
  *         firstName:
  *           type: string
- *           description: The firstName of the user
+ *           description: The first name of the user
+ *         lastName:
+ *           type: string
+ *           description: The last name of the user
  *         email:
  *           type: string
- *           description: Email address of the user
+ *           description: E-mail address of the user
  *         password:
  *           type: string
  *           description: Password of the user
  *         gender:
  *           type: string
- *           description: The gender of the user
+ *           description: Gender of the user
  *         cityOfResidence:
  *           type: string
- *           description: The city of residence of the user
+ *           description: City of residence of the user
  *         weight:
  *           type: string
- *           description: The weight of the user
+ *           description: Weight of the user
  *         birthDate:
  *           type: string
  *           description: The DOB of the user
  *         motivation:
  *           type: string
- *           description: The motivation of the user
+ *           description: Motivational quote of the user
  *
  *       example:
  *         _id: 60c77f12835fce44a438d333
@@ -110,16 +110,16 @@ const idLength = 24;
  *                   description: user token
  *                 lastName:
  *                   type: string
- *                   description: lastName of user
+ *                   description: The last name of user
  *                 firstName:
  *                   type: string
- *                   description: firstName of user
+ *                   description: The first name of user
  *                 email:
  *                   type: string
- *                   description: email address of user
+ *                   description: The e-mail address of the user
  *                 id:
  *                   type: string
- *                   description: id of user
+ *                   description: The id of the user
  *               required:
  *                 - status
  *                 - token
@@ -167,13 +167,13 @@ const idLength = 24;
  *                   description: 403
  *                 message:
  *                   type: string
- *                   description: Az általad megadott email cím vagy jelszó helytelen
+ *                   description: E-mail address or password is incorrect
  *               required:
  *                 - status
  *                 - message
  *             example:
  *               status: 403
- *               message: Az általad megadott email cím vagy jelszó helytelen
+ *               message: E-mail address or password is incorrect
  *
  *       404:
  *         description: The user's email address is not yet registered
@@ -187,13 +187,13 @@ const idLength = 24;
  *                   description: 404
  *                 message:
  *                   type: string
- *                   description: Az általad megadott email cím még nincs regisztrálva
+ *                   description: This e-mail address has not yet been registered
  *               required:
  *                 - status
  *                 - message
  *             example:
  *               status: 404
- *               message: Az általad megadott email cím még nincs regisztrálva
+ *               message: This e-mail address has not yet been registered
  *
  *       500:
  *         description: Something went wrong
@@ -207,13 +207,13 @@ const idLength = 24;
  *                   description: 500
  *                 message:
  *                   type: string
- *                   description: Adatbázis probléma
+ *                   description: Database error
  *               required:
  *                 - status
  *                 - message
  *             example:
  *               status: 500
- *               message: Adatbázis probléma
+ *               message: Database error
  */
 
 router.post('/', (req, res) => {

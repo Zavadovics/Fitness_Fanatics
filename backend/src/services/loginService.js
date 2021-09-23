@@ -18,7 +18,7 @@ export const loginService = {
     if (!user) {
       return {
         status: 404,
-        message: 'Az általad megadott email cím még nincs regisztrálva',
+        message: 'This e-mail address has not yet been registered',
       };
     }
 
@@ -29,7 +29,7 @@ export const loginService = {
     if (!validPass) {
       return {
         status: 403,
-        message: 'Az általad megadott email cím vagy jelszó helytelen',
+        message: 'E-mail address or password is incorrect',
       };
     }
 
@@ -56,7 +56,7 @@ export const loginService = {
       logger.error(err);
       return {
         status: 500,
-        message: 'Adatbázis probléma',
+        message: 'Database error',
       };
     }
   },

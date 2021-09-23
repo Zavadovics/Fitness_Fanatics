@@ -147,7 +147,7 @@ router.get('/:id', (req, res) => {
  *                   description: 200
  *                 message:
  *                   type: string
- *                   description: Sikeres módosítás. A tevékenység frissítésre került az adatbázisban
+ *                   description: Activity has been modified
  *                 updatedActivity:
  *                   type: object
  *                   description: The details of the newly-updated activity
@@ -157,7 +157,7 @@ router.get('/:id', (req, res) => {
  *                 - updatedActivity
  *             example:
  *               status: 200
- *               message: Sikeres módosítás. A tevékenység frissítésre került az adatbázisban
+ *               message: Activity has been modified
  *               updatedActivity: details of the updated activity
  *
  *       500:
@@ -172,13 +172,13 @@ router.get('/:id', (req, res) => {
  *                   description: 500
  *                 message:
  *                   type: string
- *                   description: Sikertelen módosítás. Adatbázis probléma
+ *                   description: Activity could not be modified
  *               required:
  *                 - status
  *                 - message
  *             example:
  *               status: 500
- *               message: Sikertelen módosítás. Adatbázis probléma
+ *               message: Activity could not be modified
  *     security:
  *     - bearerAuth: []
  */
@@ -222,7 +222,7 @@ router.put('/:id', (req, res) => {
  *                   description: 201
  *                 message:
  *                   type: string
- *                   description: Sikeres mentés. Az új tevékenységet hozzádtuk az adatbázishoz
+ *                   description: New activity has been added
  *                 newActivity:
  *                   type: object
  *                   description: The details of the newly-created activity
@@ -232,7 +232,7 @@ router.put('/:id', (req, res) => {
  *                 - newActivity
  *             example:
  *               status: 201
- *               message: Sikeres mentés. Az új tevékenységet hozzádtuk az adatbázishoz
+ *               message: New activity has been added
  *               newActivity: details of the activity
  *
  *       400:
@@ -267,13 +267,13 @@ router.put('/:id', (req, res) => {
  *                   description: 500
  *                 message:
  *                   type: string
- *                   description: Sikertelen mentés. Adatbázis probléma
+ *                   description: New activity could not be added
  *               required:
  *                 - status
  *                 - message
  *             example:
  *               status: 500
- *               message: Sikertelen mentés. Adatbázis probléma
+ *               message: New activity could not be added
  *     security:
  *     - bearerAuth: []
  */
@@ -320,13 +320,13 @@ router.post('/', (req, res) => {
  *                   description: 200
  *                 message:
  *                   type: string
- *                   description: Tevékenység sikeresen törölve
+ *                   description: Activity has been deleted
  *               required:
  *                 - status
  *                 - message
  *             example:
  *               status: 200
- *               message: Tevékenység sikeresen törölve
+ *               message: Activity has been deleted
  *
  *       500:
  *         description: Something went wrong
@@ -340,13 +340,13 @@ router.post('/', (req, res) => {
  *                   description: 500
  *                 message:
  *                   type: string
- *                   description: Tevékenység törlése sikertelen
+ *                   description: Activity could not be deleted
  *               required:
  *                 - status
  *                 - message
  *             example:
  *               status: 500
- *               message: Tevékenység törlése sikertelen
+ *               message: Activity could not be deleted
  *     security:
  *     - bearerAuth: []
  */

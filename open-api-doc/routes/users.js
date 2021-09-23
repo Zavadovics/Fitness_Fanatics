@@ -65,11 +65,11 @@ const idLength = 24;
  *         firstName: Elod
  *         email: tesztelod@gmail.com
  *         password: titkosjelszo
- *         gender: ferfi
+ *         gender: male
  *         cityOfResidence: Kukutyin
  *         weight: 130
  *         birthDate: 1963.02.11
- *         motivation: Hajra Magyarok!
+ *         motivation: Never give up!
  */
 
 /**
@@ -92,7 +92,7 @@ const idLength = 24;
  *           schema:
  *             $ref: '#/components/schemas/User'
  *     responses:
- *       201:
+ *       200:
  *         description: User has successfully registered
  *         content:
  *           application/json:
@@ -101,10 +101,10 @@ const idLength = 24;
  *               properties:
  *                 status:
  *                   type: number
- *                   description: 201
+ *                   description: 200
  *                 message:
  *                   type: string
- *                   description: Sikeres regisztráció. Máris átirányítunk a bejelentkezés oldalra
+ *                   description: Please open the e-mail we have just sent you to activate your account
  *                 user:
  *                   type: object
  *                   description: The details of the newly-created user
@@ -113,8 +113,8 @@ const idLength = 24;
  *                 - message
  *                 - user
  *             example:
- *               status: 201
- *               message: Sikeres regisztráció. Máris átirányítunk a bejelentkezés oldalra
+ *               status: 200
+ *               message: Please open the e-mail we have just sent you to activate your account
  *               user: details of the user
  *
  *       400:
@@ -149,13 +149,13 @@ const idLength = 24;
  *                   description: 409
  *                 message:
  *                   type: string
- *                   description: Az általad megadott email cím már regisztrálva van
+ *                   description: This e-mail address has already been registered
  *               required:
  *                 - status
  *                 - message
  *             example:
  *               status: 409
- *               message: Az általad megadott email cím már regisztrálva van
+ *               message: This e-mail address has already been registered
  *
  *       500:
  *         description: Something went wrong
@@ -169,13 +169,13 @@ const idLength = 24;
  *                   description: 500
  *                 message:
  *                   type: string
- *                   description: Adatbázis probléma
+ *                   description: Database error
  *               required:
  *                 - status
  *                 - message
  *             example:
  *               status: 500
- *               message: Adatbázis probléma
+ *               message: Database error
  */
 
 router.post('/', (req, res) => {
@@ -262,7 +262,7 @@ router.get('/:id', (req, res) => {
  *                   description: 200
  *                 message:
  *                   type: string
- *                   description: User data has been updated
+ *                   description: Your information has been added to our database
  *                 updatedUser:
  *                   type: object
  *                   description: The updated details of the user
@@ -272,7 +272,7 @@ router.get('/:id', (req, res) => {
  *                 - updatedUser
  *             example:
  *               status: 200
- *               message: User data has been updated
+ *               message: Your information has been added to our database
  *               updatedUser: details of the user
  *
  *       400:
@@ -307,13 +307,13 @@ router.get('/:id', (req, res) => {
  *                   description: 500
  *                 message:
  *                   type: string
- *                   description: Adatbázis probléma
+ *                   description: Database error
  *               required:
  *                 - status
  *                 - message
  *             example:
  *               status: 500
- *               message: Adatbázis probléma
+ *               message: Database error
  *     security:
  *     - bearerAuth: []
  */
@@ -357,13 +357,13 @@ router.put('/:id', (req, res) => {
  *                   description: 200
  *                 message:
  *                   type: string
- *                   description: A jelszó cseréjéhez kérlek nyitsd meg az e-mailt amit küldtünk
+ *                   description: Please open the e-mail we have just sent you to change your password
  *               required:
  *                 - status
  *                 - message
  *             example:
  *               status: 200
- *               message: A jelszó cseréjéhez kérlek nyitsd meg az e-mailt amit küldtünk
+ *               message: Please open the e-mail we have just sent you to change your password
  *
  *       400:
  *         description: This email address has not yet been registered
@@ -377,13 +377,13 @@ router.put('/:id', (req, res) => {
  *                   description: 400
  *                 message:
  *                   type: string
- *                   description: A megadott e-mail címmel még nem regisztráltak
+ *                   description: This e-mail address has not yet been registered
  *               required:
  *                 - status
  *                 - message
  *             example:
  *               status: 400
- *               message: A megadott e-mail címmel még nem regisztráltak
+ *               message: This e-mail address has not yet been registered
  *
  *       500:
  *         description: Something went wrong
@@ -397,13 +397,13 @@ router.put('/:id', (req, res) => {
  *                   description: 500
  *                 message:
  *                   type: string
- *                   description: Adatbázis probléma
+ *                   description: Activation failed
  *               required:
  *                 - status
  *                 - message
  *             example:
  *               status: 500
- *               message: Adatbázis probléma
+ *               message: Activation failed
  */
 
 /**
@@ -431,13 +431,13 @@ router.put('/:id', (req, res) => {
  *                   description: 200
  *                 message:
  *                   type: string
- *                   description: A jelszó cseréje sikeresen megtörtént. Most már bejelentkezhetsz
+ *                   description: Password has been updated. You can log in now
  *               required:
  *                 - status
  *                 - message
  *             example:
  *               status: 200
- *               message: A jelszó cseréje sikeresen megtörtént. Most már bejelentkezhetsz
+ *               message: Password has been updated. You can log in now
  *
  *       401:
  *         description: Token not valid
@@ -451,13 +451,13 @@ router.put('/:id', (req, res) => {
  *                   description: 401
  *                 message:
  *                   type: string
- *                   description: Sajnos a jelszó megváltoztatására adott idő (15 perc) lejárt
+ *                   description: The time to change your password (15 mins) has expired
  *               required:
  *                 - status
  *                 - message
  *             example:
  *               status: 401
- *               message: Sajnos a jelszó megváltoztatására adott idő (15 perc) lejárt
+ *               message: The time to change your password (15 mins) has expired
  *
  *       500:
  *         description: Something went wrong
@@ -471,13 +471,13 @@ router.put('/:id', (req, res) => {
  *                   description: 500
  *                 message:
  *                   type: string
- *                   description: A jelszó cseréje nem sikerült
+ *                   description: Password could not be changed
  *               required:
  *                 - status
  *                 - message
  *             example:
  *               status: 500
- *               message: A jelszó cseréje nem sikerült
+ *               message: Password could not be changed
  */
 
 export default router;

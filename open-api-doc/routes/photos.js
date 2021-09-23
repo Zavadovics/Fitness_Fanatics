@@ -21,19 +21,19 @@ const router = express.Router();
  *       properties:
  *         _id:
  *           type: string
- *           description: The auto-generated id of the training plan
+ *           description: The auto-generated id of the user's photo
  *         user_id:
  *           type: string
- *           description: ID of the user who uploaded the training plan
+ *           description: ID of the user who uploaded the photo
  *         user_email:
  *           type: string
- *           description: Email address of the user who uploaded the training plan
+ *           description: E-mail address of the user who uploaded the photo
  *         avatar:
  *           type: string
- *           description: The Cloudinary URL of the training plan
+ *           description: The Cloudinary URL of the user's photo
  *         cloudinary_id:
  *           type: string
- *           description: The Cloudinary ID of the training plan
+ *           description: The Cloudinary ID of the user's photo
  *
  *       example:
  *         _id: 60c77f12835fce44a438d876
@@ -128,7 +128,7 @@ router.get('/:id', (req, res) => {
  *                   description: 200
  *                 message:
  *                   type: string
- *                   description: Fotó sikeresen feltöltve or Fotó sikeresen módosítva
+ *                   description: Photo has been uploaded or updated
  *                 image:
  *                   type: object
  *                   description: The url of the newly-uploaded or updated photo
@@ -138,7 +138,7 @@ router.get('/:id', (req, res) => {
  *                 - image
  *             example:
  *               status: 200
- *               message: Fotó sikeresen feltöltve or Fotó sikeresen módosítva
+ *               message: Photo has been uploaded or updated
  *               image: url of the photo
  *
  *       400:
@@ -173,13 +173,13 @@ router.get('/:id', (req, res) => {
  *                   description: 500
  *                 message:
  *                   type: string
- *                   description: Fotó feltöltés sikertelen
+ *                   description: Photo could not be uploaded
  *               required:
  *                 - status
  *                 - message
  *             example:
  *               status: 500
- *               message: Fotó feltöltés sikertelen
+ *               message: Photo could not be uploaded
  *     security:
  *     - bearerAuth: []
  */
@@ -225,13 +225,13 @@ router.put('/:id', (req, res) => {
  *                   description: 200
  *                 message:
  *                   type: string
- *                   description: Fotó sikeresen törölve
+ *                   description: Photo has been deleted
  *               required:
  *                 - status
  *                 - message
  *             example:
  *               status: 200
- *               message: Fotó sikeresen törölve
+ *               message: Photo has been deleted
  *
  *       500:
  *         description: Something went wrong
@@ -245,13 +245,13 @@ router.put('/:id', (req, res) => {
  *                   description: 500
  *                 message:
  *                   type: string
- *                   description: Fotó törlése sikertelen
+ *                   description: Photo could not be deleted
  *               required:
  *                 - status
  *                 - message
  *             example:
  *               status: 500
- *               message: Fotó törlése sikertelen
+ *               message: Photo could not be deleted
  *     security:
  *     - bearerAuth: []
  */

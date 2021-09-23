@@ -120,7 +120,7 @@ router.get('/', (req, res) => {
  *                   description: 200
  *                 message:
  *                   type: string
- *                   description: Sikeres edzésterv feltöltés
+ *                   description: New training plan has been uploaded
  *                 plan:
  *                   type: object
  *                   description: The url of the newly-uploaded training plan
@@ -130,7 +130,7 @@ router.get('/', (req, res) => {
  *                 - plan
  *             example:
  *               status: 200
- *               message: Sikeres edzésterv feltöltés
+ *               message: New training plan has been uploaded
  *               plan: url of the training plan
  *
  *       400:
@@ -165,13 +165,13 @@ router.get('/', (req, res) => {
  *                   description: 500
  *                 message:
  *                   type: string
- *                   description: Edzésterv feltöltés sikertelen
+ *                   description: Training plan could not be uploaded
  *               required:
  *                 - status
  *                 - message
  *             example:
  *               status: 500
- *               message: Edzésterv feltöltés sikertelen
+ *               message: Training plan could not be uploaded
  *     security:
  *     - bearerAuth: []
  */
